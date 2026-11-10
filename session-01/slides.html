@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How LLMs Work: Slides</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+<link rel="stylesheet" href="../assets/temperature.css">
+<style>
+  :root {
+    --r-main-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-text-transform: none;
+    --r-heading-font-weight: 750;
+    --r-main-font-size: 32px;
+    --r-link-color: #1d4ed8;
+    --accent: #c2410c;
+    --soft: #fff1e8;
+    --blue-soft: #eaf0ff;
+    --muted: #5b636e;
+  }
+  body, .reveal-viewport { background: #fbfaf7; }
+  .reveal h1 { font-size: 2.2em; }
+  .reveal h2 { font-size: 1.5em; color: #1f2328; margin-bottom: 0.5em; }
+  .reveal .slides section { text-align: left; }
+  .reveal .slides section.center { text-align: center; }
+  .reveal .accent { color: var(--accent); }
+  .reveal .muted { color: var(--muted); }
+  .reveal .small { font-size: 0.7em; }
+  .reveal ul, .reveal ol { display: block; margin-left: 1.1em; }
+  .reveal li { margin: 0.25em 0; }
+  .reveal .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.55em; font-weight: 700; }
+  .reveal .card { background: #fff; border: 1px solid #e3e0d8; border-radius: 14px; padding: 0.6em 0.8em; }
+  .reveal .card.hl { background: var(--soft); border-color: transparent; }
+  .reveal .card.ex { background: var(--blue-soft); border-color: transparent; }
+  .reveal .card h3 { font-size: 0.8em; margin: 0 0 0.3em; }
+  .reveal .card p, .reveal .card li { font-size: 0.8em; }
+  .reveal .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7em; }
+  .reveal .cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6em; }
+  .reveal .big { font-size: 1.35em; font-weight: 700; line-height: 1.3; }
+  .reveal table { font-size: 0.68em; width: 100%; }
+  .reveal table th, .reveal table td { padding: 0.35em 0.5em; border-bottom: 1px solid #e3e0d8; }
+  .reveal code { background: #f3f1ec; padding: 0 0.2em; border-radius: 4px; }
+  .reveal .nest div { border: 3px solid #94a3b8; border-radius: 18px; padding: 0.3em 0.6em 0.5em; background: #fff; font-size: 0.95em; }
+  .reveal .nest div div { margin-top: 0.3em; }
+  .reveal .nest .l2 { border-color: #60a5fa; }
+  .reveal .nest .l3 { border-color: #a78bfa; }
+  .reveal .nest .l4 { border-color: var(--accent); background: var(--soft); }
+  .reveal .nest small { color: var(--muted); font-size: 0.8em; display: block; }
+  .reveal .tokens { display: flex; flex-wrap: wrap; gap: 0.2em; font-family: ui-monospace, Consolas, monospace; font-size: 1.1em; margin: 0.4em 0; }
+  .reveal .tokens span { padding: 0.05em 0.3em; border-radius: 6px; white-space: pre; }
+  .reveal .tokens span:nth-child(5n+1) { background: #fde2c8; }
+  .reveal .tokens span:nth-child(5n+2) { background: #cfe0ff; }
+  .reveal .tokens span:nth-child(5n+3) { background: #cdeed8; }
+  .reveal .tokens span:nth-child(5n+4) { background: #f6d0e4; }
+  .reveal .tokens span:nth-child(5n+5) { background: #e5dcfb; }
+  .reveal .bar { display: grid; grid-template-columns: 5em 1fr 3em; align-items: center; gap: 0.4em; font-size: 0.75em; margin: 0.2em 0; }
+  .reveal .bar i { display: block; height: 0.8em; background: var(--accent); border-radius: 4px; }
+  .reveal .flow { display: flex; gap: 0.4em; align-items: stretch; }
+  .reveal .flow .card { flex: 1; }
+  .reveal .arrow { align-self: center; font-size: 1.2em; color: var(--muted); }
+  .reveal .td { font-size: 0.75em; max-width: 1000px; }
+  .reveal .td-row { margin: 2px 0; }
+  .reveal .td-actions button { font-size: 1em; }
+  .reveal .slide-number { background: transparent; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1. Title -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">GenAI &amp; Agentic AI Workshop · Day 1 · Session 1</p>
+  <h1 style="color:#fff">How LLMs Work</h1>
+  <p style="color:#cbd5e1">What actually happens when you ask ChatGPT a question?</p>
+  <p class="small" style="color:#94a3b8">Press <b>→</b> to move · <b>S</b> for speaker notes · <b>F</b> for full screen</p>
+  <aside class="notes">Welcome. Introduce yourself briefly. Tell them: no heavy math today, just intuition. By the end they'll be able to explain to a friend how ChatGPT works.</aside>
+</section>
+
+<!-- 2. Hook -->
+<section>
+  <h2>Quick poll ✋</h2>
+  <ul>
+    <li>Who used ChatGPT, Gemini or Claude <b>this week</b>?</li>
+    <li class="fragment">What did you use it for? Assignments? Code? Resume?</li>
+    <li class="fragment">Has it ever given you a <b>wrong answer</b> confidently?</li>
+  </ul>
+  <p class="fragment big accent" style="margin-top:1em">Today: how does it "know" things, and why does it sometimes get them wrong?</p>
+  <aside class="notes">Take 3-4 answers from the room. Note any "wrong answer" stories; you'll come back to them in the hallucination section.</aside>
+</section>
+
+<!-- 3. Agenda -->
+<section>
+  <h2>Today's plan</h2>
+  <div class="cols">
+    <ol>
+      <li>AI → ML → Deep Learning</li>
+      <li>Transformers &amp; attention</li>
+      <li>LLM = next-word predictor</li>
+      <li>Tokens &amp; embeddings</li>
+    </ol>
+    <ol start="5">
+      <li>Context window</li>
+      <li>Temperature</li>
+      <li>Hallucination</li>
+      <li>Open vs closed models</li>
+    </ol>
+  </div>
+  <p class="muted small" style="margin-top:1em">Notes with all examples and code: see the Session 1 notes page.</p>
+</section>
+
+<!-- 4. Nested -->
+<section>
+  <h2>AI, ML, DL, LLM: one inside the other</h2>
+  <div class="nest">
+    <div class="l1"><b>Artificial Intelligence</b><small>Any "smart" machine, including old rule-based systems</small>
+      <div class="l2"><b>Machine Learning</b><small>Learns patterns from examples</small>
+        <div class="l3"><b>Deep Learning</b><small>Neural networks with many layers</small>
+          <div class="l4"><b>Generative AI / LLMs</b><small>Create new text, images, code</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Point out that people use these words interchangeably but each is a subset of the previous one. ChatGPT is in the innermost box.</aside>
+</section>
+
+<!-- 5. Programming vs ML -->
+<section>
+  <h2>Rules vs examples</h2>
+  <div class="cols">
+    <div class="card">
+      <h3>Traditional programming</h3>
+      <p><b>Rules + data → answers</b></p>
+      <p><code>if "lottery" in email: spam</code></p>
+      <p class="muted">Spammer writes "l0ttery" → rule fails 😅</p>
+    </div>
+    <div class="card hl">
+      <h3>Machine learning</h3>
+      <p><b>Data + answers → rules</b></p>
+      <p>Show 10,000 emails labelled spam / not spam</p>
+      <p class="muted">Model learns the patterns itself ✅</p>
+    </div>
+  </div>
+  <div class="card ex fragment" style="margin-top:0.6em">
+    <p><b>Campus example:</b> past students' CGPA, internships, projects + "placed or not" → model predicts placement chance for a new student.</p>
+  </div>
+  <aside class="notes">Key line: in ML we don't write the rules, we give examples and the machine finds the rules. Ask: what other college data could we learn from? (attendance → risk of failing, etc.)</aside>
+</section>
+
+<!-- 6. Deep learning -->
+<section>
+  <h2>Deep learning: layers that learn</h2>
+  <p>A <b>neural network</b> = layers of simple maths units. "Deep" = many layers.</p>
+  <div class="flow" style="margin-top:0.6em">
+    <div class="card"><h3>Layer 1</h3><p>Edges &amp; lines</p></div>
+    <div class="arrow">→</div>
+    <div class="card"><h3>Middle layers</h3><p>Eyes, nose, mouth</p></div>
+    <div class="arrow">→</div>
+    <div class="card hl"><h3>Last layer</h3><p>"This is <b>your</b> face"</p></div>
+  </div>
+  <p class="muted" style="margin-top:0.8em">📱 Face unlock: nobody programmed "what an eye looks like". It learned from millions of images.</p>
+</section>
+
+<!-- 7. Transformers -->
+<section>
+  <h2>2017: the Transformer</h2>
+  <p>Google paper: <i>"Attention Is All You Need"</i>. The <b>T</b> in GPT = <b>Transformer</b>.</p>
+  <ul>
+    <li>Old models: read one word at a time, forget the start of long sentences</li>
+    <li>Transformer: looks at <b>all words at once</b></li>
+    <li><b>Attention</b>: works out which words matter for each other</li>
+  </ul>
+  <aside class="notes">Don't go into the architecture. The one idea to land: each word looks at every other word and decides which ones are relevant to it.</aside>
+</section>
+
+<!-- 8. Attention examples -->
+<section>
+  <h2>Attention in action</h2>
+  <div class="card ex">
+    <p>I went to the <b class="accent">bank</b> to deposit my scholarship <u>money</u>. → 🏦</p>
+    <p>We sat on the river <b class="accent">bank</b> and watched the <u>sunset</u>. → 🏞️</p>
+  </div>
+  <div class="card fragment" style="margin-top:0.6em">
+    <p>The dog didn't cross the road because <b class="accent">it</b> was too <u>tired</u>. → <b>it = dog</b></p>
+    <p class="fragment">The dog didn't cross the road because <b class="accent">it</b> was too <u>busy</u>. → <b>it = road</b></p>
+  </div>
+  <aside class="notes">Ask the class what "it" refers to in each sentence before revealing. They'll get it instantly. Say: you used context. That's what attention does.</aside>
+</section>
+
+<!-- 9. Next word -->
+<section>
+  <h2>An LLM is a next-word predictor</h2>
+  <p class="big">"Virat Kohli is famous for playing ___"</p>
+  <div style="max-width:700px">
+    <div class="bar"><b>cricket</b><i style="width:92%"></i><span>92%</span></div>
+    <div class="bar"><span>for</span><i style="width:3%"></i><span>3%</span></div>
+    <div class="bar"><span>in</span><i style="width:2%"></i><span>2%</span></div>
+    <div class="bar"><span>…</span><i style="width:1%"></i><span></span></div>
+  </div>
+  <p class="fragment">Pick a word → add it to the text → predict again → repeat. That's how a whole answer gets written.</p>
+  <aside class="notes">Game: say "Virat Kohli is famous for playing..." and let the class shout the answer. Then "Once upon a..." and "Happy birthday to...". The class is acting as an LLM. Numbers are illustrative.</aside>
+</section>
+
+<!-- 10. Key idea -->
+<section class="center">
+  <p class="eyebrow">Key idea</p>
+  <p class="big">An LLM doesn't <i>look up</i> answers.<br>It generates the most likely next piece of text,<br><span class="accent">one token at a time.</span></p>
+  <p class="muted small" style="margin-top:1em">"Large" = billions of <b>parameters</b>: the numbers that store what it learned.</p>
+</section>
+
+<!-- 11. Training stages -->
+<section>
+  <h2>From predictor to assistant</h2>
+  <div class="flow">
+    <div class="card"><h3>1. Pre-training</h3><p>Read a huge chunk of the internet. Learn to predict the next word.</p><p class="muted">📚 Reading a whole library</p></div>
+    <div class="arrow">→</div>
+    <div class="card"><h3>2. Instruction tuning</h3><p>Learn from question → good answer examples.</p><p class="muted">📝 Practising exam answers</p></div>
+    <div class="arrow">→</div>
+    <div class="card hl"><h3>3. Human feedback</h3><p>Humans rank answers. Model learns to be helpful &amp; safe.</p><p class="muted">🧑‍🏫 A mentor's feedback</p></div>
+  </div>
+  <aside class="notes">Without step 2 and 3, asking "What is the capital of France?" might return "What is the capital of Germany?" because it looks like a quiz list. Stage 3 is called RLHF: Reinforcement Learning from Human Feedback.</aside>
+</section>
+
+<!-- 12. Tokens -->
+<section>
+  <h2>Tokens: how LLMs read</h2>
+  <p>Not words, not letters: <b>tokens</b> (chunks of text).</p>
+  <p class="muted small">"I love unbelievable biryani!" (illustrative split)</p>
+  <div class="tokens"><span>I</span><span> love</span><span> un</span><span>believ</span><span>able</span><span> bir</span><span>yani</span><span>!</span></div>
+  <div class="card hl" style="margin-top:0.6em">
+    <p><b>Rule of thumb:</b> 1 token ≈ 4 characters ≈ ¾ word &nbsp;·&nbsp; 100 tokens ≈ 75 words</p>
+  </div>
+  <aside class="notes">Live demo: open platform.openai.com/tokenizer or tiktokenizer.vercel.app. Type a sentence in English, then the same in Hindi. Show the token count jump.</aside>
+</section>
+
+<!-- 13. Why tokens matter -->
+<section>
+  <h2>Why should you care about tokens?</h2>
+  <div class="cols">
+    <div class="card"><h3>💰 Cost</h3><p>APIs charge per token, input + output.</p></div>
+    <div class="card"><h3>📏 Limits</h3><p>Each model has a max number of tokens.</p></div>
+    <div class="card"><h3>🇮🇳 Indian languages</h3><p>Hindi / Kannada / Tamil often use several times more tokens than English.</p></div>
+    <div class="card"><h3>🍓 Strange mistakes</h3><p>"How many r's in strawberry?" Older models said 2. They see <code>str</code><code>aw</code><code>berry</code>, not letters.</p></div>
+  </div>
+</section>
+
+<!-- 14. Embeddings -->
+<section>
+  <h2>Embeddings: meaning as numbers</h2>
+  <div class="cols" style="align-items:center">
+    <svg viewBox="0 0 560 300" role="img" aria-label="Word clusters: food, jobs, cricket">
+      <g font-family="system-ui, sans-serif" font-size="17" fill="#1f2328">
+        <circle cx="110" cy="80" r="66" fill="#fb923c" fill-opacity="0.18"/>
+        <text x="74" y="62">samosa</text><text x="64" y="90">dosa</text><text x="112" y="112">chai</text><text x="120" y="80">biryani</text>
+        <circle cx="420" cy="90" r="80" fill="#60a5fa" fill-opacity="0.18"/>
+        <text x="370" y="66">placement</text><text x="400" y="94">job</text><text x="410" y="124">recruitment</text><text x="352" y="120">interview</text>
+        <circle cx="250" cy="225" r="64" fill="#4ade80" fill-opacity="0.18"/>
+        <text x="212" y="210">cricket</text><text x="252" y="236">bat</text><text x="206" y="254">wicket</text><text x="262" y="210">IPL</text>
+      </g>
+    </svg>
+    <div>
+      <p>Text → list of numbers (a <b>vector</b>)</p>
+      <p><b>Similar meaning → close together</b></p>
+      <p class="fragment card hl">king − man + woman ≈ <b>queen</b></p>
+    </div>
+  </div>
+  <aside class="notes">Real embeddings have hundreds or thousands of dimensions; we draw 2D for intuition. The king/queen example is from word2vec.</aside>
+</section>
+
+<!-- 15. Embedding search example -->
+<section>
+  <h2>Search by meaning, not keywords</h2>
+  <p>Student asks: <b>"How do I apply for placements?"</b></p>
+  <table>
+    <tr><th>FAQ sentence</th><th>Similarity*</th></tr>
+    <tr><td>What is the process for campus recruitment?</td><td><b>0.82</b> ✅</td></tr>
+    <tr><td>Steps to register with the training &amp; placement cell</td><td><b>0.78</b> ✅</td></tr>
+    <tr><td>Placement of furniture in the new hostel block</td><td>0.21 ❌</td></tr>
+  </table>
+  <p class="muted small">*Illustrative scores. This is the core of <b>RAG</b>, which we build in Session 4.</p>
+  <aside class="notes">Point out: the first FAQ shares almost no words with the question but matches. The last one shares "placement" but doesn't match. Keyword search would get this backwards.</aside>
+</section>
+
+<!-- 16. Context window -->
+<section>
+  <h2>Context window: the model's desk</h2>
+  <div class="card ex"><p>📖 Open-book exam, but your desk fits only <b>N pages</b>. Add more, and the oldest pages fall off.</p></div>
+  <ul style="margin-top:0.5em">
+    <li>Max tokens the model sees at once: <b>instructions + chat history + documents + answer</b></li>
+    <li>Ranges from a few thousand to hundreds of thousands (even 1M) of tokens</li>
+    <li class="fragment">Long chat → old messages dropped → bot "forgets"</li>
+    <li class="fragment"><b>No memory between calls.</b> Apps re-send the whole chat every time (Session 3)</li>
+  </ul>
+</section>
+
+<!-- 17. Temperature demo -->
+<section>
+  <h2>Temperature: safe or creative?</h2>
+  <div data-temp-demo></div>
+  <aside class="notes">Drag the slider to 0: always "chai". Drag to 2: "silence" and "WiFi" start showing up. Click Generate a few times at each setting. Arrow keys on the slider adjust it without changing slides.</aside>
+</section>
+
+<!-- 18. Temperature guide -->
+<section>
+  <h2>Which temperature when?</h2>
+  <table>
+    <tr><th>Task</th><th>Temperature</th></tr>
+    <tr><td>Answer from syllabus, extract JSON, write code</td><td><b>Low</b> (0 – 0.3)</td></tr>
+    <tr><td>General chat, explanations</td><td><b>Medium</b> (0.5 – 0.8)</td></tr>
+    <tr><td>Tech fest names, poems, brainstorming</td><td><b>High</b> (0.9 – 1.2)</td></tr>
+  </table>
+  <p class="muted small" style="margin-top:0.8em">Related setting: <b>top-p</b>. Usually tune one, not both.</p>
+</section>
+
+<!-- 19. Hallucination -->
+<section>
+  <h2>Hallucination 🤯</h2>
+  <p>A confident, fluent answer that is <b>false or made up</b>.</p>
+  <div class="card ex">
+    <p><b>Prompt:</b> "Summarise the 2019 paper <i>'Quantum Biryani Optimization'</i> by Dr. R. Sharma, IIT Bombay."</p>
+    <p class="fragment">This paper <b>doesn't exist</b>. A model may still write a detailed summary, because that's what summaries <i>look like</i>.</p>
+  </div>
+  <p class="muted small fragment">Also common: fake citations, wrong dates, made-up code libraries.</p>
+  <aside class="notes">Try this live, tested beforehand. Newer models may say they can't find it, which is a good thing to show too. Bring back any "wrong answer" stories from the opening poll.</aside>
+</section>
+
+<!-- 20. Why + fix -->
+<section>
+  <h2>Why it happens, and how to reduce it</h2>
+  <div class="cols">
+    <div class="card">
+      <h3>Why</h3>
+      <ul>
+        <li>Predicts <b>plausible</b> text, not <b>true</b> text</li>
+        <li>No built-in fact database</li>
+        <li>Knowledge cutoff date</li>
+        <li>Rewarded for answering, not for "I don't know"</li>
+      </ul>
+    </div>
+    <div class="card hl">
+      <h3>Reduce it</h3>
+      <ul>
+        <li>Give it the source (<b>RAG</b>, Session 4)</li>
+        <li>Say: "If not in the text, say you don't know"</li>
+        <li>Ask for citations, then check them</li>
+        <li>Low temperature, tools, human review</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 21. Open vs closed -->
+<section>
+  <h2>Open vs closed models</h2>
+  <div class="cols">
+    <div class="card">
+      <h3>🔒 Closed</h3>
+      <p><b>GPT</b> (OpenAI) · <b>Claude</b> (Anthropic) · <b>Gemini</b> (Google)</p>
+      <ul>
+        <li>Use via app / API only</li>
+        <li>✅ Usually most capable, no hardware</li>
+        <li>❌ Pay per token, data goes to provider</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🔓 Open-weight</h3>
+      <p><b>Llama</b> (Meta) · <b>Mistral</b> · Gemma · Qwen · DeepSeek</p>
+      <ul>
+        <li>Download &amp; run yourself (Ollama, own server, Groq)</li>
+        <li>✅ Control, privacy, customisable</li>
+        <li>❌ Need GPUs &amp; skills, licences vary</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 22. How to choose -->
+<section>
+  <h2>How to choose a model</h2>
+  <div class="cols3">
+    <div class="card"><h3>🎯 Quality</h3><p>Test on 10–20 of <i>your</i> examples</p></div>
+    <div class="card"><h3>💰 Cost</h3><p>Requests × tokens × price</p></div>
+    <div class="card"><h3>⚡ Speed</h3><p>Live chat or overnight job?</p></div>
+    <div class="card"><h3>🔐 Privacy</h3><p>Can the data leave?</p></div>
+    <div class="card"><h3>🗣️ Language</h3><p>Hindi, Kannada, Tamil?</p></div>
+    <div class="card"><h3>📜 Licence</h3><p>Commercial use allowed?</p></div>
+  </div>
+  <p class="fragment card hl" style="margin-top:0.6em">💡 Start with the best model to prove it works, then try cheaper ones.</p>
+</section>
+
+<!-- 23. Scenarios -->
+<section>
+  <h2>You decide: which model? 🗳️</h2>
+  <table>
+    <tr><th>Scenario</th><th>Pick</th></tr>
+    <tr><td>24-hour hackathon prototype</td><td class="fragment">Closed API / free tier</td></tr>
+    <tr><td>Hospital records, data can't leave the building</td><td class="fragment">Open-weight, self-hosted</td></tr>
+    <tr><td>Classify 10 lakh reviews a day</td><td class="fragment">Small, cheap, fast model</td></tr>
+    <tr><td>Support chatbot in Kannada</td><td class="fragment">Test several on real Kannada questions</td></tr>
+  </table>
+  <aside class="notes">Read each scenario, take a quick vote (open vs closed, big vs small), then reveal the answer with the arrow key.</aside>
+</section>
+
+<!-- 24. Recap -->
+<section>
+  <h2>Recap: 6 things to remember</h2>
+  <ol>
+    <li>ML learns rules from <b>examples</b></li>
+    <li>Transformers use <b>attention</b> to read words in context</li>
+    <li>LLMs <b>predict the next token</b>, again and again</li>
+    <li><b>Tokens</b> = cost &amp; limits · <b>Embeddings</b> = meaning as numbers</li>
+    <li><b>Context window</b> = short-term memory · <b>Temperature</b> = creativity dial</li>
+    <li>LLMs <b>hallucinate</b>: ground them with sources</li>
+  </ol>
+</section>
+
+<!-- 25. Quiz -->
+<section>
+  <h2>Quick quiz 🧠</h2>
+  <ol>
+    <li>Roughly how many tokens is a 750-word essay?<span class="fragment accent"> ≈ 1,000</span></li>
+    <li>Why does a chatbot forget the start of a long chat?<span class="fragment accent"> Context window full</span></li>
+    <li>Extracting marks into JSON: high or low temperature?<span class="fragment accent"> Low</span></li>
+    <li>Name one way to reduce hallucination.<span class="fragment accent"> Give sources / RAG</span></li>
+  </ol>
+</section>
+
+<!-- 26. Next -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">Up next · Session 2</p>
+  <h1 style="color:#fff">Prompt Engineering</h1>
+  <p style="color:#cbd5e1">Same model, better answers: zero-shot, few-shot, chain-of-thought, JSON output</p>
+  <p style="color:#fff;margin-top:1em">Questions? 🙋</p>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="../assets/temperature.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    width: 1280,
+    height: 720,
+    margin: 0.06,
+    transition: 'slide',
+    plugins: [RevealNotes]
+  });
+</script>
+</body>
+</html>
