@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt Engineering: Slides</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+<style>
+  :root {
+    --r-main-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-text-transform: none;
+    --r-heading-font-weight: 750;
+    --r-main-font-size: 32px;
+    --r-link-color: #1d4ed8;
+    --accent: #c2410c;
+    --soft: #fff1e8;
+    --blue-soft: #eaf0ff;
+    --green-soft: #e9f8ee;
+    --muted: #5b636e;
+  }
+  body, .reveal-viewport { background: #fbfaf7; }
+  .reveal h1 { font-size: 2.2em; }
+  .reveal h2 { font-size: 1.5em; color: #1f2328; margin-bottom: 0.5em; }
+  .reveal .slides section { text-align: left; }
+  .reveal .slides section.center { text-align: center; }
+  .reveal .accent { color: var(--accent); }
+  .reveal .muted { color: var(--muted); }
+  .reveal .small { font-size: 0.7em; }
+  .reveal ul, .reveal ol { display: block; margin-left: 1.1em; }
+  .reveal li { margin: 0.25em 0; }
+  .reveal .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.55em; font-weight: 700; }
+  .reveal .card { background: #fff; border: 1px solid #e3e0d8; border-radius: 14px; padding: 0.6em 0.8em; }
+  .reveal .card.hl { background: var(--soft); border-color: transparent; }
+  .reveal .card.ex { background: var(--blue-soft); border-color: transparent; }
+  .reveal .card.ok { background: var(--green-soft); border-color: transparent; }
+  .reveal .card h3 { font-size: 0.8em; margin: 0 0 0.3em; }
+  .reveal .card p, .reveal .card li { font-size: 0.8em; }
+  .reveal .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7em; }
+  .reveal .cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6em; }
+  .reveal .big { font-size: 1.35em; font-weight: 700; line-height: 1.3; }
+  .reveal table { font-size: 0.68em; width: 100%; }
+  .reveal table th, .reveal table td { padding: 0.35em 0.5em; border-bottom: 1px solid #e3e0d8; }
+  .reveal code { background: #f3f1ec; padding: 0 0.2em; border-radius: 4px; }
+  .reveal pre { width: 100%; box-shadow: none; font-size: 0.5em; margin: 0.3em 0; }
+  .reveal pre code { background: #f3f1ec; border-radius: 10px; padding: 0.6em 0.8em; max-height: 460px; line-height: 1.4; }
+  .reveal img.diagram { width: 100%; margin: 0; }
+  .reveal .slide-number { background: transparent; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1. Title -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">GenAI &amp; Agentic AI Workshop · Day 1 · Session 2</p>
+  <h1 style="color:#fff">Prompt Engineering</h1>
+  <p style="color:#cbd5e1">Same model. Better answers.</p>
+  <p class="small" style="color:#94a3b8">Press <b>→</b> to move · <b>S</b> for speaker notes · <b>F</b> for full screen</p>
+  <aside class="notes">Quick link back to Session 1: an LLM predicts the next token from the text it's given. Today: how to write that text well.</aside>
+</section>
+
+<!-- 2. Hook -->
+<section>
+  <h2>Let's try something 🎪</h2>
+  <div class="card"><p><b>Prompt A:</b> "Write about our college fest."</p></div>
+  <div class="card ok fragment" style="margin-top:0.5em"><p><b>Prompt B:</b> "Write a 60-word Instagram caption for TechNova 2026, our tech fest on 20–21 Feb. Audience: first-years. Tone: fun. Mention the hackathon and robo-race. End with 2 hashtags."</p></div>
+  <p class="fragment big accent" style="margin-top:0.6em">Which one would you actually post?</p>
+  <aside class="notes">Do this live in a chatbot. Run A first, let them read the long generic essay. Then run B. Ask: what changed? The model didn't change. Only the prompt did.</aside>
+</section>
+
+<!-- 3. Diagram weak vs strong -->
+<section>
+  <h2>Vague in, vague out</h2>
+  <img class="diagram" src="diagrams/weak-vs-strong.svg" alt="Weak prompt gives generic result; strong prompt gives ready-to-post result">
+  <aside class="notes">Analogy: the LLM is a very smart intern on day one. Knows a lot in general, knows nothing about you. Tell them exactly what you need.</aside>
+</section>
+
+<!-- 4. Agenda -->
+<section>
+  <h2>Today's plan</h2>
+  <div class="cols">
+    <ol>
+      <li>Six parts of a good prompt</li>
+      <li>Zero-shot</li>
+      <li>Few-shot</li>
+      <li>Chain-of-thought</li>
+    </ol>
+    <ol start="5">
+      <li>System prompts</li>
+      <li>JSON output for apps</li>
+      <li>Seven simple tips</li>
+      <li><b>Lab:</b> weak vs strong prompts</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 5. Anatomy -->
+<section>
+  <h2>The six parts of a good prompt</h2>
+  <img class="diagram" src="diagrams/prompt-anatomy.svg" alt="Role, Task, Context, Examples, Format, Rules" style="max-height:560px;width:auto;display:block;margin:0 auto;">
+  <aside class="notes">Read each row. Stress: you don't need all six. Start with a clear task and add parts until the answer is good.</aside>
+</section>
+
+<!-- 6. Resume exercise -->
+<section>
+  <h2>Your turn: fix this prompt</h2>
+  <p class="big">"Improve my resume."</p>
+  <div class="card ok fragment" style="margin-top:0.5em">
+    <p><b>Role:</b> You are a placement trainer.
+    <b>Task:</b> Review the resume summary below.
+    <b>Context:</b> Final-year CSE, applying for backend roles.
+    <b>Format:</b> 3 bullet points, under 20 words each.
+    <b>Rules:</b> Don't invent skills I didn't mention.</p>
+  </div>
+  <aside class="notes">Ask the class: what's missing? Collect answers and map each to one of the six parts before revealing.</aside>
+</section>
+
+<!-- 7. Techniques overview -->
+<section>
+  <h2>Four techniques</h2>
+  <img class="diagram" src="diagrams/prompt-techniques.svg" alt="Zero-shot, few-shot, chain-of-thought, structured output">
+</section>
+
+<!-- 8. Zero-shot -->
+<section>
+  <h2>Zero-shot: just ask</h2>
+  <div class="card ex">
+    <p>"Is this canteen review positive, negative or neutral? <b>Reply with one word.</b><br>Review: The dosa was great but the chai was cold."</p>
+  </div>
+  <p class="fragment">→ <b>Neutral</b></p>
+  <p class="fragment muted">Good for simple, common tasks. Even here, saying the format ("one word") helps.</p>
+</section>
+
+<!-- 9. Few-shot -->
+<section>
+  <h2>Few-shot: show, don't tell</h2>
+<pre><code class="plaintext">Send each complaint to the right department.
+Departments: Hostel, Exam cell, Library, Maintenance
+
+Complaint: WiFi in Block C is very slow            → Department: Hostel
+Complaint: My internal marks are not updated       → Department: Exam cell
+Complaint: Library book return date is wrong       → Department: Library
+Complaint: The projector in Room 204 is not working → Department:</code></pre>
+  <p class="fragment">→ <b>Maintenance</b></p>
+  <p class="fragment muted small">Use 2–5 varied examples. If every example says "Hostel", it'll say "Hostel" for everything.</p>
+  <aside class="notes">Run it live. Then remove the examples and run again: the answer may become a long sentence instead of a label.</aside>
+</section>
+
+<!-- 10. CoT -->
+<section>
+  <h2>Chain-of-thought: think step by step 🧮</h2>
+  <div class="card ex"><p>"I've attended 36 of 50 classes (72%). 20 classes are left. How many must I attend to reach 75%? <b>Think step by step.</b>"</p></div>
+  <div class="card fragment" style="margin-top:0.5em">
+    <p>Total = 50 + 20 = 70 &nbsp;·&nbsp; 75% of 70 = 52.5 → 53<br>Need 53 − 36 = <b class="accent">17 more classes</b></p>
+  </div>
+  <p class="fragment muted small">Writing the steps = more text to read before the answer = fewer mistakes. Reasoning models do this automatically.</p>
+  <aside class="notes">Ask the class to solve it first (give 30 seconds). Many will get it wrong or not finish. Then show the step-by-step answer.</aside>
+</section>
+
+<!-- 11. System prompt -->
+<section>
+  <h2>System prompts: rules for the whole chat</h2>
+<pre><code class="plaintext">SYSTEM: You are "CampusBuddy", helpdesk assistant for ABC Engineering College.
+- Answer only questions about the college: exams, fees, hostel, library, placements.
+- Under 80 words, simple English.
+- If you don't know: "I'm not sure. Please contact office@abc.edu."
+- Never share any student's personal details.
+
+USER: Can you write my DBMS assignment for me?</code></pre>
+  <p class="fragment card ok">"I can't write your assignment, but I can explain any DBMS topic you're stuck on. Which one?"</p>
+  <aside class="notes">Developer writes the system prompt; user never sees it. Every project from now on has one.</aside>
+</section>
+
+<!-- 12. JSON -->
+<section>
+  <h2>JSON output: when code reads the answer</h2>
+  <div class="cols">
+    <div class="card ex"><p><b>Prompt</b></p><p>Extract name, course, city, wants_hostel (true/false). <b>JSON only.</b></p><p class="muted">"Hi, I am Rahul from Mysuru. I want to join B.Tech CSE. Is hostel available?"</p></div>
+    <div class="card ok"><p><b>Answer</b></p><p><code>{"name": "Rahul", "course": "B.Tech CSE", "city": "Mysuru", "wants_hostel": true}</code></p></div>
+  </div>
+  <ul class="fragment small" style="margin-top:0.6em">
+    <li>List fields + types · "JSON only" · temperature 0</li>
+    <li>Use the API's <b>JSON mode</b> · always check with <code>json.loads()</code></li>
+  </ul>
+</section>
+
+<!-- 13. Tips -->
+<section>
+  <h2>Seven simple tips</h2>
+  <div class="cols">
+    <ol>
+      <li>Be specific: length, audience, tone</li>
+      <li>Say what <i>to</i> do</li>
+      <li>Wrap data in <code>"""quotes"""</code></li>
+      <li>Allow "I don't know"</li>
+    </ol>
+    <ol start="5">
+      <li>One job per prompt</li>
+      <li>Iterate: write → test → fix</li>
+      <li>Test with 5–10 real inputs</li>
+    </ol>
+  </div>
+  <p class="fragment card hl" style="margin-top:0.6em">⚠️ <b>Prompt injection:</b> user text saying "Ignore all previous instructions..." More in Session 5.</p>
+</section>
+
+<!-- 14. Lab -->
+<section>
+  <h2>Lab: weak vs strong (20 min) 🧪</h2>
+  <table>
+    <tr><th>Task</th><th>Weak prompt</th><th>Make it strong by adding...</th></tr>
+    <tr><td>Fest caption</td><td>"Write about our college fest."</td><td>Name, dates, audience, tone, length</td></tr>
+    <tr><td>Complaint routing</td><td>"Which department is this for?"</td><td>Label list + 3 examples + "name only"</td></tr>
+    <tr><td>Enquiry → JSON</td><td>"Get the details from this email."</td><td>Fields + types, JSON only, temp 0</td></tr>
+  </table>
+  <p class="small" style="margin-top:0.6em">Use any chat app, or the Colab notebook linked from the Session 2 notes page. Note: what was wrong, what you added, did it fix it?</p>
+  <aside class="notes">Pairs. Walk around. At the end, pick 2-3 pairs to share their strongest prompt.</aside>
+</section>
+
+<!-- 15. Recap -->
+<section>
+  <h2>Recap</h2>
+  <ol>
+    <li>The prompt decides the answer</li>
+    <li><b>Role · Task · Context · Examples · Format · Rules</b></li>
+    <li><b>Zero-shot</b> simple · <b>Few-shot</b> style · <b>CoT</b> logic</li>
+    <li><b>System prompt</b> = rules for the whole chat</li>
+    <li><b>JSON</b> when code reads the answer</li>
+    <li>Write → test → fix → repeat</li>
+  </ol>
+</section>
+
+<!-- 16. Quiz -->
+<section>
+  <h2>Quick quiz 🧠</h2>
+  <ol>
+    <li>Zero-shot vs few-shot?<span class="fragment accent"> No examples vs a few examples</span></li>
+    <li>When do you add "think step by step"?<span class="fragment accent"> Maths, logic, multi-step</span></li>
+    <li>Who sees the system prompt?<span class="fragment accent"> The developer, not the user</span></li>
+    <li>Rewrite: "Explain OS."<span class="fragment accent"> Audience + analogy + length + format</span></li>
+  </ol>
+</section>
+
+<!-- 17. Next -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">Up next · Session 3</p>
+  <h1 style="color:#fff">Building with LLM APIs</h1>
+  <p style="color:#cbd5e1">Call a model from Python, stream the answer, count the cost, and build a chatbot with memory</p>
+  <p style="color:#fff;margin-top:1em">Questions? 🙋</p>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    width: 1280,
+    height: 720,
+    margin: 0.06,
+    transition: 'slide',
+    plugins: [RevealNotes]
+  });
+</script>
+</body>
+</html>

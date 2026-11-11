@@ -1,0 +1,58 @@
+<mxfile host="drawio">
+  <diagram id="chunking" name="Chunking">
+    <mxGraphModel dx="1000" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="960" pageHeight="460" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Chunking: cut long documents into small, overlapping pieces" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="36" as="geometry" />
+        </mxCell>
+
+        <mxCell id="doc" value="Whole document: College FAQ (2,000 words). Too long to send for every question, and most of it is not relevant." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3f1ec;strokeColor=#5b636e;fontColor=#1f2328;fontSize=14;arcSize=14;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="20" y="60" width="920" height="46" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c1" value="&lt;b&gt;Chunk 1&lt;/b&gt;: words 1-120" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="20" y="126" width="360" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="&lt;b&gt;Chunk 2&lt;/b&gt;: words 101-220" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf0ff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="300" y="176" width="360" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="&lt;b&gt;Chunk 3&lt;/b&gt;: words 201-320" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="580" y="226" width="360" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ov1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6d28d9;strokeColor=none;opacity=18;" vertex="1" parent="1">
+          <mxGeometry x="300" y="126" width="80" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="ov2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6d28d9;strokeColor=none;opacity=18;" vertex="1" parent="1">
+          <mxGeometry x="580" y="176" width="80" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="ovl" value="&lt;b&gt;Overlap&lt;/b&gt; (20 words): a sentence cut at the edge still appears whole in one chunk" style="text;html=1;whiteSpace=wrap;fontSize=13;align=left;verticalAlign=middle;fontColor=#6d28d9;" vertex="1" parent="1">
+          <mxGeometry x="20" y="226" width="540" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Sizes -->
+        <mxCell id="s1h" value="Too small" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#be123c;strokeColor=none;fontColor=#ffffff;fontSize=15;fontStyle=1;arcSize=18;" vertex="1" parent="1">
+          <mxGeometry x="20" y="290" width="296" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="s1" value="&lt;i&gt;&quot;fee of ₹500 per subject&quot;&lt;/i&gt;&lt;br&gt;&lt;br&gt;Fee for what? The meaning is lost." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe9ee;strokeColor=none;fontColor=#1f2328;fontSize=13;align=left;verticalAlign=top;spacing=10;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="20" y="330" width="296" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="s2h" value="Just right" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#15803d;strokeColor=none;fontColor=#ffffff;fontSize=15;fontStyle=1;arcSize=18;" vertex="1" parent="1">
+          <mxGeometry x="332" y="290" width="296" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="One topic, one paragraph or section.&lt;br&gt;&lt;br&gt;&lt;i&gt;&quot;To apply for revaluation... pay ₹500 per subject.&quot;&lt;/i&gt; Clear and complete." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=none;fontColor=#1f2328;fontSize=13;align=left;verticalAlign=top;spacing=10;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="332" y="330" width="296" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="s3h" value="Too big" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#5b636e;strokeColor=none;fontColor=#ffffff;fontSize=15;fontStyle=1;arcSize=18;" vertex="1" parent="1">
+          <mxGeometry x="644" y="290" width="296" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="Exams + attendance + fees in one chunk.&lt;br&gt;&lt;br&gt;Mixed topics, more noise, more tokens, vaguer answers." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3f1ec;strokeColor=none;fontColor=#1f2328;fontSize=13;align=left;verticalAlign=top;spacing=10;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="644" y="330" width="296" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

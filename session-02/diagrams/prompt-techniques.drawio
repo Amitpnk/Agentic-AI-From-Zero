@@ -1,0 +1,57 @@
+<mxfile host="drawio">
+  <diagram id="prompt-techniques" name="Four prompting techniques">
+    <mxGraphModel dx="1100" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1000" pageHeight="480" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Four prompting techniques" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="500" height="36" as="geometry" />
+        </mxCell>
+
+        <mxCell id="axis" value="more guidance, more control" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;fontSize=13;fontColor=#5b636e;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="20" y="66" as="sourcePoint" />
+            <mxPoint x="980" y="66" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Zero-shot -->
+        <mxCell id="h1" value="Zero-shot" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#5b636e;strokeColor=none;fontColor=#ffffff;fontSize=17;fontStyle=1;arcSize=18;" vertex="1" parent="1">
+          <mxGeometry x="20" y="90" width="225" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" value="&lt;b&gt;Just ask.&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;i&gt;&quot;Is this review positive or negative? The canteen food was cold.&quot;&lt;/i&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#5b636e&quot;&gt;&lt;b&gt;Use when:&lt;/b&gt; the task is common and simple.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3f1ec;strokeColor=none;fontColor=#1f2328;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="20" y="146" width="225" height="250" as="geometry" />
+        </mxCell>
+
+        <!-- Few-shot -->
+        <mxCell id="h2" value="Few-shot" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1d4ed8;strokeColor=none;fontColor=#ffffff;fontSize=17;fontStyle=1;arcSize=18;" vertex="1" parent="1">
+          <mxGeometry x="265" y="90" width="225" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="&lt;b&gt;Show 2-5 examples first.&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;i&gt;&quot;Wifi is slow&quot; → Hostel&lt;br&gt;&quot;Marks not updated&quot; → Exam cell&lt;br&gt;&quot;Projector broken&quot; → ?&lt;/i&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#5b636e&quot;&gt;&lt;b&gt;Use when:&lt;/b&gt; you need a specific style, label set or format.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf0ff;strokeColor=none;fontColor=#1f2328;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="265" y="146" width="225" height="250" as="geometry" />
+        </mxCell>
+
+        <!-- Chain of thought -->
+        <mxCell id="h3" value="Chain-of-thought" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6d28d9;strokeColor=none;fontColor=#ffffff;fontSize=17;fontStyle=1;arcSize=18;" vertex="1" parent="1">
+          <mxGeometry x="510" y="90" width="225" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="&lt;b&gt;Ask it to think step by step.&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;i&gt;&quot;I have 72% attendance. 20 classes are left. How many must I attend to reach 75%? Think step by step.&quot;&lt;/i&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#5b636e&quot;&gt;&lt;b&gt;Use when:&lt;/b&gt; maths, logic or multi-step problems.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f1ebff;strokeColor=none;fontColor=#1f2328;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="510" y="146" width="225" height="250" as="geometry" />
+        </mxCell>
+
+        <!-- Structured output -->
+        <mxCell id="h4" value="Structured output" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c2410c;strokeColor=none;fontColor=#ffffff;fontSize=17;fontStyle=1;arcSize=18;" vertex="1" parent="1">
+          <mxGeometry x="755" y="90" width="225" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" value="&lt;b&gt;Ask for JSON your code can read.&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font face=&quot;Consolas&quot;&gt;{&quot;name&quot;: &quot;Priya&quot;,&lt;br&gt;&amp;nbsp;&quot;branch&quot;: &quot;CSE&quot;,&lt;br&gt;&amp;nbsp;&quot;cgpa&quot;: 8.4}&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#5b636e&quot;&gt;&lt;b&gt;Use when:&lt;/b&gt; a program, not a person, reads the answer.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=none;fontColor=#1f2328;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="755" y="146" width="225" height="250" as="geometry" />
+        </mxCell>
+
+        <mxCell id="foot" value="All four start from the same base: a clear task. Add a &lt;b&gt;system prompt&lt;/b&gt; on top to set the role and rules for the whole chat." style="text;html=1;whiteSpace=wrap;fontSize=14;align=left;verticalAlign=middle;fontColor=#5b636e;" vertex="1" parent="1">
+          <mxGeometry x="20" y="410" width="960" height="36" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

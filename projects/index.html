@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workshop Projects</title>
+<meta name="description" content="Six hands-on projects that build up to a campus helpdesk agent: prompt lab, chatbot with memory, RAG bot, tool-calling agent with MCP, multi-agent team and the capstone.">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="home" href="../">GenAI &amp; Agentic AI Workshop</a>
+    <nav>
+      <a href="#p1">Day 1</a>
+      <a href="#p4">Day 2</a>
+      <a href="#capstone">Capstone</a>
+      <a href="#ideas">More ideas</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="eyebrow">Hands-on projects</div>
+  <h1>Projects</h1>
+  <p class="lead">Six small projects, one per lab. Each one adds a piece, and together they become a campus helpdesk agent you can put on your GitHub and resume.</p>
+
+  <figure class="diagram">
+    <img src="diagrams/helpdesk-architecture.svg" alt="The campus helpdesk agent in the centre. A student asks a question. The agent uses memory (Project 2), searches the college FAQ with RAG (Project 3), calls a timetable tool over MCP (Project 4), follows guardrails (Session 5), and can be deployed as an API (Session 9).">
+    <figcaption>How the projects fit together. Source: <a href="diagrams/helpdesk-architecture.drawio">helpdesk-architecture.drawio</a> (open in draw.io to edit).</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table>
+    <tr><th>#</th><th>Project</th><th>Session</th><th>Level</th><th>Status</th></tr>
+    <tr><td>1</td><td><a href="#p1">Prompt Lab</a></td><td>2. Prompt engineering</td><td>Beginner</td><td><b>Starter ready</b></td></tr>
+    <tr><td>2</td><td><a href="#p2">Chatbot with memory</a></td><td>3. LLM APIs</td><td>Beginner</td><td><b>Starter ready</b></td></tr>
+    <tr><td>3</td><td><a href="#p3">Chat with the syllabus (RAG)</a></td><td>4. RAG</td><td>Intermediate</td><td><b>Starter ready</b></td></tr>
+    <tr><td>4</td><td><a href="#p4">Timetable agent + MCP server</a></td><td>7. Tool calling &amp; MCP</td><td>Intermediate</td><td>Coming soon</td></tr>
+    <tr><td>5</td><td><a href="#p5">Research team (multi-agent)</a></td><td>8. Agent frameworks</td><td>Intermediate</td><td>Coming soon</td></tr>
+    <tr><td>6</td><td><a href="#capstone">Campus helpdesk agent</a></td><td>10. Mini project</td><td>Capstone</td><td>Coming soon</td></tr>
+  </table></div>
+
+  <div class="box key">
+    <span class="label">What you need</span>
+    A Google account for <b>Google Colab</b> and a free <b>Gemini</b> API key from Google AI Studio (or a <b>Groq</b> key). No installs, no credit card.
+  </div>
+
+  <h2>Day 1: Generative AI</h2>
+
+  <div class="project" id="p1">
+    <h3>Project 1 · Prompt Lab</h3>
+    <div class="tags"><span class="pill">Session 2</span><span class="pill">Beginner</span><span class="pill">20 min</span><span class="pill on">Starter ready</span></div>
+    <p>Take three everyday tasks, write a weak and a strong prompt for each, and compare the answers. Learn what actually makes a prompt good.</p>
+    <p><b>You will build:</b></p>
+    <ul>
+      <li>A fest caption writer (role, audience, tone, length)</li>
+      <li>A complaint router that replies with one department name (few-shot)</li>
+      <li>An enquiry email → JSON extractor your code can read (structured output)</li>
+      <li>Bonus: a "CampusBuddy" system prompt, and try to break it</li>
+    </ul>
+    <p><b>Stretch:</b> test your complaint router on 20 real complaints and count how many it gets right. That's your first evaluation.</p>
+    <div class="btn-row">
+      <a class="btn" href="https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-02-prompt-lab.ipynb" target="_blank" rel="noopener">Open in Colab</a>
+      <a class="btn secondary" href="../session-02/notes.html#lab">Session 2 notes</a>
+    </div>
+  </div>
+
+  <div class="project" id="p2">
+    <h3>Project 2 · Chatbot with memory</h3>
+    <div class="tags"><span class="pill">Session 3</span><span class="pill">Beginner</span><span class="pill">25 min</span><span class="pill on">Starter ready</span></div>
+    <p>Call an LLM from Python and build "CampusBuddy", a chatbot that remembers the conversation. You'll see that "memory" is just re-sending the chat history each time.</p>
+    <ul>
+      <li>Make your first API call and print the token usage</li>
+      <li>Write a <code>cost()</code> function and stream an answer</li>
+      <li>Keep a <code>history</code> list and send it with every request; break it, then fix it</li>
+      <li>A chat loop that shows tokens and cost after every turn</li>
+    </ul>
+    <p><b>Stretch:</b> keep only the last 6 messages, retry on rate limits, or switch the bot to Groq.</p>
+    <div class="btn-row">
+      <a class="btn" href="https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-03-chatbot-lab.ipynb" target="_blank" rel="noopener">Open in Colab</a>
+      <a class="btn secondary" href="../session-03/notes.html#lab">Session 3 notes</a>
+    </div>
+  </div>
+
+  <div class="project" id="p3">
+    <h3>Project 3 · Chat with the syllabus (RAG)</h3>
+    <div class="tags"><span class="pill">Session 4</span><span class="pill">Intermediate</span><span class="pill">45 min</span><span class="pill on">Starter ready</span></div>
+    <p>Make the chatbot answer from college documents, with citations, instead of guessing. The starter uses a sample FAQ for a fictional college; then you swap in your own college's PDF.</p>
+    <ul>
+      <li>Load the FAQ → chunk it by section → embed the chunks</li>
+      <li>Search by meaning with NumPy, then store everything in Chroma</li>
+      <li>Answer with the source in [brackets], and refuse questions that aren't in the documents</li>
+      <li>Measure the retrieval hit rate on a small test set</li>
+    </ul>
+    <p><b>Stretch:</b> upload your own college PDF, tune chunk size, k and the minimum score, or add memory from Project 2.</p>
+    <div class="btn-row">
+      <a class="btn" href="https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-04-rag-lab.ipynb" target="_blank" rel="noopener">Open in Colab</a>
+      <a class="btn secondary" href="../session-04/notes.html#lab">Session 4 notes</a>
+    </div>
+  </div>
+
+  <h2>Day 2: Agentic AI</h2>
+
+  <div class="project" id="p4">
+    <h3>Project 4 · Timetable agent + MCP server</h3>
+    <div class="tags"><span class="pill">Session 7</span><span class="pill">Intermediate</span><span class="pill">45 min</span><span class="pill">Coming soon</span></div>
+    <p>Give the LLM a tool. The agent decides when to call <code>get_exam_date(subject)</code> or a weather API, reads the result, and answers.</p>
+    <ul>
+      <li>Define a tool with a name, description and parameters</li>
+      <li>Run the tool-calling loop: model asks → your code runs the tool → model answers</li>
+      <li>Expose the same tool as an <b>MCP server</b> so any MCP client can use it</li>
+    </ul>
+    <p><b>Stretch:</b> add a second tool (library hours) and see the agent pick the right one.</p>
+  </div>
+
+  <div class="project" id="p5">
+    <h3>Project 5 · Research team (multi-agent)</h3>
+    <div class="tags"><span class="pill">Session 8</span><span class="pill">Intermediate</span><span class="pill">45 min</span><span class="pill">Coming soon</span></div>
+    <p>Two agents working together: a <b>researcher</b> collects facts on a topic and a <b>writer</b> turns them into a short report.</p>
+    <ul>
+      <li>Build it with an agent framework (LangGraph or CrewAI)</li>
+      <li>Pass work from one agent to the next</li>
+      <li>Add a human approval step before the final report</li>
+    </ul>
+    <p><b>Stretch:</b> add a third "reviewer" agent that checks the report for mistakes.</p>
+  </div>
+
+  <h2 id="capstone">Capstone</h2>
+
+  <div class="project">
+    <h3>Project 6 · Campus helpdesk agent</h3>
+    <div class="tags"><span class="pill">Session 10</span><span class="pill">Capstone</span><span class="pill">60 min</span><span class="pill">Coming soon</span></div>
+    <p>Put it all together. A student asks <i>"When is my DBMS exam, and is the library open on Sunday?"</i> and the agent answers using everything you built.</p>
+    <div class="table-wrap"><table>
+      <tr><th>Piece</th><th>Comes from</th></tr>
+      <tr><td>System prompt with role and rules</td><td>Project 1</td></tr>
+      <tr><td>Conversation memory</td><td>Project 2</td></tr>
+      <tr><td>Answers from the college FAQ, with sources</td><td>Project 3</td></tr>
+      <tr><td>Timetable tool over MCP</td><td>Project 4</td></tr>
+      <tr><td>Guardrails: "I don't know", no personal data</td><td>Session 5</td></tr>
+      <tr><td>Deployed as an API (stretch)</td><td>Session 9</td></tr>
+    </table></div>
+    <div class="box try">
+      <span class="label">Make it portfolio-ready</span>
+      Push it to GitHub with a README that has a screenshot, a diagram, how to run it, and 5 example questions it answers well and 2 it refuses correctly. Deploy it and add the link to your resume.
+    </div>
+  </div>
+
+  <h2 id="ideas">More project ideas for your portfolio</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Idea</th><th>Uses</th></tr>
+    <tr><td>Resume reviewer that scores a resume against a job description</td><td>Prompting, JSON output</td></tr>
+    <tr><td>Previous-year question paper bot: "show me all DBMS questions on normalisation"</td><td>RAG</td></tr>
+    <tr><td>Kannada / Hindi / Tamil FAQ bot for the college office</td><td>RAG, multilingual models</td></tr>
+    <tr><td>Interview practice agent that asks questions and gives feedback</td><td>System prompts, memory</td></tr>
+    <tr><td>Expense tracker that reads bill photos and fills a Google Sheet</td><td>Vision model, tools</td></tr>
+    <tr><td>GitHub repo explainer: "how does this project work?"</td><td>RAG over code, agents</td></tr>
+  </table></div>
+
+  <footer>
+    Projects for the GenAI &amp; Agentic AI 2-day workshop · <a href="../">All sessions</a> · Diagram sources are <code>.drawio</code> files you can open in <a href="https://app.diagrams.net" target="_blank" rel="noopener">draw.io</a>.
+  </footer>
+</main>
+</body>
+</html>

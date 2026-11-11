@@ -1,0 +1,50 @@
+<mxfile host="drawio">
+  <diagram id="with-without-rag" name="Without RAG vs with RAG">
+    <mxGraphModel dx="1000" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="960" pageHeight="400" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Closed-book exam vs open-book exam" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="36" as="geometry" />
+        </mxCell>
+
+        <!-- Without -->
+        <mxCell id="l1" value="&lt;b&gt;Without RAG&lt;/b&gt;" style="text;html=1;fontSize=15;align=left;verticalAlign=middle;fontColor=#be123c;" vertex="1" parent="1">
+          <mxGeometry x="20" y="60" width="200" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="q1" value="&quot;What is the revaluation fee at ABC College?&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;fontColor=#1f2328;fontSize=13;arcSize=12;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="20" y="92" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="m1" value="LLM&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;memory only&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1f2328;strokeColor=none;fontColor=#ffffff;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="90" width="110" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r1" value="&quot;The revaluation fee is usually ₹1,000 per paper.&quot;&lt;br&gt;&lt;b&gt;A confident guess. Wrong. No source.&lt;/b&gt; ❌" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe9ee;strokeColor=#be123c;fontColor=#1f2328;fontSize=13;arcSize=12;align=left;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="530" y="92" width="410" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="q1" target="m1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="m1" target="r1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- With -->
+        <mxCell id="l2" value="&lt;b&gt;With RAG&lt;/b&gt;" style="text;html=1;fontSize=15;align=left;verticalAlign=middle;fontColor=#15803d;" vertex="1" parent="1">
+          <mxGeometry x="20" y="196" width="200" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="q2" value="&quot;What is the revaluation fee at ABC College?&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;fontColor=#1f2328;fontSize=13;arcSize=12;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="20" y="228" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pages" value="&lt;b&gt;Retrieved page&lt;/b&gt;&lt;br&gt;[Exams] &quot;...pay a fee of ₹500 per subject...&quot;" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=12;size=0.15;" vertex="1" parent="1">
+          <mxGeometry x="285" y="310" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="m2" value="LLM&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;+ the right page&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1f2328;strokeColor=none;fontColor=#ffffff;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="226" width="110" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r2" value="&quot;Revaluation costs ₹500 per subject. Apply on the student portal within 7 days of the result. [Exams]&quot;&lt;br&gt;&lt;b&gt;Correct, with a source you can check.&lt;/b&gt; ✅" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=13;arcSize=12;align=left;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="530" y="228" width="410" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="q2" target="m2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="m2" target="r2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" style="endArrow=block;endFill=1;html=1;strokeColor=#15803d;strokeWidth=2;dashed=1;" edge="1" parent="1" source="pages" target="m2"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

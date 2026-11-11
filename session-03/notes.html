@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session 3: Building with LLM APIs</title>
+<meta name="description" content="Simple notes with examples: what an API is, calling an LLM from Python, messages and roles, chat memory, streaming, tokens and cost, errors and rate limits.">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="home" href="../">GenAI &amp; Agentic AI Workshop</a>
+    <nav>
+      <a href="slides.html">Slides</a>
+      <a href="#lab">Lab</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#instructor">Instructor guide</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="eyebrow">Day 1 · Session 3 · 1 hour</div>
+  <h1>Building with LLM APIs</h1>
+  <p class="lead">So far we've used chat apps. Now we call the model from our own Python code, so we can build our own apps. By the end you'll have a working chatbot that remembers the conversation.</p>
+
+  <div class="btn-row">
+    <a class="btn" href="slides.html">Open the slides</a>
+    <a class="btn secondary" href="#lab">Jump to the lab</a>
+  </div>
+
+  <div class="toc">
+    <b>What you will learn</b>
+    <ol>
+      <li><a href="#api">What is an API?</a></li>
+      <li><a href="#key">Your API key, and keeping it secret</a></li>
+      <li><a href="#first-call">Your first API call</a></li>
+      <li><a href="#roles">Messages and roles</a></li>
+      <li><a href="#memory">Chat memory: the model forgets, your code remembers</a></li>
+      <li><a href="#streaming">Streaming</a></li>
+      <li><a href="#cost">Tokens and cost</a></li>
+      <li><a href="#errors">Errors and rate limits</a></li>
+      <li><a href="#providers">Other providers look the same</a></li>
+      <li><a href="#lab">Lab: chatbot with memory</a></li>
+      <li><a href="#recap">Recap, quiz and glossary</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <h2 id="api">1. What is an API?</h2>
+  <p>An <b>API</b> (Application Programming Interface) is a way for one program to ask another program to do something. You send a <b>request</b>, you get back a <b>response</b>.</p>
+
+  <div class="box example">
+    <span class="label">Analogy: ordering food</span>
+    You (your code) don't go into the kitchen (the model). You give your order to the waiter (the API), and the waiter brings back your food (the answer). You don't need to know how the kitchen works, only how to order.
+  </div>
+
+  <div class="table-wrap"><table>
+    <tr><th></th><th>Chat app (ChatGPT, Gemini)</th><th>API</th></tr>
+    <tr><td>Who uses it</td><td>A person, typing</td><td>Your program</td></tr>
+    <tr><td>What you can build</td><td>Nothing; you just chat</td><td>Your own apps: bots, tools, automations</td></tr>
+    <tr><td>Memory</td><td>Built in</td><td>You build it yourself (section 5)</td></tr>
+    <tr><td>Cost</td><td>Free or monthly plan</td><td>Pay per token (free tiers exist)</td></tr>
+  </table></div>
+
+  <figure class="diagram">
+    <img src="diagrams/api-call.svg" alt="Your Python code sends a request (API key, model, messages, settings) to the LLM API, which sends back a response (text, token usage, finish reason).">
+  </figure>
+
+  <!-- 2 -->
+  <h2 id="key">2. Your API key, and keeping it secret</h2>
+  <p>An <b>API key</b> is a long secret string that proves the request is from you. Whoever has your key can use your account and your quota.</p>
+  <ol>
+    <li>Get a free Gemini key at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a> (no credit card), or a Groq key at console.groq.com.</li>
+    <li>In Google Colab, click the 🔑 <b>Secrets</b> icon, add a secret named <code>GEMINI_API_KEY</code>, paste the key and switch on <i>Notebook access</i>.</li>
+    <li>Read it in code with <code>userdata.get("GEMINI_API_KEY")</code>.</li>
+  </ol>
+
+  <div class="box key">
+    <span class="label">Never do this</span>
+    <p><code>api_key = "AIzaSy..."</code> written in your code and pushed to GitHub. Bots scan public repos and find leaked keys within minutes.</p>
+    Keep keys in Colab Secrets, or in a <code>.env</code> file that is listed in <code>.gitignore</code>. If a key leaks, delete it in the console and make a new one.
+  </div>
+
+  <!-- 3 -->
+  <h2 id="first-call">3. Your first API call</h2>
+<pre><code>!pip install -q google-genai
+from google import genai
+from google.colab import userdata
+
+client = genai.Client(api_key=userdata.get("GEMINI_API_KEY"))
+MODEL = "gemini-2.5-flash"   # any current free model from Google AI Studio
+
+resp = client.models.generate_content(
+    model=MODEL,
+    contents="Explain what a compiler does in 2 lines, for a first-year student.",
+)
+print(resp.text)</code></pre>
+
+  <p>That's it: <b>a client, a model name, and your text</b>. Everything else is optional.</p>
+
+  <h3>Adding settings</h3>
+  <p>Use a config to add a system prompt (Session 2), temperature (Session 1) and a limit on answer length:</p>
+<pre><code>from google.genai import types
+
+resp = client.models.generate_content(
+    model=MODEL,
+    contents="Suggest 3 names for our college coding club.",
+    config=types.GenerateContentConfig(
+        system_instruction="You are a creative assistant. Reply as a numbered list.",
+        temperature=1.0,          # creative task, so higher
+        max_output_tokens=200,    # stop after ~150 words
+    ),
+)
+print(resp.text)</code></pre>
+
+  <div class="box key">
+    <span class="label">What's in the response?</span>
+    <ul style="margin:0">
+      <li><code>resp.text</code>: the answer</li>
+      <li><code>resp.usage_metadata</code>: how many tokens went in and came out (this is what you pay for)</li>
+      <li><code>resp.candidates[0].finish_reason</code>: <code>STOP</code> means finished normally; <code>MAX_TOKENS</code> means it was cut off</li>
+    </ul>
+  </div>
+
+  <!-- 4 -->
+  <h2 id="roles">4. Messages and roles</h2>
+  <p>A chat is a list of <b>messages</b>. Each message has a <b>role</b> that says who wrote it:</p>
+  <div class="table-wrap"><table>
+    <tr><th>Role</th><th>Who</th><th>Example</th></tr>
+    <tr><td><b>system</b></td><td>You, the developer (hidden rules)</td><td>"You are CampusBuddy. Answer only college questions."</td></tr>
+    <tr><td><b>user</b></td><td>The person chatting</td><td>"When is the DBMS exam?"</td></tr>
+    <tr><td><b>model</b> / <b>assistant</b></td><td>The AI's earlier replies</td><td>"DBMS is on 12 Dec at 10 AM."</td></tr>
+  </table></div>
+  <p style="color:var(--muted);font-size:0.95rem">Gemini calls the AI's role <code>model</code> and passes the system prompt in the config. OpenAI-style APIs (Groq, OpenAI) call it <code>assistant</code> and put the system prompt as the first message. Same idea, different names.</p>
+
+  <!-- 5 -->
+  <h2 id="memory">5. Chat memory: the model forgets, your code remembers</h2>
+  <p>Remember from Session 1: <b>LLMs have no memory between calls</b>. Each request starts fresh. So how does ChatGPT remember your name? The app <b>re-sends the whole conversation</b> every time.</p>
+
+  <figure class="diagram">
+    <img src="diagrams/chat-memory.svg" alt="Turn 1 sends system and user message. Turn 2 sends system, the turn 1 user message, the model's reply and the new question, so the model knows the name. Without memory, turn 2 sends only the new question and the model doesn't know the name.">
+  </figure>
+
+  <p>In code, memory is just a Python list that grows:</p>
+<pre><code>SYSTEM = "You are CampusBuddy, a friendly helpdesk bot for ABC Engineering College."
+history = []   # the whole conversation lives here
+
+def chat(user_text):
+    history.append({"role": "user", "parts": [{"text": user_text}]})
+    resp = client.models.generate_content(
+        model=MODEL,
+        contents=history,                       # send EVERYTHING so far
+        config=types.GenerateContentConfig(system_instruction=SYSTEM),
+    )
+    history.append({"role": "model", "parts": [{"text": resp.text}]})
+    return resp.text
+
+print(chat("Hi, I'm Priya from CSE."))
+print(chat("What's my name and branch?"))   # → Priya, CSE</code></pre>
+
+  <div class="box example">
+    <span class="label">Try it: break the memory</span>
+    Change <code>contents=history</code> to <code>contents=user_text</code> and ask "What's my name?" again. The bot forgets. That one line <i>is</i> the memory.
+  </div>
+
+  <h3>The catch: long chats get expensive</h3>
+  <p>Every turn re-sends all earlier turns, so the input grows. Turn 20 might send 5,000 tokens just to answer "ok thanks". Two simple fixes:</p>
+  <ul>
+    <li><b>Keep only the last N messages:</b> <code>contents=history[-10:]</code></li>
+    <li><b>Summarise old messages:</b> ask the model to summarise the first part of the chat, then send the summary instead.</li>
+  </ul>
+  <p style="color:var(--muted);font-size:0.95rem">The SDK also has a shortcut, <code>client.chats.create(...)</code>, that keeps the history for you. We build it by hand first so you know what's happening inside.</p>
+
+  <!-- 6 -->
+  <h2 id="streaming">6. Streaming</h2>
+  <p>A long answer can take several seconds. Without streaming, the user stares at a blank screen and then everything appears at once. With <b>streaming</b>, words appear as the model writes them, like in ChatGPT.</p>
+
+  <figure class="diagram">
+    <img src="diagrams/streaming.svg" alt="Without streaming: a long wait then the full answer. With streaming: a short wait, then words appear piece by piece. Same total time and cost.">
+  </figure>
+
+<pre><code>for chunk in client.models.generate_content_stream(
+    model=MODEL,
+    contents="Give 5 tips to prepare for campus placements.",
+):
+    print(chunk.text or "", end="", flush=True)</code></pre>
+  <p>Same cost, same total time. It just <b>feels</b> much faster. Use it whenever a person is waiting for the answer.</p>
+
+  <!-- 7 -->
+  <h2 id="cost">7. Tokens and cost</h2>
+  <p>APIs charge per <b>token</b> (Session 1), with separate prices for <b>input</b> (what you send) and <b>output</b> (what the model writes). Output usually costs several times more than input.</p>
+
+<pre><code>u = resp.usage_metadata
+print("Input tokens: ", u.prompt_token_count)
+print("Output tokens:", u.candidates_token_count)
+print("Total:        ", u.total_token_count)</code></pre>
+
+  <div class="box example">
+    <span class="label">Example: what would a campus chatbot cost?</span>
+    <p>Prices change, so always check the provider's pricing page. Say a model costs <b>$0.30 per million input tokens</b> and <b>$2.50 per million output tokens</b> (illustrative).</p>
+    <div class="table-wrap"><table>
+      <tr><th></th><th>Calculation</th><th>Tokens per day</th><th>Cost per day</th></tr>
+      <tr><td>Input</td><td>2,000 students × 10 questions × 500 tokens</td><td>10 million</td><td>$3.00</td></tr>
+      <tr><td>Output</td><td>2,000 students × 10 questions × 200 tokens</td><td>4 million</td><td>$10.00</td></tr>
+      <tr><td colspan="3"><b>Total</b></td><td><b>$13 a day</b> (roughly ₹1,100)</td></tr>
+    </table></div>
+    Notice the 500 input tokens per question: that includes the system prompt and chat history, which are re-sent every turn.
+  </div>
+
+<pre><code>PRICE_IN, PRICE_OUT = 0.30, 2.50   # $ per million tokens (check current prices)
+
+def cost(resp):
+    u = resp.usage_metadata
+    return (u.prompt_token_count * PRICE_IN + (u.candidates_token_count or 0) * PRICE_OUT) / 1_000_000
+
+print(f"This answer cost ${cost(resp):.6f}")</code></pre>
+
+  <h3>How to keep costs down</h3>
+  <ul>
+    <li>Use the <b>smallest model</b> that's good enough (Session 1 checklist).</li>
+    <li>Keep the <b>system prompt short</b>; it's sent on every turn.</li>
+    <li><b>Trim the history</b> (last N messages, or a summary).</li>
+    <li>Set <code>max_output_tokens</code> and ask for short answers.</li>
+    <li><b>Cache</b> answers to common questions instead of asking the model again.</li>
+  </ul>
+  <p style="color:var(--muted);font-size:0.95rem">Some newer models also "think" before answering. Those thinking tokens are billed as output too, so a reasoning model can cost more for the same visible answer.</p>
+
+  <!-- 8 -->
+  <h2 id="errors">8. Errors and rate limits</h2>
+  <p>Real apps must handle failures. The common ones:</p>
+  <div class="table-wrap"><table>
+    <tr><th>Error</th><th>What it means</th><th>What to do</th></tr>
+    <tr><td><b>400</b> Bad request</td><td>Something wrong in your request (bad model name, bad format)</td><td>Fix your code</td></tr>
+    <tr><td><b>401 / 403</b></td><td>Key missing, wrong or not allowed</td><td>Check the key and its secret name</td></tr>
+    <tr><td><b>429</b> Too many requests</td><td>You hit the <b>rate limit</b> (requests per minute) or daily quota</td><td>Wait and retry; slow down</td></tr>
+    <tr><td><b>500 / 503</b></td><td>Problem on the provider's side</td><td>Wait and retry</td></tr>
+  </table></div>
+
+<pre><code>import time
+from google.genai import errors
+
+def ask_with_retry(prompt, tries=3):
+    for i in range(tries):
+        try:
+            return client.models.generate_content(model=MODEL, contents=prompt).text
+        except errors.APIError as e:
+            if e.code in (429, 500, 503) and i &lt; tries - 1:
+                wait = 5 * 2 ** i          # 5s, then 10s, then 20s
+                print(f"Error {e.code}, retrying in {wait}s...")
+                time.sleep(wait)
+            else:
+                raise</code></pre>
+  <p>Waiting longer after each failure is called <b>exponential backoff</b>. Free tiers have low rate limits, so in a class of 60 students you may see 429s. That's normal; wait a minute and try again.</p>
+
+  <!-- 9 -->
+  <h2 id="providers">9. Other providers look the same</h2>
+  <p>Every LLM API follows the same pattern: <b>model + messages + settings → text + token usage</b>. Once you know one, the others take minutes. Here is the same call on <b>Groq</b> (fast, free tier, open models like Llama), which uses the OpenAI-style format:</p>
+<pre><code>!pip install -q groq
+from groq import Groq
+
+groq = Groq(api_key=userdata.get("GROQ_API_KEY"))
+resp = groq.chat.completions.create(
+    model="llama-3.3-70b-versatile",   # check console.groq.com for current models
+    messages=[
+        {"role": "system", "content": "You are CampusBuddy."},
+        {"role": "user", "content": "Explain what a compiler does in 2 lines."},
+    ],
+)
+print(resp.choices[0].message.content)
+print(resp.usage.prompt_tokens, resp.usage.completion_tokens)</code></pre>
+  <p>This is handy as a <b>backup</b>: if one provider is down or rate-limited during the workshop, switch to the other.</p>
+
+  <!-- Lab -->
+  <h2 id="lab">10. Lab: chatbot with memory (25 min)</h2>
+  <p>Build <b>CampusBuddy</b>, a chatbot that remembers the conversation, streams its answers and tells you what each turn cost.</p>
+
+  <div class="btn-row">
+    <a class="btn" href="https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-03-chatbot-lab.ipynb" target="_blank" rel="noopener">Open the lab in Colab</a>
+    <a class="btn secondary" href="../projects/#p2">Project 2 details</a>
+  </div>
+
+  <ol>
+    <li>Make your first call and print the token usage.</li>
+    <li>Write a <code>cost()</code> function.</li>
+    <li>Stream an answer.</li>
+    <li>Build <code>chat()</code> with a <code>history</code> list. Prove it remembers your name.</li>
+    <li>Break the memory on purpose, then fix it.</li>
+    <li>Run a chat loop: type questions, type <code>quit</code> to stop. Print tokens and cost after each turn.</li>
+  </ol>
+
+  <div class="box try">
+    <span class="label">Stretch goals</span>
+    Keep only the last 6 messages and watch the input tokens stop growing. Add retry for 429 errors. Switch the same bot to Groq.
+  </div>
+
+  <!-- Recap -->
+  <h2 id="recap">11. Recap</h2>
+  <ol>
+    <li>An <b>API</b> lets your code send a request to a model and get a response.</li>
+    <li>Your <b>API key</b> is a password. Keep it in Secrets or <code>.env</code>, never in GitHub.</li>
+    <li>A call needs a <b>model</b> and <b>contents</b>. Settings add a system prompt, temperature and max tokens.</li>
+    <li>Messages have <b>roles</b>: system, user, model/assistant.</li>
+    <li><b>Memory</b> = your code re-sends the whole history every turn. Trim it to save cost.</li>
+    <li><b>Streaming</b> shows words as they're written. Same cost, feels faster.</li>
+    <li><b>Cost</b> = input tokens × input price + output tokens × output price.</li>
+    <li>Handle <b>429</b> and <b>5xx</b> errors with retry and backoff.</li>
+  </ol>
+
+  <h2 id="quiz">Quick quiz</h2>
+  <details><summary>1. What three things does the simplest API call need?</summary>A client with your API key, a model name, and the contents (your text).</details>
+  <details><summary>2. Your friend pasted their API key into code and pushed it to a public GitHub repo. What should they do?</summary>Delete (revoke) the key in the provider's console immediately, create a new one, and store it in Secrets or a <code>.env</code> file listed in <code>.gitignore</code>.</details>
+  <details><summary>3. How does a chatbot "remember" your name if the model has no memory?</summary>The app keeps the conversation in a list and sends the whole list with every request.</details>
+  <details><summary>4. Why do long chats cost more per question?</summary>Every turn re-sends all the earlier messages as input tokens, so input grows each turn.</details>
+  <details><summary>5. Does streaming make the answer cheaper?</summary>No. Same tokens, same cost, same total time. It just shows words sooner, so it feels faster.</details>
+  <details><summary>6. You get error 429. What does it mean and what do you do?</summary>Too many requests: you hit the rate limit or quota. Wait and retry with backoff, and slow down.</details>
+  <details><summary>7. 1,000 users × 5 questions × 400 input tokens a day, at $0.30 per million input tokens. Input cost per day?</summary>2,000,000 tokens × $0.30 / 1,000,000 = $0.60 a day.</details>
+
+  <h2 id="glossary">Glossary</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Term</th><th>Meaning in one line</th></tr>
+    <tr><td>API</td><td>A way for your program to ask another program to do something.</td></tr>
+    <tr><td>API key</td><td>A secret string that proves a request is from you.</td></tr>
+    <tr><td>SDK</td><td>A library (like <code>google-genai</code>) that makes calling an API easy.</td></tr>
+    <tr><td>Request / response</td><td>What you send / what you get back.</td></tr>
+    <tr><td>Role</td><td>Who wrote a message: system, user or model/assistant.</td></tr>
+    <tr><td>Chat history</td><td>The list of earlier messages your code re-sends for memory.</td></tr>
+    <tr><td>Streaming</td><td>Receiving the answer piece by piece as it's written.</td></tr>
+    <tr><td>Input / output tokens</td><td>Tokens you send / tokens the model writes. Both are billed.</td></tr>
+    <tr><td>Rate limit</td><td>The maximum number of requests allowed per minute or day.</td></tr>
+    <tr><td>Exponential backoff</td><td>Retrying after waiting longer each time (5s, 10s, 20s...).</td></tr>
+  </table></div>
+
+  <h2 id="learn-more">Learn more (free)</h2>
+  <ul>
+    <li>Google, <i>Gemini API quickstart</i> and <i>Text generation</i> guides (ai.google.dev)</li>
+    <li>Groq, <i>Quickstart</i> (console.groq.com/docs)</li>
+    <li>OpenAI and Anthropic API docs: same concepts, different SDKs</li>
+  </ul>
+
+  <!-- Instructor -->
+  <h2 id="instructor">Instructor guide</h2>
+  <p>Suggested plan for the 60 minutes. Press <b>S</b> in the slides to open speaker notes.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Time</th><th>Segment</th><th>What to do</th></tr>
+    <tr><td>0–5 min</td><td>Hook</td><td>Ask: how would you put ChatGPT inside your own app? Waiter analogy. Show the request/response diagram.</td></tr>
+    <tr><td>5–12 min</td><td>API key + first call</td><td>Everyone gets a Gemini key and adds it to Colab Secrets. Live-code the first call. Warn about pushing keys to GitHub.</td></tr>
+    <tr><td>12–22 min</td><td>Roles + memory</td><td>Show the memory diagram. Live: chat() remembers "Priya", then break it by sending only the new message.</td></tr>
+    <tr><td>22–30 min</td><td>Streaming + cost</td><td>Stream a long answer. Print usage. Do the 2,000-students cost example on the board.</td></tr>
+    <tr><td>30–33 min</td><td>Errors</td><td>Show the error table. Explain that 429s in class are normal.</td></tr>
+    <tr><td>33–55 min</td><td>Lab</td><td>Students build the chatbot. Walk around; most issues are the secret name or Notebook access being off.</td></tr>
+    <tr><td>55–60 min</td><td>Recap + quiz</td><td>Quiz questions 3, 4 and 7. Preview Session 4: RAG, so the bot answers from college documents.</td></tr>
+  </table></div>
+  <div class="box try">
+    <span class="label">Before class</span>
+    Check the current free model name in Google AI Studio and update <code>MODEL</code> in the notebook if needed. Have a Groq key ready as a backup. With a large class, stagger the first run (row by row) to avoid rate limits.
+  </div>
+
+  <footer>
+    Session 3 of the GenAI &amp; Agentic AI 2-day workshop · <a href="../">All sessions</a> · <a href="slides.html">Slides</a> · <a href="../session-02/notes.html">← Session 2</a> · <a href="../session-04/notes.html">Session 4 →</a>
+  </footer>
+</main>
+</body>
+</html>

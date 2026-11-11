@@ -143,6 +143,18 @@ pre code { background: none; padding: 0; }
 .pill { display: inline-block; font-size: 0.75rem; padding: 1px 8px; border-radius: 999px; background: var(--code-bg); color: var(--muted); }
 .card.ready .pill { background: var(--accent-soft); color: var(--accent); }
 
+/* draw.io diagrams (exported SVG, white background) */
+figure.diagram { margin: 20px 0; }
+figure.diagram img { display: block; width: 100%; height: auto; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); }
+figure.diagram figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 6px; }
+figure.diagram figcaption a { font-weight: 600; }
+
+/* Project list */
+.project { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 20px 14px; margin: 18px 0; }
+.project h3 { margin-top: 14px; }
+.project .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+.project .tags .pill.on { background: var(--green-soft); color: var(--green); }
+
 details { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; margin: 10px 0; }
 details summary { cursor: pointer; font-weight: 600; }
 

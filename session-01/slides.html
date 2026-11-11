@@ -80,6 +80,59 @@
   <aside class="notes">Welcome. Introduce yourself briefly. Tell them: no heavy math today, just intuition. By the end they'll be able to explain to a friend how ChatGPT works.</aside>
 </section>
 
+<!-- 1a. Why now -->
+<section>
+  <h2>The elephant in the room 🐘</h2>
+  <p>Layoffs. Slow fresher hiring. "AI will replace programmers."</p>
+  <p class="fragment big accent" style="margin-top:0.8em">Let's be honest about what's happening, and what you can do about it.</p>
+  <aside class="notes">Ask: who here is worried about layoffs or AI taking jobs? Most hands will go up. Acknowledge it. The tone is honest but encouraging: the next three slides explain why, what to improve, what to learn.</aside>
+</section>
+
+<!-- 1b. Why layoffs -->
+<section>
+  <h2>Why are there layoffs?</h2>
+  <div class="cols">
+    <div class="card"><h3>📈 Over-hiring correction</h3><p>Hired fast in 2020–22, cut back when demand cooled</p></div>
+    <div class="card"><h3>💸 Cost pressure</h3><p>Clients cut "nice to have" projects first. IT services feel it directly</p></div>
+    <div class="card"><h3>🧠 Money moving to AI</h3><p>GPUs, data centres, AI teams. Other teams shrink to pay for it</p></div>
+    <div class="card"><h3>🤖 Routine tasks automated</h3><p>Boilerplate code, simple tests, basic support. Often entry-level work</p></div>
+  </div>
+  <p class="fragment card hl" style="margin-top:0.6em">AI replaces <b>tasks</b>, not whole jobs. The work is changing shape, and AI builders are in demand.</p>
+  <aside class="notes">No single cause. Also mention flatter teams: fewer management layers, smaller teams expected to do more with AI. Key message: budgets didn't disappear, they moved toward AI. Be the person they're moving toward.</aside>
+</section>
+
+<!-- 1c. What to improve -->
+<section>
+  <h2>What to improve</h2>
+  <div class="cols3">
+    <div class="card"><h3>🧱 Fundamentals</h3><p>DSA, DBMS/SQL, OS, networks. You can't judge AI's code without them</p></div>
+    <div class="card"><h3>🧩 Problem solving</h3><p>Deciding <i>what</i> to build and how it fits together</p></div>
+    <div class="card"><h3>🔍 Reviewing code</h3><p>Spot bugs and security holes in AI output</p></div>
+    <div class="card"><h3>🗣️ Communication</h3><p>Prompts, requirements, docs, interviews</p></div>
+    <div class="card"><h3>🚀 Ownership</h3><p>Finish and ship. One deployed project &gt; ten tutorials</p></div>
+    <div class="card"><h3>🏥 Domain knowledge</h3><p>Finance, health, education... AI is generic, you aren't</p></div>
+  </div>
+  <aside class="notes">Example: before, a fresher spent two days writing CRUD APIs and tests. Now AI drafts it in minutes. The valuable part is understanding the need, designing the data model, reviewing the code and deploying it. The person who only types code is easy to replace.</aside>
+</section>
+
+<!-- 1d. What to learn -->
+<section>
+  <h2>What to learn: a roadmap</h2>
+  <div class="flow">
+    <div class="card"><h3>1. Foundations</h3><p>Python, Git, SQL, APIs, JSON</p></div>
+    <div class="arrow">→</div>
+    <div class="card"><h3>2. Use AI daily</h3><p>Chat + coding assistants</p></div>
+    <div class="arrow">→</div>
+    <div class="card hl"><h3>3. Build with LLMs</h3><p>Prompts, APIs, RAG<br><b>Day 1</b></p></div>
+    <div class="arrow">→</div>
+    <div class="card hl"><h3>4. Build agents</h3><p>Tools, MCP, multi-agent<br><b>Day 2</b></p></div>
+    <div class="arrow">→</div>
+    <div class="card"><h3>5. Production</h3><p>Cloud, Docker, evals, cost</p></div>
+  </div>
+  <p class="fragment big accent" style="margin-top:0.8em">Goal: leave with a working AI agent on your GitHub.</p>
+  <aside class="notes">This workshop covers steps 3 and 4. Encourage them to deploy the helpdesk agent afterwards and put it on their resume: worth more in an interview than a certificate.</aside>
+</section>
+
 <!-- 2. Hook -->
 <section>
   <h2>Quick poll ✋</h2>
@@ -202,6 +255,13 @@
   </div>
   <p class="fragment">Pick a word → add it to the text → predict again → repeat. That's how a whole answer gets written.</p>
   <aside class="notes">Game: say "Virat Kohli is famous for playing..." and let the class shout the answer. Then "Once upon a..." and "Happy birthday to...". The class is acting as an LLM. Numbers are illustrative.</aside>
+</section>
+
+<!-- 9b. Pipeline diagram -->
+<section>
+  <h2>The whole loop, in one picture</h2>
+  <img src="diagrams/llm-pipeline.svg" alt="Text to tokens to embeddings to transformer to probabilities to pick one, then repeat" style="width:100%;margin:0;">
+  <aside class="notes">Walk left to right. Each box is a topic we cover today: tokens, embeddings, attention, temperature. The dashed arrow is the key: one token at a time, then repeat.</aside>
 </section>
 
 <!-- 10. Key idea -->

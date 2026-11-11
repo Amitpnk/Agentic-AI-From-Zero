@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAG: Slides</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+<style>
+  :root {
+    --r-main-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-text-transform: none;
+    --r-heading-font-weight: 750;
+    --r-main-font-size: 32px;
+    --r-link-color: #1d4ed8;
+    --accent: #c2410c;
+    --soft: #fff1e8;
+    --blue-soft: #eaf0ff;
+    --green-soft: #e9f8ee;
+    --muted: #5b636e;
+  }
+  body, .reveal-viewport { background: #fbfaf7; }
+  .reveal h1 { font-size: 2.2em; }
+  .reveal h2 { font-size: 1.5em; color: #1f2328; margin-bottom: 0.5em; }
+  .reveal .slides section { text-align: left; }
+  .reveal .slides section.center { text-align: center; }
+  .reveal .accent { color: var(--accent); }
+  .reveal .muted { color: var(--muted); }
+  .reveal .small { font-size: 0.7em; }
+  .reveal ul, .reveal ol { display: block; margin-left: 1.1em; }
+  .reveal li { margin: 0.25em 0; }
+  .reveal .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.55em; font-weight: 700; }
+  .reveal .card { background: #fff; border: 1px solid #e3e0d8; border-radius: 14px; padding: 0.6em 0.8em; }
+  .reveal .card.hl { background: var(--soft); border-color: transparent; }
+  .reveal .card.ex { background: var(--blue-soft); border-color: transparent; }
+  .reveal .card.ok { background: var(--green-soft); border-color: transparent; }
+  .reveal .card h3 { font-size: 0.8em; margin: 0 0 0.3em; }
+  .reveal .card p, .reveal .card li { font-size: 0.8em; }
+  .reveal .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7em; }
+  .reveal .cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6em; }
+  .reveal .big { font-size: 1.35em; font-weight: 700; line-height: 1.3; }
+  .reveal table { font-size: 0.68em; width: 100%; }
+  .reveal table th, .reveal table td { padding: 0.35em 0.5em; border-bottom: 1px solid #e3e0d8; }
+  .reveal code { background: #f3f1ec; padding: 0 0.2em; border-radius: 4px; }
+  .reveal pre { width: 100%; box-shadow: none; font-size: 0.5em; margin: 0.3em 0; }
+  .reveal pre code { background: #f3f1ec; border-radius: 10px; padding: 0.6em 0.8em; max-height: 460px; line-height: 1.4; }
+  .reveal img.diagram { width: 100%; margin: 0; }
+  .reveal .slide-number { background: transparent; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1. Title -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">GenAI &amp; Agentic AI Workshop · Day 1 · Session 4</p>
+  <h1 style="color:#fff">RAG</h1>
+  <p style="color:#cbd5e1">Retrieval-Augmented Generation: make the AI answer from <b>your</b> documents</p>
+  <p class="small" style="color:#94a3b8">Press <b>→</b> to move · <b>S</b> for speaker notes · <b>F</b> for full screen</p>
+  <aside class="notes">2-hour session with a break. By the end, CampusBuddy answers from the college FAQ with sources, and refuses what isn't there.</aside>
+</section>
+
+<!-- 2. Hook -->
+<section>
+  <h2>Ask it about <i>our</i> college 🏫</h2>
+  <div class="card ex"><p>"What is the revaluation fee at ABC Engineering College, and how many days do I have to apply?"</p></div>
+  <p class="fragment big accent" style="margin-top:0.6em">It has never seen our rules.<br>So it guesses, or gives up.</p>
+  <aside class="notes">Run this live in a chatbot. Most models will guess a number or give a generic answer. Ask: how would YOU fix this?</aside>
+</section>
+
+<!-- 3. Diagram -->
+<section>
+  <h2>Closed book vs open book</h2>
+  <img class="diagram" src="diagrams/with-without-rag.svg" alt="Without RAG the model guesses; with RAG it answers from the retrieved page with a source">
+</section>
+
+<!-- 4. Three options -->
+<section>
+  <h2>Three ways to teach it your documents</h2>
+  <div class="cols3">
+    <div class="card"><h3>📋 Paste everything</h3><p>Fine for 2 pages.<br>500 pages? Too many tokens, slow, costly.</p></div>
+    <div class="card"><h3>🏋️ Fine-tune</h3><p>Retrain the model.<br>Costly, redo on every rule change, still hallucinates.</p></div>
+    <div class="card hl"><h3>🔎 RAG</h3><p>Search the documents.<br>Send only the 2–3 pieces that matter.</p></div>
+  </div>
+</section>
+
+<!-- 5. What is RAG -->
+<section>
+  <h2>R · A · G</h2>
+  <div class="cols3">
+    <div class="card ok"><h3>Retrieval</h3><p>Find the pieces of your documents that match the question</p></div>
+    <div class="card ex"><h3>Augmented</h3><p>Add those pieces to the prompt</p></div>
+    <div class="card hl"><h3>Generation</h3><p>The LLM writes the answer from them, with sources</p></div>
+  </div>
+  <p class="fragment big accent" style="margin-top:0.8em">An open-book exam 📖</p>
+</section>
+
+<!-- 6. Pipeline -->
+<section>
+  <h2>The RAG pipeline</h2>
+  <img class="diagram" src="diagrams/rag-pipeline.svg" alt="Indexing: load, chunk, embed, store. Answering: embed question, retrieve, generate with source">
+  <aside class="notes">Top lane runs once (or when documents change). Bottom lane runs for every question. The same embedding model is used in both.</aside>
+</section>
+
+<!-- 7. Load -->
+<section>
+  <h2>Step 1: Load 📄</h2>
+<pre><code class="python">from pypdf import PdfReader
+reader = PdfReader("syllabus.pdf")
+pages = [page.extract_text() for page in reader.pages]</code></pre>
+  <p class="fragment card hl">⚠️ Garbage in, garbage out: jumbled tables, repeated headers, and <b>scanned PDFs give no text</b> (need OCR).</p>
+  <aside class="notes">If you can, show a real messy PDF extraction here. It makes the point instantly.</aside>
+</section>
+
+<!-- 8. Chunk -->
+<section>
+  <h2>Step 2: Chunk ✂️</h2>
+  <img class="diagram" src="diagrams/chunking.svg" alt="Overlapping chunks; too small, just right, too big" style="max-height:520px;width:auto;display:block;margin:0 auto;">
+  <aside class="notes">Rule of thumb: 100-300 words, 10-20% overlap, split by heading or paragraph when you can, keep the source. Ask: what chunk size would you pick for our syllabus?</aside>
+</section>
+
+<!-- 9. Embed -->
+<section>
+  <h2>Step 3: Embed 🔢</h2>
+<pre><code class="python">from sentence_transformers import SentenceTransformer
+embedder = SentenceTransformer("all-MiniLM-L6-v2")      # free, runs in Colab
+vectors = embedder.encode(chunks, normalize_embeddings=True)</code></pre>
+  <p class="fragment card hl">🚨 Same embedding model for chunks <b>and</b> questions. Different models = different maps.</p>
+  <aside class="notes">Recap Session 1: similar meaning = nearby vectors. "How do I apply for placements?" matched "campus recruitment process".</aside>
+</section>
+
+<!-- 10. Store -->
+<section>
+  <h2>Step 4: Store in a vector database 🗄️</h2>
+  <table>
+    <tr><th>Option</th><th>Good for</th></tr>
+    <tr><td><b>Chroma</b></td><td>Learning, prototypes (today)</td></tr>
+    <tr><td><b>FAISS</b></td><td>Big collections on your own machine</td></tr>
+    <tr><td><b>pgvector</b></td><td>Apps already on PostgreSQL</td></tr>
+    <tr><td><b>Managed / cloud</b></td><td>Production: Pinecone, Vertex AI, Azure AI Search, OpenSearch</td></tr>
+  </table>
+  <p class="small muted" style="margin-top:0.6em">Stores vector + text + source. Finds the closest vectors fast.</p>
+</section>
+
+<!-- 11. Retrieve -->
+<section>
+  <h2>Step 5: Retrieve the top-k 🔎</h2>
+  <table>
+    <tr><th>Question</th><th>Top chunk</th></tr>
+    <tr><td>Is the library open on Sunday?</td><td>[Library] "...closed on Sundays, except exam months..."</td></tr>
+    <tr><td>More drives after a 7 LPA offer?</td><td>[Placements] "...one-student-one-job policy..."</td></tr>
+    <tr class="fragment"><td>Who won the IPL in 2020?</td><td>Nothing relevant: all scores low ❌</td></tr>
+  </table>
+  <p class="fragment small" style="margin-top:0.6em">Use a <b>minimum score</b>: if nothing is close, don't send junk to the model.</p>
+</section>
+
+<!-- 12. Generate -->
+<section>
+  <h2>Step 6: Generate with citations 📝</h2>
+<pre><code class="plaintext">SYSTEM: Answer using ONLY the context below.
+- After each fact, cite the source in [brackets].
+- If it's not in the context, say "I couldn't find that in the college documents."
+
+Context:
+[Exams] ...hall ticket only with at least 75% attendance...
+[Attendance] ...65% to 74%: condonation with medical certificate, fee ₹1,000...
+
+Question: My attendance in DBMS is 70%. Can I still write the exam?</code></pre>
+  <p class="fragment card ok">You need 75% for a hall ticket [Exams]. With 70%, apply for condonation with a medical certificate and ₹1,000 [Attendance].</p>
+</section>
+
+<!-- 13. Problems -->
+<section>
+  <h2>When RAG goes wrong 🔧</h2>
+  <table>
+    <tr><th>Symptom</th><th>Fix</th></tr>
+    <tr><td>Wrong or vague answer</td><td><b>Print the retrieved chunks first.</b> Fix chunking / k</td></tr>
+    <tr><td>"Not found" but it's there</td><td>Check extracted text; lower the threshold</td></tr>
+    <tr><td>Answers off-topic questions</td><td>"ONLY the context" + minimum score</td></tr>
+    <tr><td>Old information</td><td>Re-index when documents change</td></tr>
+    <tr><td>Can't find "CS301"</td><td>Hybrid search: keywords + vectors</td></tr>
+  </table>
+  <p class="fragment big accent" style="margin-top:0.5em">Most RAG bugs are retrieval bugs.</p>
+</section>
+
+<!-- 14. Testing -->
+<section>
+  <h2>Test it like an engineer 🧪</h2>
+  <ol>
+    <li>10–20 real questions + the section that has the answer</li>
+    <li><b>Retrieval:</b> right section in the top 3? → hit rate</li>
+    <li><b>Answer:</b> correct and cited correctly?</li>
+    <li>3–4 questions <b>not</b> in the docs → should refuse</li>
+    <li>Re-run after every change</li>
+  </ol>
+</section>
+
+<!-- 15. Lab -->
+<section>
+  <h2>Lab: chat with the college FAQ (45 min)</h2>
+  <div class="cols">
+    <ol>
+      <li>Ask with no docs: watch it guess</li>
+      <li>Load + chunk the FAQ</li>
+      <li>Embed + NumPy search</li>
+      <li>Store in Chroma</li>
+    </ol>
+    <ol start="5">
+      <li>Answer with citations</li>
+      <li>Refuse what's not there</li>
+      <li>Measure the hit rate</li>
+      <li>Chat with it</li>
+    </ol>
+  </div>
+  <p class="small muted" style="margin-top:0.6em">Stretch: upload your college's PDF · tune chunk size, k, min score · add memory</p>
+  <aside class="notes">Pairs. Fast pairs try a real college PDF. At the end, ask for the best hit rates and the funniest wrong answer.</aside>
+</section>
+
+<!-- 16. Recap -->
+<section>
+  <h2>Recap</h2>
+  <ol>
+    <li>LLMs don't know your documents → they guess</li>
+    <li><b>RAG</b> = look it up, then answer (open book)</li>
+    <li>Indexing: <b>load → chunk → embed → store</b></li>
+    <li>Answering: <b>embed question → retrieve → generate</b></li>
+    <li>Same embedding model · cite sources · "not found" is OK</li>
+    <li>Test with a question set</li>
+  </ol>
+</section>
+
+<!-- 17. Quiz -->
+<section>
+  <h2>Quick quiz 🧠</h2>
+  <ol>
+    <li>R, A, G stand for?<span class="fragment accent"> Retrieval, Augmented, Generation</span></li>
+    <li>Why do chunks overlap?<span class="fragment accent"> Ideas cut at the edge stay whole</span></li>
+    <li>Chunks embedded with model A, questions with B?<span class="fragment accent"> Retrieval breaks</span></li>
+    <li>Wrong answer: check what first?<span class="fragment accent"> The retrieved chunks</span></li>
+  </ol>
+</section>
+
+<!-- 18. Next -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">Up next · Session 5</p>
+  <h1 style="color:#fff">Responsible AI</h1>
+  <p style="color:#cbd5e1">Hallucination, bias, privacy, prompt injection and guardrails. Then Day 2: agents!</p>
+  <p style="color:#fff;margin-top:1em">Questions? 🙋</p>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    width: 1280,
+    height: 720,
+    margin: 0.06,
+    transition: 'slide',
+    plugins: [RevealNotes]
+  });
+</script>
+</body>
+</html>

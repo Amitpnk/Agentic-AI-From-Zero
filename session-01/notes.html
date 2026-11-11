@@ -32,7 +32,8 @@
 
   <div class="toc">
     <b>What you will learn</b>
-    <ol>
+    <ol start="0">
+      <li><a href="#why-now">Introduction: layoffs, AI and what it means for you</a></li>
       <li><a href="#big-picture">The big picture: AI → ML → Deep Learning → LLMs</a></li>
       <li><a href="#transformers">Transformers and attention</a></li>
       <li><a href="#next-word">An LLM is a next-word predictor</a></li>
@@ -44,6 +45,58 @@
       <li><a href="#models">Open vs closed models, and how to choose</a></li>
       <li><a href="#recap">Recap, quiz and glossary</a></li>
     </ol>
+  </div>
+
+  <!-- 0 -->
+  <h2 id="why-now">0. Introduction: why this workshop, why now</h2>
+  <p>You have probably seen the headlines: big tech companies and IT services firms cutting jobs, fresher hiring slowing down, and "AI will replace programmers" posts everywhere. Before we learn how LLMs work, let's be honest about what is happening and what you can do about it.</p>
+
+  <h3>Why are there layoffs?</h3>
+  <p>There is no single reason. Several things are happening at the same time:</p>
+  <ol>
+    <li><b>Correction after over-hiring.</b> During 2020–22, demand for digital services exploded and companies hired very fast. When demand cooled, many of them cut back.</li>
+    <li><b>Cost pressure.</b> Higher interest rates and an uncertain economy mean companies and their clients cut "nice to have" projects first. Indian IT services feel this directly when overseas clients reduce spending.</li>
+    <li><b>Money is moving to AI.</b> Companies are spending heavily on GPUs, data centres and AI teams. To pay for it, they often shrink other teams. The budget didn't disappear; it moved.</li>
+    <li><b>Routine tasks are being automated.</b> AI tools now handle a lot of first-draft work: boilerplate code, simple test cases, basic support tickets, documentation, data entry. Roles made mostly of these tasks are hit hardest, and many of those are entry-level roles.</li>
+    <li><b>Flatter teams.</b> Many companies are removing layers of management and expecting smaller teams to deliver more, often with the help of AI tools.</li>
+  </ol>
+
+  <div class="box key">
+    <span class="label">The real picture</span>
+    AI mostly replaces <b>tasks</b>, not whole jobs. The work isn't vanishing; it is changing shape. A developer who uses AI well can now do the work that used to take a small team, and companies are hiring for <i>that</i> person. At the same time, demand for people who can build, deploy and evaluate AI systems keeps growing.
+  </div>
+
+  <div class="box example">
+    <span class="label">Example: the same task, two ways</span>
+    <p><b>Before:</b> a fresher spends two days writing CRUD APIs and unit tests for a student-records module.</p>
+    <p><b>Now:</b> an AI assistant writes the first draft in minutes. The valuable work is everything around it: understanding what the college actually needs, designing the data model, checking the AI's code for bugs and security issues, and deploying it reliably.</p>
+    The person who can only type the code is easy to replace. The person who can do the rest is in demand.
+  </div>
+
+  <h3>What to improve</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Skill</th><th>Why it matters more now</th></tr>
+    <tr><td><b>Fundamentals</b>: DSA, OOP, DBMS/SQL, networking, operating systems</td><td>You can't judge whether AI-written code is correct, fast or secure if you don't understand it yourself.</td></tr>
+    <tr><td><b>Problem solving and system design</b></td><td>AI is good at writing a function. Deciding <i>what</i> to build and how the pieces fit together is still your job.</td></tr>
+    <tr><td><b>Reading and reviewing code</b></td><td>You will read far more code than you write. Spotting bugs in AI output is a core skill.</td></tr>
+    <tr><td><b>Communication</b>: writing, explaining, asking good questions</td><td>Prompting is communication. So are requirements, documentation and interviews.</td></tr>
+    <tr><td><b>Ownership</b>: finishing and shipping things</td><td>A deployed project that real people use beats ten unfinished tutorials.</td></tr>
+    <tr><td><b>Domain knowledge</b>: finance, healthcare, education, manufacturing...</td><td>AI is generic. Knowing a business problem deeply is what makes your solution useful.</td></tr>
+  </table></div>
+
+  <h3>What to learn</h3>
+  <p>A practical path, roughly in order. This workshop covers the middle of it.</p>
+  <div class="flow">
+    <div class="step"><b>1. Foundations</b><small>Python, Git and GitHub, SQL, REST APIs and JSON, basic Linux.</small></div>
+    <div class="step"><b>2. Use AI tools daily</b><small>ChatGPT, Gemini, Claude, coding assistants. Learn where they help and where they fail.</small></div>
+    <div class="step"><b>3. Build with LLMs</b><small>Prompt engineering, calling LLM APIs, RAG with embeddings and vector databases. (Day 1)</small></div>
+    <div class="step"><b>4. Build agents</b><small>Tool calling, MCP, agent frameworks, multi-agent systems. (Day 2)</small></div>
+    <div class="step"><b>5. Take it to production</b><small>Cloud basics (AWS, Azure or GCP), Docker, evaluation, monitoring, cost, security.</small></div>
+  </div>
+
+  <div class="box try">
+    <span class="label">Your goal for these two days</span>
+    Leave with one working AI project on your GitHub: a campus helpdesk agent you built yourself. Then improve it, deploy it and put it on your resume. That is worth more in an interview than any certificate.
   </div>
 
   <!-- 1 -->
@@ -115,6 +168,10 @@
     <span class="label">Key idea</span>
     An LLM does not "look up" answers. It generates the most likely continuation of the text, one piece at a time. It's very good at this because it has seen so much text. Everything else in this workshop builds on this one idea.
   </div>
+
+  <figure class="diagram">
+    <img src="diagrams/llm-pipeline.svg" alt="Your text is split into tokens, turned into embeddings, processed by the transformer with attention, which outputs probabilities for the next token. One token is picked, added to the text, and the loop repeats.">
+  </figure>
 
   <p><b>"Large"</b> refers to the number of <b>parameters</b>: the adjustable numbers inside the network that store what it learned. Modern LLMs have billions of them.</p>
 
@@ -372,12 +429,12 @@ for faq, s in zip(faqs, scores[0]):
   <p>Suggested plan for the 60 minutes. Press <b>S</b> in the slides to open speaker notes.</p>
   <div class="table-wrap"><table>
     <tr><th>Time</th><th>Segment</th><th>What to do</th></tr>
-    <tr><td>0–5 min</td><td>Hook</td><td>Show of hands: who used ChatGPT / Gemini / Claude this week? For what? Then ask: "How does it know?"</td></tr>
-    <tr><td>5–15 min</td><td>AI → ML → DL → Transformers</td><td>Spam filter, placement prediction, face unlock, "bank" and "it" examples.</td></tr>
-    <tr><td>15–20 min</td><td>Next-word prediction</td><td>Game: say "Virat Kohli is famous for playing..." and let the class finish it. Then "Once upon a..." The class is the LLM.</td></tr>
-    <tr><td>20–35 min</td><td>Tokens, embeddings, context, temperature</td><td>Live tokenizer demo (English vs Hindi). Temperature slider demo. Desk analogy for context.</td></tr>
+    <tr><td>0–10 min</td><td>Intro + hook</td><td>Introduce yourself. Ask: who is worried about layoffs or AI taking jobs? Walk through why layoffs are happening, what to improve and what to learn. Keep it encouraging, not scary. Then: who used ChatGPT / Gemini / Claude this week? "How does it know?"</td></tr>
+    <tr><td>10–18 min</td><td>AI → ML → DL → Transformers</td><td>Spam filter, placement prediction, face unlock, "bank" and "it" examples.</td></tr>
+    <tr><td>18–22 min</td><td>Next-word prediction</td><td>Game: say "Virat Kohli is famous for playing..." and let the class finish it. Then "Once upon a..." The class is the LLM.</td></tr>
+    <tr><td>22–35 min</td><td>Tokens, embeddings, context, temperature</td><td>Live tokenizer demo (English vs Hindi). Temperature slider demo. Desk analogy for context.</td></tr>
     <tr><td>35–45 min</td><td>Hallucination</td><td>Live: ask a chatbot about the fake "Quantum Biryani Optimization" paper, or about a fake event at your college. Discuss why.</td></tr>
-    <tr><td>45–55 min</td><td>Open vs closed, choosing</td><td>Run the four scenarios as a class vote before revealing answers.</td></tr>
+    <tr><td>45–55 min</td><td>Open vs closed, choosing</td><td>Run the four scenarios as a class vote before revealing answers. If short on time, do two scenarios.</td></tr>
     <tr><td>55–60 min</td><td>Recap + quiz</td><td>Ask 3–4 quiz questions aloud. Preview Session 2: prompt engineering.</td></tr>
   </table></div>
   <div class="box try">
