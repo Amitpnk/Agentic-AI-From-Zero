@@ -1,0 +1,48 @@
+<mxfile host="drawio">
+  <diagram id="llm-pipeline" name="How an LLM writes text">
+    <mxGraphModel dx="1200" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="420" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="How an LLM writes an answer: one token at a time" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="700" height="36" as="geometry" />
+        </mxCell>
+
+        <mxCell id="b1" value="&lt;b&gt;1. Your text&lt;/b&gt;&lt;br&gt;&lt;br&gt;&quot;Virat Kohli is famous for playing&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;fontColor=#1f2328;fontSize=14;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="20" y="70" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" value="&lt;b&gt;2. Tokens&lt;/b&gt;&lt;br&gt;&lt;br&gt;[Virat] [Kohli] [is] [famous] [for] [playing]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=14;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="200" y="70" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="b3" value="&lt;b&gt;3. Embeddings&lt;/b&gt;&lt;br&gt;&lt;br&gt;Each token becomes a list of numbers that holds its meaning" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf0ff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=14;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="380" y="70" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="b4" value="&lt;b&gt;4. Transformer&lt;/b&gt;&lt;br&gt;&lt;br&gt;Attention: which words matter for each other" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f1ebff;strokeColor=#6d28d9;fontColor=#1f2328;fontSize=14;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="560" y="70" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="b5" value="&lt;b&gt;5. Probabilities&lt;/b&gt;&lt;br&gt;&lt;br&gt;cricket 92%&lt;br&gt;for 3%&lt;br&gt;in 2% ..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=14;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="740" y="70" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="b6" value="&lt;b&gt;6. Pick one&lt;/b&gt;&lt;br&gt;&lt;br&gt;&quot;cricket&quot;&lt;br&gt;&lt;font color=&quot;#ffe4d1&quot;&gt;(temperature decides how adventurous)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c2410c;strokeColor=#c2410c;fontColor=#ffffff;fontSize=14;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="920" y="70" width="150" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="b1" target="b2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="b2" target="b3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="b3" target="b4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="b4" target="b5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="b5" target="b6"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="loop" value="Add &quot;cricket&quot; to the text and repeat until the answer is done" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=2;dashed=1;fontSize=14;fontColor=#c2410c;fontStyle=1;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="b6" target="b1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="995" y="250" />
+              <mxPoint x="95" y="250" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

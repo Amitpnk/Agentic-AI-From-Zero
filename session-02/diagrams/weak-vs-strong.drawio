@@ -1,0 +1,40 @@
+<mxfile host="drawio">
+  <diagram id="weak-vs-strong" name="Weak vs strong prompt">
+    <mxGraphModel dx="900" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="900" pageHeight="420" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Same model, different prompt, different result" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="700" height="36" as="geometry" />
+        </mxCell>
+
+        <!-- Weak -->
+        <mxCell id="wp" value="&lt;b&gt;Weak prompt&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;i&gt;&quot;Write about our college fest.&quot;&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3f1ec;strokeColor=#5b636e;fontColor=#1f2328;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="20" y="60" width="300" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="llm1" value="LLM" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1f2328;strokeColor=none;fontColor=#ffffff;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="370" y="100" width="80" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="wo" value="&lt;b&gt;Result&lt;/b&gt;&lt;br&gt;&lt;br&gt;A long, generic essay. Wrong tone, no dates, no details. You have to rewrite it." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe9ee;strokeColor=#be123c;fontColor=#1f2328;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="60" width="380" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="we1" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="wp" target="llm1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="we2" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="llm1" target="wo"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Strong -->
+        <mxCell id="sp" value="&lt;b&gt;Strong prompt&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;i&gt;&quot;Write a 60-word Instagram caption for TechNova 2026, our college tech fest on 20-21 Feb. Audience: first-year students. Tone: fun. Mention the hackathon and robo-race. End with 2 hashtags.&quot;&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="20" y="240" width="300" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="llm2" value="LLM" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1f2328;strokeColor=none;fontColor=#ffffff;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="370" y="300" width="80" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="so" value="&lt;b&gt;Result&lt;/b&gt;&lt;br&gt;&lt;br&gt;A short, fun caption with the right name, dates and events. Ready to post." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="240" width="380" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="se1" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="sp" target="llm2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="se2" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="llm2" target="so"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,60 @@
+<mxfile host="drawio">
+  <diagram id="streaming" name="Streaming vs waiting">
+    <mxGraphModel dx="1000" dy="500" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="960" pageHeight="300" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Streaming: show the answer while it is being written" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="36" as="geometry" />
+        </mxCell>
+
+        <!-- Row 1: no streaming -->
+        <mxCell id="l1" value="&lt;b&gt;Without streaming&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#5b636e&quot; style=&quot;font-size:12px&quot;&gt;wait for the full answer&lt;/font&gt;" style="text;html=1;fontSize=15;align=left;verticalAlign=middle;fontColor=#1f2328;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="20" y="70" width="170" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="w1" value="⏳ waiting... (blank screen)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3f1ec;strokeColor=#5b636e;dashed=1;fontColor=#5b636e;fontSize=14;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="200" y="76" width="520" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" value="Your DBMS exam is on 12 Dec at 10 AM in Hall B." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c2410c;strokeColor=none;fontColor=#ffffff;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="730" y="76" width="210" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Row 2: streaming -->
+        <mxCell id="l2" value="&lt;b&gt;With streaming&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#5b636e&quot; style=&quot;font-size:12px&quot;&gt;words appear as they're made&lt;/font&gt;" style="text;html=1;fontSize=15;align=left;verticalAlign=middle;fontColor=#1f2328;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="20" y="150" width="170" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="s0" value="⏳" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3f1ec;strokeColor=#5b636e;dashed=1;fontColor=#5b636e;fontSize=14;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="200" y="156" width="50" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="s1" value="Your" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="265" y="156" width="100" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="DBMS exam" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="400" y="156" width="120" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="is on 12 Dec" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="555" y="156" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="s4" value="at 10 AM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="720" y="156" width="100" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="s5" value="in Hall B." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="845" y="156" width="95" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Time axis -->
+        <mxCell id="axis" value="time" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;fontSize=13;fontColor=#5b636e;labelBackgroundColor=#ffffff;align=right;" edge="1" parent="1">
+          <mxGeometry x="0.9" relative="1" as="geometry">
+            <mxPoint x="200" y="230" as="sourcePoint" />
+            <mxPoint x="940" y="230" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="foot" value="Same total time, same cost. Streaming just &lt;b&gt;feels&lt;/b&gt; much faster, which is why every chat app uses it." style="text;html=1;whiteSpace=wrap;fontSize=14;align=left;verticalAlign=middle;fontColor=#5b636e;" vertex="1" parent="1">
+          <mxGeometry x="20" y="245" width="920" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

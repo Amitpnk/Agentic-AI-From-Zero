@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session 4: RAG</title>
+<meta name="description" content="Simple notes with examples: why LLMs need your documents, the RAG pipeline (load, chunk, embed, store, retrieve, generate), vector databases, citations and evaluation.">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="home" href="../">GenAI &amp; Agentic AI Workshop</a>
+    <nav>
+      <a href="slides.html">Slides</a>
+      <a href="#lab">Lab</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#instructor">Instructor guide</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="eyebrow">Day 1 · Session 4 · 2 hours</div>
+  <h1>RAG: Retrieval-Augmented Generation</h1>
+  <p class="lead">An LLM doesn't know your college's rules, timetable or syllabus. RAG fixes that: before answering, it looks up the right page in your documents and answers from it, with the source.</p>
+
+  <div class="btn-row">
+    <a class="btn" href="slides.html">Open the slides</a>
+    <a class="btn secondary" href="#lab">Jump to the lab</a>
+  </div>
+
+  <div class="toc">
+    <b>What you will learn</b>
+    <ol>
+      <li><a href="#problem">The problem: the model doesn't know your documents</a></li>
+      <li><a href="#what">What RAG is: an open-book exam</a></li>
+      <li><a href="#pipeline">The RAG pipeline in six steps</a></li>
+      <li><a href="#load">Step 1: Load</a></li>
+      <li><a href="#chunk">Step 2: Chunk</a></li>
+      <li><a href="#embed">Step 3: Embed</a></li>
+      <li><a href="#store">Step 4: Store in a vector database</a></li>
+      <li><a href="#retrieve">Step 5: Retrieve</a></li>
+      <li><a href="#generate">Step 6: Generate with citations</a></li>
+      <li><a href="#problems">When RAG goes wrong, and how to fix it</a></li>
+      <li><a href="#evaluate">How to test a RAG bot</a></li>
+      <li><a href="#lab">Lab: chat with the college FAQ</a></li>
+      <li><a href="#recap">Recap, quiz and glossary</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <h2 id="problem">1. The problem: the model doesn't know your documents</h2>
+  <p>Ask any chatbot <i>"What is the revaluation fee at our college?"</i> and it can't know. Your college's rules were never in its training data, and even if similar text was, it might be out of date. So it either says "I don't know" or, worse, <b>makes something up</b> (Session 1: hallucination).</p>
+
+  <figure class="diagram">
+    <img src="diagrams/with-without-rag.svg" alt="Without RAG, the LLM guesses the revaluation fee as 1,000 rupees, which is wrong and has no source. With RAG, the LLM is given the retrieved Exams page and answers 500 rupees per subject, with the source.">
+  </figure>
+
+  <p>There are three ways to give a model your information:</p>
+  <div class="table-wrap"><table>
+    <tr><th>Option</th><th>How</th><th>Problem</th></tr>
+    <tr><td><b>Paste everything</b></td><td>Put the whole document in every prompt</td><td>Fine for 2 pages. For 500 pages: too many tokens, slow, expensive, may not fit the context window.</td></tr>
+    <tr><td><b>Fine-tune</b></td><td>Train the model further on your documents</td><td>Costly, needs skills, and must be redone every time a rule changes. Still can hallucinate.</td></tr>
+    <tr><td><b>RAG</b> ✅</td><td>Search your documents, send only the few relevant pieces</td><td>Needs some setup, which is what this session is about.</td></tr>
+  </table></div>
+
+  <!-- 2 -->
+  <h2 id="what">2. What RAG is: an open-book exam</h2>
+  <p><b>RAG</b> stands for <b>Retrieval-Augmented Generation</b>:</p>
+  <ul>
+    <li><b>Retrieval:</b> find the pieces of your documents that match the question.</li>
+    <li><b>Augmented:</b> add those pieces to the prompt.</li>
+    <li><b>Generation:</b> the LLM writes the answer using them.</li>
+  </ul>
+  <div class="box example">
+    <span class="label">Analogy: open-book exam</span>
+    Without RAG, the model writes a closed-book exam from memory. With RAG, it's an open-book exam: before each answer, it flips to the right page of the textbook and answers from it. And just like a good student, it can say <i>which page</i> the answer came from.
+  </div>
+
+  <!-- 3 -->
+  <h2 id="pipeline">3. The RAG pipeline in six steps</h2>
+  <p>RAG has two parts. <b>Indexing</b> prepares your documents once (and again whenever they change). <b>Answering</b> runs for every question.</p>
+
+  <figure class="diagram">
+    <img src="diagrams/rag-pipeline.svg" alt="Indexing: documents are chunked, embedded and stored in a vector database. Answering: the question is embedded, the closest chunks are retrieved from the database, and the LLM generates an answer with a source.">
+  </figure>
+
+  <div class="flow">
+    <div class="step"><b>1. Load</b><small>Read PDFs, web pages, docs into text</small></div>
+    <div class="step"><b>2. Chunk</b><small>Cut into small pieces</small></div>
+    <div class="step"><b>3. Embed</b><small>Turn each piece into a vector</small></div>
+    <div class="step"><b>4. Store</b><small>Save in a vector database</small></div>
+    <div class="step"><b>5. Retrieve</b><small>Find the pieces closest to the question</small></div>
+    <div class="step"><b>6. Generate</b><small>LLM answers from those pieces, with sources</small></div>
+  </div>
+
+  <!-- Step 1 -->
+  <h2 id="load">4. Step 1: Load</h2>
+  <p>First, get your documents into plain text. Common sources: PDFs (syllabus, rules), web pages (college website), Word files, Google Docs, or a database.</p>
+<pre><code># Read a PDF page by page
+from pypdf import PdfReader
+
+reader = PdfReader("syllabus.pdf")
+pages = [page.extract_text() for page in reader.pages]
+print(len(pages), "pages")
+print(pages[0][:300])</code></pre>
+  <div class="box key">
+    <span class="label">Garbage in, garbage out</span>
+    Check the extracted text! Tables often come out jumbled, headers and page numbers repeat on every page, and <b>scanned PDFs</b> (photos of paper) give no text at all; they need OCR first. A RAG bot can only be as good as the text you feed it.
+  </div>
+
+  <!-- Step 2 -->
+  <h2 id="chunk">5. Step 2: Chunk</h2>
+  <p>We don't search the whole document as one block. We cut it into <b>chunks</b>: small pieces, each about one topic. Then we can send the model only the 2–3 chunks it needs.</p>
+
+  <figure class="diagram">
+    <img src="diagrams/chunking.svg" alt="A long document is cut into chunks of 120 words, each overlapping the previous by 20 words. Too-small chunks lose meaning, too-big chunks mix topics, one topic per chunk is just right.">
+  </figure>
+
+  <ul>
+    <li><b>Chunk size:</b> start with about <b>100–300 words</b> (roughly 150–400 tokens).</li>
+    <li><b>Overlap:</b> repeat about <b>10–20%</b> between neighbouring chunks, so a sentence cut at the edge still appears whole somewhere.</li>
+    <li><b>Split on structure when you can:</b> by heading, section or paragraph. A chunk that is exactly "the Library section" is better than one that's half Library, half Placements.</li>
+    <li><b>Keep the source</b> with each chunk (file name, page, section). You'll need it for citations.</li>
+  </ul>
+
+<pre><code>def chunk_text(text, size=120, overlap=20):
+    words = text.split()
+    chunks, step = [], size - overlap
+    for start in range(0, len(words), step):
+        chunks.append(" ".join(words[start:start + size]))
+        if start + size &gt;= len(words):
+            break
+    return chunks</code></pre>
+  <p style="color:var(--muted);font-size:0.95rem">Libraries like LangChain and LlamaIndex have ready-made "text splitters" that do the same thing with more options. Writing your own once helps you understand what they do.</p>
+
+  <!-- Step 3 -->
+  <h2 id="embed">6. Step 3: Embed</h2>
+  <p>Remember <b>embeddings</b> from Session 1: text turned into a list of numbers so that similar meanings are close together. We embed every chunk once.</p>
+<pre><code>from sentence_transformers import SentenceTransformer
+
+embedder = SentenceTransformer("all-MiniLM-L6-v2")   # small, free, runs in Colab
+vectors = embedder.encode(chunks, normalize_embeddings=True)
+print(vectors.shape)   # (number of chunks, 384)</code></pre>
+  <div class="box key">
+    <span class="label">One rule you must not break</span>
+    Use the <b>same embedding model</b> for the chunks and the questions. Vectors from different models live in different "maps" and can't be compared.
+  </div>
+  <p>Embedding model options: free local models (like <code>all-MiniLM-L6-v2</code>, or multilingual ones for Hindi, Kannada and Tamil), or API models from Google, OpenAI and others. Local is free and has no rate limits; API models are often more accurate.</p>
+
+  <!-- Step 4 -->
+  <h2 id="store">7. Step 4: Store in a vector database</h2>
+  <p>A <b>vector database</b> stores each chunk's vector together with its text and source, and can quickly find the vectors closest to a question, even among millions.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Option</th><th>What it is</th><th>Good for</th></tr>
+    <tr><td><b>Chroma</b></td><td>Simple open-source vector DB, runs inside Python</td><td>Learning, prototypes, small apps (we use it today)</td></tr>
+    <tr><td><b>FAISS</b></td><td>Fast similarity-search library from Meta</td><td>Large collections on your own machine</td></tr>
+    <tr><td><b>pgvector</b></td><td>Vector search inside PostgreSQL</td><td>Apps that already use Postgres</td></tr>
+    <tr><td><b>Managed</b></td><td>Pinecone, Weaviate, or cloud services (Vertex AI Vector Search, Azure AI Search, Amazon OpenSearch / Bedrock Knowledge Bases)</td><td>Production: scaling, backups, security handled for you</td></tr>
+  </table></div>
+<pre><code>import chromadb
+
+db = chromadb.Client()
+col = db.create_collection("college_faq")
+col.add(
+    ids=["Library-0", "Exams-0"],
+    documents=[library_text, exams_text],
+    metadatas=[{"source": "Library"}, {"source": "Exams"}],
+    embeddings=embedder.encode([library_text, exams_text], normalize_embeddings=True).tolist(),
+)</code></pre>
+
+  <!-- Step 5 -->
+  <h2 id="retrieve">8. Step 5: Retrieve</h2>
+  <p>When a question comes in, embed it with the same model and ask the database for the <b>top-k</b> closest chunks (usually k = 3 to 5).</p>
+<pre><code>q_vec = embedder.encode(["Is the library open on Sunday?"], normalize_embeddings=True).tolist()
+res = col.query(query_embeddings=q_vec, n_results=3)
+print(res["metadatas"][0])   # [{'source': 'Library'}, ...]</code></pre>
+  <div class="box example">
+    <span class="label">Example: what retrieval finds</span>
+    <div class="table-wrap"><table>
+      <tr><th>Question</th><th>Top chunk found</th></tr>
+      <tr><td>Is the library open on Sunday?</td><td>[Library] "...closed on Sundays, except during exam months..."</td></tr>
+      <tr><td>Can I sit for more drives after a 7 LPA offer?</td><td>[Placements] "...one-student-one-job policy..."</td></tr>
+      <tr><td>Who won the IPL in 2020?</td><td>Nothing relevant: all similarity scores are low</td></tr>
+    </table></div>
+    The placement question doesn't contain the words "one-student-one-job", but the meaning matches. That's the power of embeddings.
+  </div>
+  <p>Use a <b>minimum similarity score</b>: if even the best chunk scores low, the answer probably isn't in your documents, so don't send junk to the model.</p>
+
+  <!-- Step 6 -->
+  <h2 id="generate">9. Step 6: Generate with citations</h2>
+  <p>Now we build a prompt (Session 2!) with three parts: <b>rules</b>, the <b>retrieved chunks</b> labelled with their source, and the <b>question</b>.</p>
+<pre><code>SYSTEM = """You are CampusBuddy, the helpdesk assistant for ABC Engineering College.
+Answer the student's question using ONLY the context below.
+- After each fact, cite the source in square brackets, like [Exams].
+- If the answer is not in the context, say: "I couldn't find that in the
+  college documents. Please contact office@abc.edu."
+- Keep the answer under 80 words, in simple English."""
+
+context = "\n\n".join(f"[{h['source']}] {h['text']}" for h in hits)
+prompt = f"Context:\n{context}\n\nQuestion: {question}"
+
+resp = client.models.generate_content(
+    model=MODEL, contents=prompt,
+    config=types.GenerateContentConfig(system_instruction=SYSTEM, temperature=0),
+)</code></pre>
+  <div class="box example">
+    <span class="label">Result</span>
+    <p><b>Q:</b> My attendance in DBMS is 70%. Can I still write the exam?</p>
+    <p><b>A:</b> You need 75% to get a hall ticket [Exams]. With 70%, you can apply for condonation with a medical certificate and a ₹1,000 fee; the principal decides [Attendance].</p>
+    Two sources, combined into one answer, and you can check both.
+  </div>
+  <p>Why citations matter: students (and you) can <b>check</b> the answer, and it's easy to spot when the bot used the wrong chunk. "Only use the context" plus "say you couldn't find it" is your main defence against hallucination.</p>
+
+  <!-- Problems -->
+  <h2 id="problems">10. When RAG goes wrong, and how to fix it</h2>
+  <p>Most RAG bugs are <b>retrieval</b> bugs, not LLM bugs. Always look at which chunks were retrieved first.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+    <tr><td>Answer is wrong or vague</td><td>The right chunk wasn't retrieved</td><td>Print the retrieved chunks. Try different chunk size, more k, better splitting.</td></tr>
+    <tr><td>Says "not found" but it's in the document</td><td>Text didn't load (scanned PDF, table), or score threshold too high</td><td>Check the extracted text. Lower the threshold.</td></tr>
+    <tr><td>Answers questions outside the documents</td><td>Prompt doesn't restrict it</td><td>"ONLY use the context" + minimum score.</td></tr>
+    <tr><td>Old information</td><td>Documents changed, index didn't</td><td>Re-index when documents are updated.</td></tr>
+    <tr><td>Exact codes or names not found (e.g. "CS301")</td><td>Embeddings match meaning, not exact words</td><td><b>Hybrid search</b>: combine keyword search with vector search.</td></tr>
+  </table></div>
+  <p style="color:var(--muted);font-size:0.95rem">Going further: <b>re-ranking</b> (a second model re-orders the top 20 chunks), <b>query rewriting</b> (rephrase the question before searching), and <b>metadata filters</b> (search only the 3rd-semester syllabus). You don't need these to start.</p>
+
+  <!-- Evaluate -->
+  <h2 id="evaluate">11. How to test a RAG bot</h2>
+  <p>Don't just try two questions and call it done. Make a small <b>test set</b>:</p>
+  <ol>
+    <li>Write 10–20 real questions students ask, with the section where the answer is.</li>
+    <li><b>Test retrieval:</b> is the right section in the top 3? Count the hit rate.</li>
+    <li><b>Test answers:</b> is the answer correct, and is the citation right?</li>
+    <li>Include 3–4 questions that are <b>not</b> in the documents. The bot should refuse them.</li>
+    <li>Re-run the test set every time you change chunk size, k, the prompt or the model.</li>
+  </ol>
+  <p>This is your first taste of <b>evaluation</b>, which we cover properly in Session 9.</p>
+
+  <!-- Lab -->
+  <h2 id="lab">12. Lab: chat with the college FAQ (45 min)</h2>
+  <p>Build CampusBuddy-RAG over a sample FAQ for a fictional college: exams, attendance, fees, hostel, library, placements, scholarships and clubs. Then try it on your own college's PDF.</p>
+
+  <div class="btn-row">
+    <a class="btn" href="https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-04-rag-lab.ipynb" target="_blank" rel="noopener">Open the lab in Colab</a>
+    <a class="btn secondary" href="../labs/data/abc-college-faq.md">View the sample FAQ</a>
+    <a class="btn secondary" href="../projects/#p3">Project 3 details</a>
+  </div>
+
+  <ol>
+    <li>Ask Gemini about the college with no documents. Watch it guess.</li>
+    <li>Load the FAQ and chunk it (by word count, then by heading).</li>
+    <li>Embed the chunks and search by meaning with NumPy: RAG from scratch.</li>
+    <li>Store the chunks in Chroma and retrieve the top 3.</li>
+    <li>Generate answers with citations, and refuse questions not in the FAQ.</li>
+    <li>Measure the retrieval hit rate on 8 test questions.</li>
+    <li>Chat with it.</li>
+  </ol>
+
+  <div class="box try">
+    <span class="label">Stretch goals</span>
+    Upload your own college PDF. Change chunk size, k and the minimum score and watch the hit rate. Add memory from Session 3 so follow-up questions work.
+  </div>
+
+  <!-- Recap -->
+  <h2 id="recap">13. Recap</h2>
+  <ol>
+    <li>LLMs don't know your private or recent documents, so they guess.</li>
+    <li><b>RAG</b> = look up the right pieces, add them to the prompt, then answer. An open-book exam.</li>
+    <li><b>Indexing</b> (once): load → chunk → embed → store.</li>
+    <li><b>Answering</b> (every question): embed the question → retrieve top-k → generate.</li>
+    <li>Chunks of ~100–300 words with 10–20% overlap; split by section when you can; keep the source.</li>
+    <li>Same embedding model for chunks and questions.</li>
+    <li>Prompt: "use ONLY the context", cite sources, say when it's not found.</li>
+    <li>Most RAG bugs are retrieval bugs. Test with a question set.</li>
+  </ol>
+
+  <h2 id="quiz">Quick quiz</h2>
+  <details><summary>1. What do the R, A and G in RAG stand for?</summary>Retrieval (find relevant chunks), Augmented (add them to the prompt), Generation (the LLM writes the answer).</details>
+  <details><summary>2. Why not just paste the whole 500-page syllabus into every prompt?</summary>Too many tokens: expensive, slow, may not fit the context window, and models can miss details in very long inputs.</details>
+  <details><summary>3. Why do chunks overlap?</summary>So that a sentence or idea cut at a chunk boundary still appears complete in at least one chunk.</details>
+  <details><summary>4. You embedded the chunks with model A and the questions with model B. What happens?</summary>Retrieval breaks: the vectors are on different "maps" and the similarity scores are meaningless.</details>
+  <details><summary>5. The bot says "not found" for a question whose answer is in a scanned PDF. Why?</summary>A scanned PDF is an image; <code>pypdf</code> extracts no text, so nothing was indexed. It needs OCR first.</details>
+  <details><summary>6. Your bot gives a wrong answer. What's the first thing to check?</summary>Which chunks were retrieved. If the right chunk isn't there, fix retrieval (chunking, k, threshold) before touching the prompt or model.</details>
+  <details><summary>7. Name two things you'd put in a RAG system prompt.</summary>Any two of: use only the context; cite the source for each fact; say "not found" if it isn't in the context; keep answers short.</details>
+
+  <h2 id="glossary">Glossary</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Term</th><th>Meaning in one line</th></tr>
+    <tr><td>RAG</td><td>Retrieve relevant document pieces, add them to the prompt, then generate the answer.</td></tr>
+    <tr><td>Indexing</td><td>Preparing documents for search: load, chunk, embed, store.</td></tr>
+    <tr><td>Chunk</td><td>A small piece of a document, usually one topic.</td></tr>
+    <tr><td>Overlap</td><td>Words repeated between neighbouring chunks.</td></tr>
+    <tr><td>Embedding model</td><td>The model that turns text into vectors.</td></tr>
+    <tr><td>Vector database</td><td>A database that stores vectors and finds the closest ones fast.</td></tr>
+    <tr><td>Top-k</td><td>The k most similar chunks returned for a question.</td></tr>
+    <tr><td>Similarity score</td><td>How close two vectors are in meaning (higher = closer).</td></tr>
+    <tr><td>Citation / grounding</td><td>Linking each fact in the answer to the chunk it came from.</td></tr>
+    <tr><td>Hybrid search</td><td>Combining keyword search with vector search.</td></tr>
+    <tr><td>Re-ranking</td><td>Re-ordering retrieved chunks with a second, more careful model.</td></tr>
+    <tr><td>OCR</td><td>Optical Character Recognition: reading text from images or scans.</td></tr>
+  </table></div>
+
+  <h2 id="learn-more">Learn more (free)</h2>
+  <ul>
+    <li>Lewis et al., <i>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</i> (2020), the original RAG paper</li>
+    <li>Chroma documentation, <i>Getting started</i> (docs.trychroma.com)</li>
+    <li>Sentence Transformers documentation, <i>Semantic search</i> (sbert.net)</li>
+    <li>LangChain and LlamaIndex RAG tutorials, once you've built one by hand</li>
+  </ul>
+
+  <!-- Instructor -->
+  <h2 id="instructor">Instructor guide</h2>
+  <p>Suggested plan for the 2 hours, with a short break. Press <b>S</b> in the slides to open speaker notes.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Time</th><th>Segment</th><th>What to do</th></tr>
+    <tr><td>0–10 min</td><td>Hook</td><td>Live: ask a chatbot "What is the revaluation fee at ABC College?" It guesses. Show the with/without diagram. Ask: how would <i>you</i> fix this?</td></tr>
+    <tr><td>10–20 min</td><td>Three options + what RAG is</td><td>Paste vs fine-tune vs RAG. Open-book exam analogy. Pipeline diagram.</td></tr>
+    <tr><td>20–40 min</td><td>Load, chunk, embed</td><td>Show a messy PDF extraction. Chunking diagram: ask the class to pick a chunk size for the syllabus. Recap embeddings from Session 1.</td></tr>
+    <tr><td>40–55 min</td><td>Store, retrieve, generate</td><td>Vector DB options. Live retrieval in the notebook (Steps 4–6). Point at the citations.</td></tr>
+    <tr><td>55–65 min</td><td>Break</td><td>Students start the first install cell so it's ready after the break.</td></tr>
+    <tr><td>65–75 min</td><td>Problems + testing</td><td>Symptom table. "Print the retrieved chunks first." Show the evaluation cell.</td></tr>
+    <tr><td>75–115 min</td><td>Lab</td><td>Pairs work through the notebook. Fast pairs: upload a real college PDF (stretch 1). Collect the best hit rates.</td></tr>
+    <tr><td>115–120 min</td><td>Recap + quiz</td><td>Quiz questions 1, 4 and 6. Preview Day 2: turning CampusBuddy into an agent that can use tools.</td></tr>
+  </table></div>
+  <div class="box try">
+    <span class="label">Before class</span>
+    Run the whole notebook once on Colab; the first install and model download take 1–2 minutes. Bring 2–3 real college PDFs (syllabus, placement brochure) on a pen drive or shared link for the stretch goal, and check they're text PDFs, not scans.
+  </div>
+
+  <footer>
+    Session 4 of the GenAI &amp; Agentic AI 2-day workshop · <a href="../">All sessions</a> · <a href="slides.html">Slides</a> · <a href="../session-03/notes.html">← Session 3</a>
+  </footer>
+</main>
+</body>
+</html>

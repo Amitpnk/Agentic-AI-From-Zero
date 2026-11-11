@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session 1: How LLMs Work</title>
+<meta name="description" content="Simple notes with examples: ML to deep learning to transformers, tokens, embeddings, context window, temperature, hallucination, open vs closed models.">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/temperature.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="home" href="../">GenAI &amp; Agentic AI Workshop</a>
+    <nav>
+      <a href="slides.html">Slides</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#instructor">Instructor guide</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="eyebrow">Day 1 · Session 1 · 1 hour</div>
+  <h1>How LLMs Work</h1>
+  <p class="lead">What happens inside ChatGPT, Gemini or Claude when you type a question? This session explains it in plain language. No heavy math.</p>
+
+  <div class="btn-row">
+    <a class="btn" href="slides.html">Open the slides</a>
+    <a class="btn secondary" href="#quiz">Jump to the quiz</a>
+  </div>
+
+  <div class="toc">
+    <b>What you will learn</b>
+    <ol start="0">
+      <li><a href="#why-now">Introduction: layoffs, AI and what it means for you</a></li>
+      <li><a href="#big-picture">The big picture: AI → ML → Deep Learning → LLMs</a></li>
+      <li><a href="#transformers">Transformers and attention</a></li>
+      <li><a href="#next-word">An LLM is a next-word predictor</a></li>
+      <li><a href="#tokens">Tokens</a></li>
+      <li><a href="#embeddings">Embeddings</a></li>
+      <li><a href="#context">Context window</a></li>
+      <li><a href="#temperature">Temperature</a></li>
+      <li><a href="#hallucination">Why LLMs hallucinate</a></li>
+      <li><a href="#models">Open vs closed models, and how to choose</a></li>
+      <li><a href="#recap">Recap, quiz and glossary</a></li>
+    </ol>
+  </div>
+
+  <!-- 0 -->
+  <h2 id="why-now">0. Introduction: why this workshop, why now</h2>
+  <p>You have probably seen the headlines: big tech companies and IT services firms cutting jobs, fresher hiring slowing down, and "AI will replace programmers" posts everywhere. Before we learn how LLMs work, let's be honest about what is happening and what you can do about it.</p>
+
+  <h3>Why are there layoffs?</h3>
+  <p>There is no single reason. Several things are happening at the same time:</p>
+  <ol>
+    <li><b>Correction after over-hiring.</b> During 2020–22, demand for digital services exploded and companies hired very fast. When demand cooled, many of them cut back.</li>
+    <li><b>Cost pressure.</b> Higher interest rates and an uncertain economy mean companies and their clients cut "nice to have" projects first. Indian IT services feel this directly when overseas clients reduce spending.</li>
+    <li><b>Money is moving to AI.</b> Companies are spending heavily on GPUs, data centres and AI teams. To pay for it, they often shrink other teams. The budget didn't disappear; it moved.</li>
+    <li><b>Routine tasks are being automated.</b> AI tools now handle a lot of first-draft work: boilerplate code, simple test cases, basic support tickets, documentation, data entry. Roles made mostly of these tasks are hit hardest, and many of those are entry-level roles.</li>
+    <li><b>Flatter teams.</b> Many companies are removing layers of management and expecting smaller teams to deliver more, often with the help of AI tools.</li>
+  </ol>
+
+  <div class="box key">
+    <span class="label">The real picture</span>
+    AI mostly replaces <b>tasks</b>, not whole jobs. The work isn't vanishing; it is changing shape. A developer who uses AI well can now do the work that used to take a small team, and companies are hiring for <i>that</i> person. At the same time, demand for people who can build, deploy and evaluate AI systems keeps growing.
+  </div>
+
+  <div class="box example">
+    <span class="label">Example: the same task, two ways</span>
+    <p><b>Before:</b> a fresher spends two days writing CRUD APIs and unit tests for a student-records module.</p>
+    <p><b>Now:</b> an AI assistant writes the first draft in minutes. The valuable work is everything around it: understanding what the college actually needs, designing the data model, checking the AI's code for bugs and security issues, and deploying it reliably.</p>
+    The person who can only type the code is easy to replace. The person who can do the rest is in demand.
+  </div>
+
+  <h3>What to improve</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Skill</th><th>Why it matters more now</th></tr>
+    <tr><td><b>Fundamentals</b>: DSA, OOP, DBMS/SQL, networking, operating systems</td><td>You can't judge whether AI-written code is correct, fast or secure if you don't understand it yourself.</td></tr>
+    <tr><td><b>Problem solving and system design</b></td><td>AI is good at writing a function. Deciding <i>what</i> to build and how the pieces fit together is still your job.</td></tr>
+    <tr><td><b>Reading and reviewing code</b></td><td>You will read far more code than you write. Spotting bugs in AI output is a core skill.</td></tr>
+    <tr><td><b>Communication</b>: writing, explaining, asking good questions</td><td>Prompting is communication. So are requirements, documentation and interviews.</td></tr>
+    <tr><td><b>Ownership</b>: finishing and shipping things</td><td>A deployed project that real people use beats ten unfinished tutorials.</td></tr>
+    <tr><td><b>Domain knowledge</b>: finance, healthcare, education, manufacturing...</td><td>AI is generic. Knowing a business problem deeply is what makes your solution useful.</td></tr>
+  </table></div>
+
+  <h3>What to learn</h3>
+  <p>A practical path, roughly in order. This workshop covers the middle of it.</p>
+  <div class="flow">
+    <div class="step"><b>1. Foundations</b><small>Python, Git and GitHub, SQL, REST APIs and JSON, basic Linux.</small></div>
+    <div class="step"><b>2. Use AI tools daily</b><small>ChatGPT, Gemini, Claude, coding assistants. Learn where they help and where they fail.</small></div>
+    <div class="step"><b>3. Build with LLMs</b><small>Prompt engineering, calling LLM APIs, RAG with embeddings and vector databases. (Day 1)</small></div>
+    <div class="step"><b>4. Build agents</b><small>Tool calling, MCP, agent frameworks, multi-agent systems. (Day 2)</small></div>
+    <div class="step"><b>5. Take it to production</b><small>Cloud basics (AWS, Azure or GCP), Docker, evaluation, monitoring, cost, security.</small></div>
+  </div>
+
+  <div class="box try">
+    <span class="label">Your goal for these two days</span>
+    Leave with one working AI project on your GitHub: a campus helpdesk agent you built yourself. Then improve it, deploy it and put it on your resume. That is worth more in an interview than any certificate.
+  </div>
+
+  <!-- 1 -->
+  <h2 id="big-picture">1. The big picture</h2>
+  <p>People use "AI", "ML", "deep learning" and "GenAI" as if they mean the same thing. They don't. Each one sits inside the one before it:</p>
+
+  <div class="nest">
+    <div class="l1"><b>Artificial Intelligence (AI)</b><small>Any machine that does something we'd call "smart". Includes old rule-based systems.</small>
+      <div class="l2"><b>Machine Learning (ML)</b><small>The machine learns patterns from examples instead of being given rules.</small>
+        <div class="l3"><b>Deep Learning (DL)</b><small>ML with large neural networks that have many layers.</small>
+          <div class="l4"><b>Generative AI and LLMs</b><small>Deep learning models that create new text, images, code or audio.</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Traditional programming vs machine learning</h3>
+  <div class="table-wrap">
+  <table>
+    <tr><th></th><th>Traditional programming</th><th>Machine learning</th></tr>
+    <tr><td>You give it</td><td>Rules + data</td><td>Data + correct answers (examples)</td></tr>
+    <tr><td>It gives you</td><td>Answers</td><td>The rules (a "model")</td></tr>
+    <tr><td>Spam filter example</td><td><code>if "lottery" in email: spam</code>. Spammers write "l0ttery" and it breaks.</td><td>Show it 10,000 emails labelled spam / not spam. It learns the patterns itself, including ones you never thought of.</td></tr>
+  </table>
+  </div>
+
+  <div class="box example">
+    <span class="label">Example: placement prediction</span>
+    Give an ML model past student records (CGPA, internships, projects, communication score) and whether each student got placed. It learns which factors matter and predicts the chance for a new student. Nobody wrote the rule "CGPA &gt; 7.5 and 1 internship = likely placed". The model found it.
+  </div>
+
+  <h3>Deep learning</h3>
+  <p>Deep learning uses <b>neural networks</b>: layers of simple maths units loosely inspired by brain neurons. "Deep" just means many layers. Each layer learns something a little more complex than the one before.</p>
+  <div class="box example">
+    <span class="label">Example: face unlock on your phone</span>
+    Early layers spot edges and lines. Middle layers spot eyes, nose, mouth. Final layers recognise <i>your</i> face. No one programmed "what an eye looks like". The network learned it from millions of images.
+  </div>
+
+  <!-- 2 -->
+  <h2 id="transformers">2. Transformers and attention</h2>
+  <p>In 2017, researchers at Google published a paper called <i>"Attention Is All You Need"</i>. It introduced the <b>transformer</b>, the design behind almost every modern LLM. The "T" in GPT stands for Transformer.</p>
+  <p>Older models read a sentence one word at a time, left to right, and often forgot the start of long sentences. A transformer looks at <b>all the words at once</b> and works out <b>which words matter for each other</b>. This is called <b>attention</b>.</p>
+
+  <div class="box example">
+    <span class="label">Example: the word "bank"</span>
+    <p>"I went to the <b>bank</b> to deposit my scholarship <u>money</u>." → attention links <i>bank</i> with <i>deposit</i> and <i>money</i>, so it means a financial bank.</p>
+    <p>"We sat on the river <b>bank</b> and watched the <u>sunset</u>." → attention links <i>bank</i> with <i>river</i>, so it means the side of a river.</p>
+    Same word, different meaning, decided by the words around it.
+  </div>
+
+  <div class="box example">
+    <span class="label">Example: what does "it" mean?</span>
+    "The dog didn't cross the road because <b>it</b> was too tired." → <i>it</i> = the dog.<br>
+    "The dog didn't cross the road because <b>it</b> was too busy." → <i>it</i> = the road.<br>
+    You figured this out instantly. Attention is how a transformer does the same.
+  </div>
+
+  <!-- 3 -->
+  <h2 id="next-word">3. An LLM is a next-word predictor</h2>
+  <p>A <b>Large Language Model (LLM)</b> is a huge transformer trained on a huge amount of text (books, websites, code, Wikipedia) to do one simple job: <b>predict the next word</b>.</p>
+
+  <div class="box example">
+    <span class="label">Example</span>
+    Input: "Virat Kohli is famous for playing ___"<br>
+    The model scores every possible next word: <b>cricket</b> 92%, <i>for</i> 3%, <i>in</i> 2%, ... and picks one. Then it adds that word to the input and predicts the next one again. Word by word, it writes a whole answer.
+  </div>
+
+  <div class="box key">
+    <span class="label">Key idea</span>
+    An LLM does not "look up" answers. It generates the most likely continuation of the text, one piece at a time. It's very good at this because it has seen so much text. Everything else in this workshop builds on this one idea.
+  </div>
+
+  <figure class="diagram">
+    <img src="diagrams/llm-pipeline.svg" alt="Your text is split into tokens, turned into embeddings, processed by the transformer with attention, which outputs probabilities for the next token. One token is picked, added to the text, and the loop repeats.">
+  </figure>
+
+  <p><b>"Large"</b> refers to the number of <b>parameters</b>: the adjustable numbers inside the network that store what it learned. Modern LLMs have billions of them.</p>
+
+  <h3>From predictor to helpful assistant</h3>
+  <p>A model that only predicts the next word isn't a good chatbot yet. Ask it "What is the capital of France?" and it might continue with "What is the capital of Germany?" because that looks like a quiz list. So it is trained in stages:</p>
+  <div class="flow">
+    <div class="step"><b>1. Pre-training</b><small>Read a huge part of the internet and learn to predict the next word. Like reading an entire library.</small></div>
+    <div class="step"><b>2. Instruction tuning</b><small>Learn from thousands of example question → good answer pairs. Like learning to answer exam questions.</small></div>
+    <div class="step"><b>3. Human feedback (RLHF)</b><small>Humans rank answers; the model learns to prefer helpful, honest, safe ones. Like a mentor giving feedback.</small></div>
+  </div>
+
+  <!-- 4 -->
+  <h2 id="tokens">4. Tokens</h2>
+  <p>LLMs don't read words or letters. They read <b>tokens</b>: small chunks of text. A token can be a whole word, part of a word, a space plus a word, or punctuation.</p>
+
+  <div class="box example">
+    <span class="label">Example (illustrative split)</span>
+    "I love unbelievable biryani!" might become:
+    <div class="tokens"><span>I</span><span> love</span><span> un</span><span>believ</span><span>able</span><span> bir</span><span>yani</span><span>!</span></div>
+    Common words are usually one token. Rare words get split into pieces. The exact split depends on each model's tokenizer.
+  </div>
+
+  <div class="box key">
+    <span class="label">Rule of thumb (English)</span>
+    1 token ≈ 4 characters ≈ ¾ of a word. So 100 tokens ≈ 75 words, and a 2-page essay ≈ 1,000 tokens.
+  </div>
+
+  <h3>Why tokens matter</h3>
+  <ul>
+    <li><b>Cost:</b> APIs charge per token, for both your input and the model's output.</li>
+    <li><b>Limits:</b> every model has a maximum number of tokens it can handle at once (see <a href="#context">context window</a>).</li>
+    <li><b>Indian languages cost more:</b> the same sentence in Hindi, Kannada or Tamil often takes several times more tokens than in English, because tokenizers saw less of that text in training. More tokens = more cost and less room.</li>
+    <li><b>Strange mistakes:</b> ask a model "How many r's are in <i>strawberry</i>?" and older models often said 2. They see tokens like <code>str</code> <code>aw</code> <code>berry</code>, not individual letters.</li>
+  </ul>
+
+  <div class="box try">
+    <span class="label">Try it</span>
+    Paste a sentence into <a href="https://platform.openai.com/tokenizer" target="_blank" rel="noopener">OpenAI Tokenizer</a> or <a href="https://tiktokenizer.vercel.app" target="_blank" rel="noopener">Tiktokenizer</a>. Try the same sentence in English and in Hindi and compare the token count.
+  </div>
+
+<pre><code># Count tokens in Python (run in Google Colab)
+!pip install tiktoken
+import tiktoken
+
+enc = tiktoken.get_encoding("cl100k_base")
+text = "I love unbelievable biryani!"
+tokens = enc.encode(text)
+print(len(tokens), "tokens")
+print([enc.decode([t]) for t in tokens])</code></pre>
+
+  <!-- 5 -->
+  <h2 id="embeddings">5. Embeddings</h2>
+  <p>Computers work with numbers, not meaning. An <b>embedding</b> turns a word, sentence or document into a list of numbers (a <b>vector</b>) so that <b>things with similar meaning end up close together</b>.</p>
+
+  <figure>
+    <svg viewBox="0 0 560 300" role="img" aria-label="2D map of words: food words cluster together, job words cluster together, cricket words cluster together">
+      <rect x="0" y="0" width="560" height="300" rx="12" fill="none" stroke="currentColor" stroke-opacity="0.2"/>
+      <g font-family="system-ui, sans-serif" font-size="15" fill="currentColor">
+        <circle cx="110" cy="80" r="62" fill="#fb923c" fill-opacity="0.15"/>
+        <text x="80" y="62">samosa</text><text x="70" y="88">dosa</text><text x="112" y="108">chai</text><text x="122" y="78">biryani</text>
+        <text x="72" y="160" font-size="12" fill-opacity="0.6">Food</text>
+        <circle cx="420" cy="90" r="70" fill="#60a5fa" fill-opacity="0.15"/>
+        <text x="375" y="70">placement</text><text x="400" y="96">job</text><text x="430" y="122">recruitment</text><text x="360" y="118">interview</text>
+        <text x="395" y="180" font-size="12" fill-opacity="0.6">Jobs</text>
+        <circle cx="250" cy="225" r="60" fill="#4ade80" fill-opacity="0.15"/>
+        <text x="215" y="210">cricket</text><text x="250" y="235">bat</text><text x="210" y="250">wicket</text><text x="262" y="212">IPL</text>
+        <text x="235" y="296" font-size="12" fill-opacity="0.6">Cricket</text>
+      </g>
+    </svg>
+    <figcaption style="color:var(--muted);font-size:0.9rem">Real embeddings have hundreds or thousands of dimensions. This 2D picture shows the idea: similar meaning = nearby points.</figcaption>
+  </figure>
+
+  <div class="box example">
+    <span class="label">Example: search by meaning, not keywords</span>
+    <p>Student asks: <b>"How do I apply for placements?"</b></p>
+    <div class="table-wrap"><table>
+      <tr><th>Sentence in the FAQ</th><th>Similarity (illustrative)</th></tr>
+      <tr><td>What is the process for campus recruitment?</td><td>0.82 (very close)</td></tr>
+      <tr><td>Steps to register with the training &amp; placement cell</td><td>0.78</td></tr>
+      <tr><td>Placement of furniture in the new hostel block</td><td>0.21 (far)</td></tr>
+    </table></div>
+    The first sentence shares almost no words with the question, but it means the same thing. The last one shares the word "placement" but means something else. Embeddings get this right; keyword search does not.
+  </div>
+
+  <div class="box key">
+    <span class="label">Famous example</span>
+    With word embeddings you can do arithmetic on meaning: <b>king − man + woman ≈ queen</b>. The direction "man → woman" is roughly the same as "king → queen".
+  </div>
+
+  <p><b>Where embeddings are used:</b> semantic search, recommendations ("students who liked this course also liked..."), finding duplicate questions, and <b>RAG</b>, which we build in Session 4.</p>
+
+<pre><code># Compare sentence meanings (run in Google Colab)
+!pip install sentence-transformers
+from sentence_transformers import SentenceTransformer, util
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+q = "How do I apply for placements?"
+faqs = ["What is the process for campus recruitment?",
+        "Placement of furniture in the new hostel block"]
+
+scores = util.cos_sim(model.encode(q), model.encode(faqs))
+for faq, s in zip(faqs, scores[0]):
+    print(f"{s:.2f}  {faq}")</code></pre>
+
+  <!-- 6 -->
+  <h2 id="context">6. Context window</h2>
+  <p>The <b>context window</b> is the maximum number of tokens a model can look at in one go. It includes <b>everything</b>: the instructions, the whole conversation so far, any documents you pasted, and the answer it's writing.</p>
+
+  <div class="box example">
+    <span class="label">Analogy: an open-book exam with a small desk</span>
+    You can bring notes, but your desk only fits a certain number of pages. If you add more, the oldest pages fall off. The model can only "see" what's on the desk right now.
+  </div>
+
+  <ul>
+    <li>Sizes vary a lot: from a few thousand tokens in small models to hundreds of thousands, or even a million, in large ones. Check each model's documentation.</li>
+    <li>When a chat gets longer than the window, the app drops or summarises older messages. That's why a chatbot sometimes "forgets" what you said at the start.</li>
+    <li><b>LLMs have no memory between calls.</b> Every request starts fresh. Chat apps feel like they remember because they <b>re-send the whole conversation</b> every time. You'll build this yourself in Session 3.</li>
+    <li>Bigger isn't free: more tokens means higher cost and slower answers. Models can also miss details buried in the middle of very long inputs.</li>
+  </ul>
+
+  <!-- 7 -->
+  <h2 id="temperature">7. Temperature</h2>
+  <p>Remember that the model gives a probability for every possible next token. <b>Temperature</b> controls how it picks from that list.</p>
+  <ul>
+    <li><b>Low temperature (0 – 0.3):</b> almost always picks the top choice. Predictable and consistent.</li>
+    <li><b>High temperature (0.8 – 1.5):</b> gives less likely words a real chance. Creative and varied, but more likely to go off track.</li>
+  </ul>
+
+  <div class="box try">
+    <span class="label">Try it: move the slider</span>
+    <div data-temp-demo data-themed></div>
+  </div>
+
+  <div class="table-wrap"><table>
+    <tr><th>Task</th><th>Temperature</th><th>Why</th></tr>
+    <tr><td>Answer from the syllabus, extract data to JSON, write code</td><td>Low (0 – 0.3)</td><td>You want the same correct answer every time.</td></tr>
+    <tr><td>General chat, explanations</td><td>Medium (0.5 – 0.8)</td><td>Natural but still focused.</td></tr>
+    <tr><td>Names for the college tech fest, poems, brainstorming</td><td>High (0.9 – 1.2)</td><td>You want variety and surprise.</td></tr>
+  </table></div>
+  <p style="color:var(--muted);font-size:0.95rem">You may also see <b>top-p</b>. It's a related setting: "only pick from the smallest group of words that together cover p% of the probability". Usually you tune one of the two, not both.</p>
+
+  <!-- 8 -->
+  <h2 id="hallucination">8. Why LLMs hallucinate</h2>
+  <p>A <b>hallucination</b> is when a model gives an answer that sounds confident and fluent but is <b>false or made up</b>.</p>
+
+  <div class="box example">
+    <span class="label">Example</span>
+    <p>Prompt: <i>"Summarise the 2019 research paper 'Quantum Biryani Optimization' by Dr. R. Sharma, IIT Bombay."</i></p>
+    <p>This paper doesn't exist. A model may still write a detailed summary, with methods and results, because that's what a summary of a paper <i>looks like</i>. Other common cases: fake citations, wrong dates, invented court cases, made-up library functions in code.</p>
+  </div>
+
+  <h3>Why it happens</h3>
+  <ol>
+    <li><b>It predicts plausible text, not true text.</b> Its goal is "what words usually come next", not "what is a fact".</li>
+    <li><b>It has no built-in fact database.</b> What it learned is stored as patterns in its parameters, not as a list of facts it can check.</li>
+    <li><b>Knowledge cutoff.</b> It only knows what was in its training data up to a certain date. It doesn't know your college's latest timetable.</li>
+    <li><b>It is rewarded for answering.</b> Training often rewards a helpful-looking answer more than "I don't know", so it guesses.</li>
+  </ol>
+
+  <h3>How to reduce it</h3>
+  <ul>
+    <li><b>Give it the source:</b> paste the document, or use <b>RAG</b> to fetch the right text automatically (Session 4).</li>
+    <li><b>Allow "I don't know":</b> add "If the answer isn't in the text, say you don't know."</li>
+    <li><b>Ask for citations</b>, then actually check them.</li>
+    <li><b>Lower the temperature</b> for factual tasks.</li>
+    <li><b>Give it tools</b> like web search or a calculator (Day 2: agents).</li>
+    <li><b>Keep a human in the loop</b> for anything important: marks, money, medical, legal.</li>
+  </ul>
+
+  <!-- 9 -->
+  <h2 id="models">9. Open vs closed models, and how to choose</h2>
+  <div class="table-wrap"><table>
+    <tr><th></th><th>Closed models</th><th>Open-weight models</th></tr>
+    <tr><td>Examples</td><td><b>GPT</b> (OpenAI), <b>Claude</b> (Anthropic), <b>Gemini</b> (Google)</td><td><b>Llama</b> (Meta), <b>Mistral</b>, also Gemma (Google), Qwen (Alibaba), DeepSeek</td></tr>
+    <tr><td>How you use it</td><td>Through the company's app or API. You can't download the model.</td><td>Download and run it yourself: on a laptop (e.g. with Ollama), your own server, or a host like Groq.</td></tr>
+    <tr><td>Strengths</td><td>Usually the most capable. No hardware needed. Quick to start.</td><td>Full control. Data can stay on your machines. Can be customised (fine-tuned). No per-token fee if self-hosted.</td></tr>
+    <tr><td>Weaknesses</td><td>Pay per token. Your data goes to the provider. The provider can change or retire the model.</td><td>Need GPUs and skills to run well. Big models are expensive to host. Licences vary.</td></tr>
+  </table></div>
+  <p style="color:var(--muted);font-size:0.95rem">"Open-weight" means the trained model is published. It doesn't always mean the training data and code are open too, and licences can restrict commercial use. Always read the licence.</p>
+
+  <h3>How to choose: a simple checklist</h3>
+  <ol>
+    <li><b>Quality:</b> is it good enough at <i>your</i> task? Test with 10–20 real examples.</li>
+    <li><b>Cost:</b> how many requests per day × tokens per request × price per token?</li>
+    <li><b>Speed:</b> does the user need an answer in under a second (chat) or can it wait (overnight report)?</li>
+    <li><b>Privacy:</b> can this data leave your organisation?</li>
+    <li><b>Language:</b> does it handle Hindi, Kannada, Tamil, etc. well?</li>
+    <li><b>Context length:</b> do you need to fit long documents?</li>
+    <li><b>Licence:</b> are you allowed to use it commercially?</li>
+  </ol>
+
+  <div class="box example">
+    <span class="label">Scenarios: which would you pick?</span>
+    <details><summary>24-hour hackathon prototype</summary>A closed model through an API, or a free tier (Gemini free tier, Groq). Fastest to start; quality matters more than cost here.</details>
+    <details><summary>Hospital summarising patient records; data must not leave the building</summary>An open-weight model running on the hospital's own servers.</details>
+    <details><summary>Classifying 10 lakh customer reviews a day as positive / negative</summary>A small, cheap, fast model. A giant model is overkill for a simple task at high volume.</details>
+    <details><summary>Customer support chatbot in Kannada</summary>Test several models on real Kannada questions before choosing. Language quality varies a lot.</details>
+  </div>
+
+  <div class="box key">
+    <span class="label">Practical tip</span>
+    Start with the strongest model you can access to prove the idea works. Then try smaller, cheaper models and keep the smallest one that's still good enough.
+  </div>
+
+  <!-- 10 -->
+  <h2 id="recap">10. Recap</h2>
+  <ol>
+    <li>AI ⊃ ML ⊃ Deep Learning ⊃ LLMs. ML learns rules from examples.</li>
+    <li>Transformers use <b>attention</b> to understand each word using the words around it.</li>
+    <li>An LLM <b>predicts the next token</b>, again and again. Training stages turn it into an assistant.</li>
+    <li><b>Tokens</b> are the unit of input, cost and limits. <b>Embeddings</b> turn meaning into numbers.</li>
+    <li>The <b>context window</b> is the model's short-term memory. LLMs don't remember between calls.</li>
+    <li><b>Temperature</b>: low for facts, high for creativity.</li>
+    <li>LLMs <b>hallucinate</b> because they generate plausible text. Ground them with sources.</li>
+    <li>Choose models by quality, cost, speed, privacy, language and licence, not by hype.</li>
+  </ol>
+
+  <h2 id="quiz">Quick quiz</h2>
+  <details><summary>1. An ML spam filter is given 10,000 labelled emails. What does it produce?</summary>A model: rules/patterns it learned to decide whether a new email is spam.</details>
+  <details><summary>2. What does "attention" help a transformer do?</summary>Decide which other words in the input matter for understanding each word (e.g. "bank" near "money" vs near "river").</details>
+  <details><summary>3. Roughly how many tokens is a 750-word English essay?</summary>About 1,000 tokens (1 token ≈ ¾ word).</details>
+  <details><summary>4. Why does a chatbot "forget" the start of a very long conversation?</summary>The conversation exceeded the context window, so older messages were dropped or summarised.</details>
+  <details><summary>5. You're extracting student names and marks into JSON. High or low temperature?</summary>Low (around 0). You want consistent, exact output.</details>
+  <details><summary>6. Give two reasons LLMs hallucinate and one way to reduce it.</summary>They predict plausible text, not verified facts; they have a knowledge cutoff; training rewards answering. Reduce it by giving source documents (RAG), allowing "I don't know", lowering temperature, or checking citations.</details>
+  <details><summary>7. A bank wants an internal assistant, and customer data can't leave its servers. Open or closed model?</summary>An open-weight model hosted on the bank's own infrastructure (or a closed model only if the provider offers a deployment that meets the bank's data rules).</details>
+
+  <h2 id="glossary">Glossary</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Term</th><th>Meaning in one line</th></tr>
+    <tr><td>Model</td><td>The trained program that makes predictions.</td></tr>
+    <tr><td>Parameters</td><td>The numbers inside a model that store what it learned.</td></tr>
+    <tr><td>Neural network</td><td>Layers of simple maths units that learn patterns from data.</td></tr>
+    <tr><td>Transformer</td><td>The neural network design behind LLMs; uses attention.</td></tr>
+    <tr><td>Token</td><td>A chunk of text the model reads and writes.</td></tr>
+    <tr><td>Embedding</td><td>A list of numbers representing the meaning of text.</td></tr>
+    <tr><td>Context window</td><td>Max tokens the model can see at once (input + output).</td></tr>
+    <tr><td>Temperature</td><td>How random or creative the model's word choice is.</td></tr>
+    <tr><td>Hallucination</td><td>A confident but false answer.</td></tr>
+    <tr><td>Knowledge cutoff</td><td>The date after which the model has no training data.</td></tr>
+    <tr><td>Pre-training / fine-tuning</td><td>Learning from huge general text / then from smaller, focused examples.</td></tr>
+    <tr><td>RLHF</td><td>Reinforcement Learning from Human Feedback: humans rank answers to improve the model.</td></tr>
+    <tr><td>Open-weight model</td><td>A model whose trained parameters you can download and run.</td></tr>
+  </table></div>
+
+  <h2 id="learn-more">Learn more (free)</h2>
+  <ul>
+    <li>3Blue1Brown, <i>Neural Networks</i> video series on YouTube (includes visual explanations of transformers and attention)</li>
+    <li>Andrej Karpathy, <i>Intro to Large Language Models</i> (1-hour talk on YouTube)</li>
+    <li>Jay Alammar, <i>The Illustrated Transformer</i> (blog post)</li>
+    <li>Vaswani et al., <i>Attention Is All You Need</i> (2017), the original transformer paper</li>
+  </ul>
+
+  <!-- Instructor -->
+  <h2 id="instructor">Instructor guide</h2>
+  <p>Suggested plan for the 60 minutes. Press <b>S</b> in the slides to open speaker notes.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Time</th><th>Segment</th><th>What to do</th></tr>
+    <tr><td>0–10 min</td><td>Intro + hook</td><td>Introduce yourself. Ask: who is worried about layoffs or AI taking jobs? Walk through why layoffs are happening, what to improve and what to learn. Keep it encouraging, not scary. Then: who used ChatGPT / Gemini / Claude this week? "How does it know?"</td></tr>
+    <tr><td>10–18 min</td><td>AI → ML → DL → Transformers</td><td>Spam filter, placement prediction, face unlock, "bank" and "it" examples.</td></tr>
+    <tr><td>18–22 min</td><td>Next-word prediction</td><td>Game: say "Virat Kohli is famous for playing..." and let the class finish it. Then "Once upon a..." The class is the LLM.</td></tr>
+    <tr><td>22–35 min</td><td>Tokens, embeddings, context, temperature</td><td>Live tokenizer demo (English vs Hindi). Temperature slider demo. Desk analogy for context.</td></tr>
+    <tr><td>35–45 min</td><td>Hallucination</td><td>Live: ask a chatbot about the fake "Quantum Biryani Optimization" paper, or about a fake event at your college. Discuss why.</td></tr>
+    <tr><td>45–55 min</td><td>Open vs closed, choosing</td><td>Run the four scenarios as a class vote before revealing answers. If short on time, do two scenarios.</td></tr>
+    <tr><td>55–60 min</td><td>Recap + quiz</td><td>Ask 3–4 quiz questions aloud. Preview Session 2: prompt engineering.</td></tr>
+  </table></div>
+  <div class="box try">
+    <span class="label">Before class</span>
+    Open the tokenizer site and a chatbot in browser tabs. Test the hallucination prompt beforehand (newer models may refuse; if so, show that as a good example of a model saying "I can't find that"). Have a backup screenshot in case the internet is slow.
+  </div>
+
+  <footer>
+    Session 1 of the GenAI &amp; Agentic AI 2-day workshop · <a href="../">All sessions</a> · <a href="slides.html">Slides</a>
+  </footer>
+</main>
+<script src="../assets/temperature.js"></script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building with LLM APIs: Slides</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+<style>
+  :root {
+    --r-main-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-text-transform: none;
+    --r-heading-font-weight: 750;
+    --r-main-font-size: 32px;
+    --r-link-color: #1d4ed8;
+    --accent: #c2410c;
+    --soft: #fff1e8;
+    --blue-soft: #eaf0ff;
+    --green-soft: #e9f8ee;
+    --muted: #5b636e;
+  }
+  body, .reveal-viewport { background: #fbfaf7; }
+  .reveal h1 { font-size: 2.2em; }
+  .reveal h2 { font-size: 1.5em; color: #1f2328; margin-bottom: 0.5em; }
+  .reveal .slides section { text-align: left; }
+  .reveal .slides section.center { text-align: center; }
+  .reveal .accent { color: var(--accent); }
+  .reveal .muted { color: var(--muted); }
+  .reveal .small { font-size: 0.7em; }
+  .reveal ul, .reveal ol { display: block; margin-left: 1.1em; }
+  .reveal li { margin: 0.25em 0; }
+  .reveal .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.55em; font-weight: 700; }
+  .reveal .card { background: #fff; border: 1px solid #e3e0d8; border-radius: 14px; padding: 0.6em 0.8em; }
+  .reveal .card.hl { background: var(--soft); border-color: transparent; }
+  .reveal .card.ex { background: var(--blue-soft); border-color: transparent; }
+  .reveal .card.ok { background: var(--green-soft); border-color: transparent; }
+  .reveal .card h3 { font-size: 0.8em; margin: 0 0 0.3em; }
+  .reveal .card p, .reveal .card li { font-size: 0.8em; }
+  .reveal .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7em; }
+  .reveal .cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6em; }
+  .reveal .big { font-size: 1.35em; font-weight: 700; line-height: 1.3; }
+  .reveal table { font-size: 0.68em; width: 100%; }
+  .reveal table th, .reveal table td { padding: 0.35em 0.5em; border-bottom: 1px solid #e3e0d8; }
+  .reveal code { background: #f3f1ec; padding: 0 0.2em; border-radius: 4px; }
+  .reveal pre { width: 100%; box-shadow: none; font-size: 0.5em; margin: 0.3em 0; }
+  .reveal pre code { background: #f3f1ec; border-radius: 10px; padding: 0.6em 0.8em; max-height: 460px; line-height: 1.4; }
+  .reveal img.diagram { width: 100%; margin: 0; }
+  .reveal .slide-number { background: transparent; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1. Title -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">GenAI &amp; Agentic AI Workshop · Day 1 · Session 3</p>
+  <h1 style="color:#fff">Building with LLM APIs</h1>
+  <p style="color:#cbd5e1">From chatting with AI to building with it</p>
+  <p class="small" style="color:#94a3b8">Press <b>→</b> to move · <b>S</b> for speaker notes · <b>F</b> for full screen</p>
+  <aside class="notes">Sessions 1 and 2 used chat apps. Today we write code that calls the model, so we can build our own apps. By the end: a chatbot with memory.</aside>
+</section>
+
+<!-- 2. Hook -->
+<section>
+  <h2>How do apps put AI inside them? 🤔</h2>
+  <p>Food-delivery support bots, review summaries, your college's future helpdesk...</p>
+  <p class="fragment big accent" style="margin-top:0.6em">They don't open ChatGPT.<br>Their code calls an <b>API</b>.</p>
+</section>
+
+<!-- 3. Waiter -->
+<section>
+  <h2>API = the waiter 🍽️</h2>
+  <div class="cols">
+    <div class="card"><h3>You = your code</h3><p>Place an order (request)</p></div>
+    <div class="card"><h3>Kitchen = the model</h3><p>Runs on Google's / Groq's servers</p></div>
+  </div>
+  <p class="card hl" style="margin-top:0.6em">The waiter (API) takes the order and brings back the food (response). You don't need to know how the kitchen works.</p>
+</section>
+
+<!-- 4. Diagram -->
+<section>
+  <h2>One API call</h2>
+  <img class="diagram" src="diagrams/api-call.svg" alt="Request with key, model, messages, settings; response with text, usage, finish reason">
+  <aside class="notes">Point at "usage": this is what you pay for. We'll come back to it in the cost section.</aside>
+</section>
+
+<!-- 5. Key -->
+<section>
+  <h2>Your API key = a password 🔑</h2>
+  <ol>
+    <li>Get a free key: <b>aistudio.google.com/apikey</b></li>
+    <li>Colab → 🔑 Secrets → <code>GEMINI_API_KEY</code> → Notebook access ON</li>
+    <li>In code: <code>userdata.get("GEMINI_API_KEY")</code></li>
+  </ol>
+  <p class="fragment card hl" style="margin-top:0.6em">🚫 Never paste the key in code and push to GitHub. Bots find leaked keys <b>in minutes</b>.</p>
+  <aside class="notes">Pause here and have everyone create a key and add the secret. This is where most lab problems come from: wrong secret name or Notebook access off.</aside>
+</section>
+
+<!-- 6. First call -->
+<section>
+  <h2>Your first call</h2>
+<pre><code class="python">from google import genai
+from google.colab import userdata
+
+client = genai.Client(api_key=userdata.get("GEMINI_API_KEY"))
+MODEL = "gemini-2.5-flash"
+
+resp = client.models.generate_content(
+    model=MODEL,
+    contents="Explain what a compiler does in 2 lines, for a first-year student.",
+)
+print(resp.text)</code></pre>
+  <p class="fragment big accent">Client + model + text. That's it.</p>
+</section>
+
+<!-- 7. Settings -->
+<section>
+  <h2>Adding settings</h2>
+<pre><code class="python">resp = client.models.generate_content(
+    model=MODEL,
+    contents="Suggest 3 names for our college coding club.",
+    config=types.GenerateContentConfig(
+        system_instruction="You are a creative assistant. Reply as a numbered list.",
+        temperature=1.0,          # Session 1
+        max_output_tokens=200,    # limit length (and cost)
+    ),
+)</code></pre>
+  <p class="small muted">Response also has <code>usage_metadata</code> (tokens) and <code>finish_reason</code> (<code>STOP</code> or <code>MAX_TOKENS</code>).</p>
+</section>
+
+<!-- 8. Roles -->
+<section>
+  <h2>Messages have roles</h2>
+  <table>
+    <tr><th>Role</th><th>Who</th><th>Example</th></tr>
+    <tr><td><b>system</b></td><td>Developer (hidden)</td><td>"You are CampusBuddy..."</td></tr>
+    <tr><td><b>user</b></td><td>The person</td><td>"When is the DBMS exam?"</td></tr>
+    <tr><td><b>model</b> / assistant</td><td>The AI's earlier replies</td><td>"12 Dec at 10 AM."</td></tr>
+  </table>
+  <p class="small muted" style="margin-top:0.6em">Gemini says <code>model</code>; OpenAI-style APIs (Groq) say <code>assistant</code>.</p>
+</section>
+
+<!-- 9. Memory diagram -->
+<section>
+  <h2>Memory: the model forgets 🐟</h2>
+  <img class="diagram" src="diagrams/chat-memory.svg" alt="Re-sending history gives memory; without history the model forgets">
+  <aside class="notes">Session 1: no memory between calls. The app re-sends the whole chat. Ask: what happens to cost as the chat gets longer?</aside>
+</section>
+
+<!-- 10. Memory code -->
+<section>
+  <h2>Memory is just a list</h2>
+<pre><code class="python">history = []
+
+def chat(user_text):
+    history.append({"role": "user", "parts": [{"text": user_text}]})
+    resp = client.models.generate_content(
+        model=MODEL, contents=history,        # send EVERYTHING
+        config=types.GenerateContentConfig(system_instruction=SYSTEM))
+    history.append({"role": "model", "parts": [{"text": resp.text}]})
+    return resp.text
+
+chat("Hi, I'm Priya from CSE.")
+chat("What's my name and branch?")   # → Priya, CSE ✅</code></pre>
+  <p class="fragment">Change <code>contents=history</code> → <code>contents=user_text</code> and it forgets ❌</p>
+  <aside class="notes">Do this live. Then break it. That one line is the memory.</aside>
+</section>
+
+<!-- 11. Streaming -->
+<section>
+  <h2>Streaming ⚡</h2>
+  <img class="diagram" src="diagrams/streaming.svg" alt="Streaming shows words as they are generated">
+<pre class="fragment"><code class="python">for chunk in client.models.generate_content_stream(model=MODEL, contents=prompt):
+    print(chunk.text or "", end="", flush=True)</code></pre>
+</section>
+
+<!-- 12. Cost -->
+<section>
+  <h2>What does it cost? 💰</h2>
+  <p class="small muted">Illustrative prices: $0.30 / million input tokens, $2.50 / million output tokens</p>
+  <table>
+    <tr><th></th><th>2,000 students × 10 questions a day</th><th>Tokens</th><th>Cost</th></tr>
+    <tr><td>Input</td><td>× 500 tokens (prompt + history)</td><td>10 M</td><td>$3.00</td></tr>
+    <tr><td>Output</td><td>× 200 tokens</td><td>4 M</td><td>$10.00</td></tr>
+    <tr class="fragment"><td colspan="3"><b>Total per day</b></td><td><b class="accent">$13 ≈ ₹1,100</b></td></tr>
+  </table>
+  <p class="fragment small" style="margin-top:0.6em">Save: smaller model · short system prompt · trim history · <code>max_output_tokens</code> · cache common answers</p>
+  <aside class="notes">Do the maths on the board with the class. Point out output is pricier per token. Prices change: always check the pricing page.</aside>
+</section>
+
+<!-- 13. Errors -->
+<section>
+  <h2>When things go wrong</h2>
+  <table>
+    <tr><th>Error</th><th>Meaning</th><th>Fix</th></tr>
+    <tr><td><b>400</b></td><td>Bad request</td><td>Fix your code</td></tr>
+    <tr><td><b>401 / 403</b></td><td>Bad or missing key</td><td>Check the secret</td></tr>
+    <tr><td><b>429</b></td><td>Rate limit hit</td><td>Wait, retry with backoff</td></tr>
+    <tr><td><b>500 / 503</b></td><td>Provider problem</td><td>Wait, retry</td></tr>
+  </table>
+  <p class="fragment card hl" style="margin-top:0.6em">60 students on free keys = some 429s. Normal! Wait a minute and retry.</p>
+</section>
+
+<!-- 14. Providers -->
+<section>
+  <h2>Every API looks the same</h2>
+  <p class="big">model + messages + settings<br>→ <span class="accent">text + token usage</span></p>
+  <div class="cols" style="margin-top:0.6em">
+    <div class="card"><h3>Gemini</h3><p><code>client.models.generate_content(...)</code></p></div>
+    <div class="card"><h3>Groq / OpenAI</h3><p><code>client.chat.completions.create(...)</code></p></div>
+  </div>
+  <p class="small muted" style="margin-top:0.6em">Keep a Groq key as a backup if one provider is slow or rate-limited.</p>
+</section>
+
+<!-- 15. Lab -->
+<section>
+  <h2>Lab: CampusBuddy with memory (25 min) 🧪</h2>
+  <ol>
+    <li>First call + print token usage</li>
+    <li>Write <code>cost()</code></li>
+    <li>Stream an answer</li>
+    <li>Build <code>chat()</code> with history. Prove it remembers you</li>
+    <li>Break the memory, then fix it</li>
+    <li>Chat loop with tokens + cost per turn</li>
+  </ol>
+  <p class="small muted">Stretch: keep only the last 6 messages · retry on 429 · switch to Groq</p>
+  <aside class="notes">Notebook is linked from the Session 3 notes page and the Projects page (Project 2).</aside>
+</section>
+
+<!-- 16. Recap -->
+<section>
+  <h2>Recap</h2>
+  <ol>
+    <li><b>API</b>: your code → request → response</li>
+    <li><b>API key</b> = password. Never in GitHub</li>
+    <li><b>Roles</b>: system · user · model</li>
+    <li><b>Memory</b> = re-send the history (trim it!)</li>
+    <li><b>Streaming</b> = same cost, feels faster</li>
+    <li><b>Cost</b> = input × price + output × price</li>
+    <li><b>429</b> → wait and retry</li>
+  </ol>
+</section>
+
+<!-- 17. Quiz -->
+<section>
+  <h2>Quick quiz 🧠</h2>
+  <ol>
+    <li>How does a bot remember your name?<span class="fragment accent"> Code re-sends the history</span></li>
+    <li>Why do long chats cost more?<span class="fragment accent"> More input tokens every turn</span></li>
+    <li>Is streaming cheaper?<span class="fragment accent"> No, just feels faster</span></li>
+    <li>Error 429?<span class="fragment accent"> Rate limit: wait and retry</span></li>
+  </ol>
+</section>
+
+<!-- 18. Next -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">Up next · Session 4</p>
+  <h1 style="color:#fff">RAG</h1>
+  <p style="color:#cbd5e1">Make CampusBuddy answer from your college's own documents, with sources</p>
+  <p style="color:#fff;margin-top:1em">Questions? 🙋</p>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    width: 1280,
+    height: 720,
+    margin: 0.06,
+    transition: 'slide',
+    plugins: [RevealNotes]
+  });
+</script>
+</body>
+</html>
