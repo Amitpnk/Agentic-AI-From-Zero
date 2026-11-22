@@ -302,4 +302,4 @@ In groups, find the problems in this plan and suggest fixes.
 
 ---
 
-**Previous:** [Session 8: Agent Frameworks and Multi-Agent Systems](../session-08/notes.md) · **Next:** Session 10: Mini Project and Careers (coming soon)
+**Previous:** [Session 8: Agent Frameworks and Multi-Agent Systems](../session-08/notes.md) · **Next:** [Session 10: Mini Project and Careers](../session-10/notes.md)

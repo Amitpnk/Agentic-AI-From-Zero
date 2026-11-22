@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session 10: Mini Project and Careers</title>
+<meta name="description" content="The capstone: a campus helpdesk agent with RAG, tools, memory, guardrails and evals. Then careers in AI: GenAI developer, AI engineer, forward deployed engineer, ML engineer; a 90-day learning plan, portfolio tips and interview questions.">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="home" href="../">GenAI &amp; Agentic AI Workshop</a>
+    <nav>
+      <a href="slides.html">Slides</a>
+      <a href="#capstone">Capstone</a>
+      <a href="#careers">Careers</a>
+      <a href="#instructor">Instructor guide</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="eyebrow">Day 2 · Session 10 · 1 hour</div>
+  <h1>Mini Project and Careers</h1>
+  <p class="lead">Time to put it all together. First you'll build the campus helpdesk agent, using everything from the two days in one notebook. Then we'll talk about where this can take you: the jobs, what to learn next, and how to build a portfolio that gets interviews.</p>
+
+  <div class="btn-row">
+    <a class="btn" href="https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-10-capstone-lab.ipynb" target="_blank" rel="noopener">Open the capstone in Colab</a>
+    <a class="btn secondary" href="slides.html">Open the slides</a>
+  </div>
+
+  <div class="toc">
+    <b>What's in this session</b>
+    <ol>
+      <li><a href="#journey">Two days in one picture</a></li>
+      <li><a href="#capstone">The capstone: campus helpdesk agent</a></li>
+      <li><a href="#careers">AI careers: the roles</a></li>
+      <li><a href="#skills">What companies look for</a></li>
+      <li><a href="#roadmap">Your next 90 days</a></li>
+      <li><a href="#portfolio">A portfolio that gets interviews</a></li>
+      <li><a href="#interview">Interview questions you can now answer</a></li>
+      <li><a href="#resources">Free resources</a></li>
+      <li><a href="#review">Two-day review quiz</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <h2 id="journey">1. Two days in one picture</h2>
+  <figure class="diagram">
+    <img src="diagrams/two-day-journey.svg" alt="Day 1: how LLMs work, prompt engineering, LLM APIs, RAG, responsible AI. Day 2: chatbots to agents, tool calling and MCP, frameworks and multi-agent teams, production, capstone and careers. Six projects built along the way.">
+  </figure>
+  <p>Two days ago, an LLM was something you chatted with. Now you know how it works inside, how to prompt it, call it from code, ground it in your own documents, keep it safe, give it tools, organise agents into teams, and ship it. That's the core skill set of an AI engineer.</p>
+
+  <!-- 2 -->
+  <h2 id="capstone">2. The capstone: campus helpdesk agent</h2>
+  <p>A student asks: <i>"When is my OS exam? Is the library open the day before? And what's the late fee if I pay my fees late?"</i> Your agent answers all three, using the right tool for each, and remembers who it's talking to.</p>
+
+  <figure class="diagram">
+    <img src="../projects/diagrams/helpdesk-architecture.svg" alt="The campus helpdesk agent: a student asks a question; the agent (LLM + system prompt) uses memory, searches the college FAQ with RAG, calls the timetable tool, follows guardrails, and can be deployed as an API.">
+  </figure>
+
+  <div class="table-wrap"><table>
+    <tr><th>Piece</th><th>What it does</th><th>From</th></tr>
+    <tr><td>System prompt</td><td>Role, rules, "cite sources", "never guess"</td><td>Session 2</td></tr>
+    <tr><td>Memory</td><td>Remembers the conversation (only questions and answers, so it stays small)</td><td>Session 3</td></tr>
+    <tr><td><code>search_faq</code> tool</td><td>RAG over the college FAQ, now as a tool the agent chooses to use</td><td>Session 4</td></tr>
+    <tr><td>Guardrails</td><td>Injection check and personal-data masking</td><td>Session 5</td></tr>
+    <tr><td>Agent loop</td><td>The model picks tools until it can answer</td><td>Sessions 6–7</td></tr>
+    <tr><td>Live tools</td><td>Exam timetable, library hours, weather (read-only)</td><td>Session 7</td></tr>
+    <tr><td>Evals</td><td>6 test cases before you share it</td><td>Session 9</td></tr>
+    <tr><td>Chat web page</td><td>Gradio: a shareable link you can open on your phone</td><td>New today</td></tr>
+  </table></div>
+
+  <h3>The key new idea: RAG as a tool</h3>
+  <p>In Session 4, the bot <i>always</i> searched the FAQ. Now <code>search_faq</code> is just one of the agent's tools. For "When is my OS exam?" it calls the timetable; for "What's the hostel fee?" it searches the FAQ; for "Hi!" it calls nothing. The agent decides.</p>
+<pre><code>def search_faq(question: str) -&gt; dict:
+    """Search the college FAQ (rules about exams, attendance, fees, hostel, library, placements...)."""
+    q = embedder.encode([question], normalize_embeddings=True).tolist()
+    res = col.query(query_embeddings=q, n_results=3)
+    hits = [{"source": m["source"], "text": t, "score": round(1 - d / 2, 2)}
+            for t, m, d in zip(res["documents"][0], res["metadatas"][0], res["distances"][0])]
+    hits = [h for h in hits if h["score"] &gt;= MIN_SCORE]
+    return {"results": hits} if hits else {"results": [], "note": "Nothing relevant in the FAQ."}
+
+TOOLS = {f.__name__: f for f in (search_faq, get_exam_date, get_library_hours, get_weather)}</code></pre>
+
+  <h3>A conversation with your agent</h3>
+  <div class="box example">
+    <span class="label">What you'll see in the notebook</span>
+<pre style="margin:0;background:none;padding:0"><code>🧑 Hi, I'm Priya from CSE, 3rd year.
+🤖 Hi Priya! How can I help?
+🧑 When is my OS exam?
+   🛠️  get_exam_date({'subject': 'OS'})
+🤖 Your OS exam is on Monday 14 December at 2 PM in Hall A.
+🧑 Is the library open the day before? I want to study there.
+   🛠️  get_library_hours({'date': '2026-12-13'})
+🤖 Yes! Sunday 13 December is in exam month, so it's open 10 AM to 4 PM.
+🧑 What's the late fee if I pay my second fee instalment late?
+   🛠️  search_faq({'question': 'late fee second instalment'})
+🤖 ₹100 per day after 15 January, up to ₹2,000 [Fees].
+🧑 Thanks! By the way, what's my name and branch?
+🤖 You're Priya, from CSE.</code></pre>
+  </div>
+  <p>Notice the third question: "the day before" only makes sense because of <b>memory</b>. The agent remembered the OS exam date from the previous turn and worked out the Sunday by itself.</p>
+
+  <h3>Lab steps (30 min)</h3>
+  <ol>
+    <li>Build the knowledge base: chunk, embed and store the FAQ.</li>
+    <li>Set up the four read-only tools, including <code>search_faq</code>.</li>
+    <li>Write the system prompt and guardrails.</li>
+    <li>Build <code>chat()</code>: guardrails → memory → agent loop → output check.</li>
+    <li>Have the five-turn conversation above.</li>
+    <li>Run the evals.</li>
+    <li>Launch the Gradio chat page and open it on your phone.</li>
+  </ol>
+  <div class="box try">
+    <span class="label">Make it yours (pick one or two)</span>
+    Use your real college's documents. Add a tool (bus timings, canteen menu, lab slots). Try it in Hindi or Kannada. Deploy it with the <a href="https://github.com/Amitpnk/Agentic-AI-From-Zero/tree/main/labs/session-09-deploy" target="_blank" rel="noopener">Session 9 starter</a>. Add room booking with human approval.
+  </div>
+
+  <!-- 3 -->
+  <h2 id="careers">3. AI careers: the roles</h2>
+  <figure class="diagram">
+    <img src="diagrams/ai-roles.svg" alt="Four roles. GenAI app developer: adds AI features to apps (Sessions 2 to 4). AI engineer: builds and ships complete AI products with agents, evals and monitoring (Sessions 6 to 9). Forward deployed engineer: works directly with customers to build AI solutions for their real problems. ML engineer or data scientist: trains and evaluates models. All need Python, Git, SQL, APIs and communication.">
+  </figure>
+
+  <div class="table-wrap"><table>
+    <tr><th>Role</th><th>A typical day</th><th>You'd enjoy it if...</th></tr>
+    <tr><td><b>GenAI app developer</b></td><td>Add a "chat with your documents" feature to the company app; tune prompts; connect a vector DB</td><td>You like building features people use</td></tr>
+    <tr><td><b>AI engineer</b></td><td>Build an agent with tools, write evals, look at traces to find why answers are wrong, cut the cost per request</td><td>You like engineering, debugging and making things reliable</td></tr>
+    <tr><td><b>Forward deployed engineer</b></td><td>Sit with a bank's or hospital's team, understand their messy problem, prototype an AI solution in days, and get it into their real systems</td><td>You like people, variety, and seeing direct impact</td></tr>
+    <tr><td><b>ML engineer / data scientist</b></td><td>Prepare data, train or fine-tune a model, run experiments, measure accuracy, deploy and monitor the model</td><td>You like maths, data and experiments</td></tr>
+  </table></div>
+  <p>Related roles: <b>MLOps / LLMOps engineer</b> (infrastructure for models), <b>AI product manager</b> (decides what to build), <b>solutions architect</b> (designs AI systems for clients), and <b>AI safety / red-team</b> roles. "Prompt engineer" is now usually a skill inside these jobs rather than a job of its own.</p>
+  <div class="box key">
+    <span class="label">Remember Session 1</span>
+    AI replaces <i>tasks</i>, not whole jobs. The roles above exist because companies need people who can turn AI into something that actually works for their customers, safely and at a sensible cost. That's what you practised for two days.
+  </div>
+
+  <!-- 4 -->
+  <h2 id="skills">4. What companies look for</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Skill</th><th>How to show it</th></tr>
+    <tr><td><b>Fundamentals</b>: Python, Git, SQL, APIs, DSA</td><td>Clean code on GitHub; coding rounds</td></tr>
+    <tr><td><b>Building with LLMs</b>: prompts, RAG, tools, agents</td><td>Deployed projects (like your capstone)</td></tr>
+    <tr><td><b>Judgement</b>: when to use RAG vs an agent vs a workflow; when <i>not</i> to use AI</td><td>Explain your design choices in the README and in interviews</td></tr>
+    <tr><td><b>Quality</b>: evals, testing, debugging with traces</td><td>An eval set and results in your repo</td></tr>
+    <tr><td><b>Responsibility</b>: safety, privacy, cost awareness</td><td>Guardrails and a "limitations" section in your README</td></tr>
+    <tr><td><b>Communication</b>: explaining clearly to non-experts</td><td>A blog post or LinkedIn post about what you built</td></tr>
+  </table></div>
+
+  <!-- 5 -->
+  <h2 id="roadmap">5. Your next 90 days</h2>
+  <figure class="diagram">
+    <img src="diagrams/learning-roadmap.svg" alt="Month 1: finish and ship the capstone, deploy it, write a README, post on LinkedIn, strengthen fundamentals. Month 2: go deeper in one track: RAG and evals, agents, or ML foundations, plus one cloud. Month 3: build for a real person, join a hackathon, contribute to open source, practise interviews.">
+  </figure>
+  <p>Pick a track by what excited you most in these two days: answering from documents (RAG), tools and agents, or how models learn (ML). Depth in one beats a little of everything.</p>
+
+  <!-- 6 -->
+  <h2 id="portfolio">6. A portfolio that gets interviews</h2>
+  <p>Recruiters spend about a minute on your GitHub. Make that minute count:</p>
+  <ol>
+    <li><b>Three good projects beat ten tutorials.</b> Your capstone is the first one.</li>
+    <li><b>Solve a real problem for a real person</b>, even a small one: your club's FAQ bot, a professor's question-paper search.</li>
+    <li><b>A README that sells it:</b> one-line summary, a screenshot or GIF, an architecture diagram, how to run it, example questions, eval results, and known limitations.</li>
+    <li><b>A live link</b> (Gradio, Hugging Face Spaces, Render or Cloud Run) so people can try it in 10 seconds.</li>
+    <li><b>Show your thinking:</b> "I used RAG instead of fine-tuning because...", "I tested 3 chunk sizes and 200 words gave the best hit rate."</li>
+    <li><b>No secrets in the repo.</b> Check twice for API keys.</li>
+  </ol>
+  <div class="box example">
+    <span class="label">Example README opening</span>
+    <b>CampusBuddy: an AI helpdesk for ABC Engineering College.</b> Answers questions about exams, fees, hostel and placements from the official FAQ (with sources), and checks live exam dates and library hours. Built with Gemini, Chroma and a hand-written agent loop. 92% on a 25-question eval set. <i>Try it: [your live link]</i>
+  </div>
+
+  <!-- 7 -->
+  <h2 id="interview">7. Interview questions you can now answer</h2>
+  <details><summary>"How does an LLM generate text?"</summary>It predicts the next token from the tokens so far, again and again, picking from a probability list (temperature controls how adventurous). Session 1.</details>
+  <details><summary>"How would you reduce hallucination?"</summary>Ground it with RAG and citations, allow "I don't know", lower temperature, use tools for facts, evaluate, and keep a human in the loop for important answers. Sessions 1, 4, 5.</details>
+  <details><summary>"Explain RAG. When would you use it instead of fine-tuning?"</summary>Retrieve relevant chunks, add them to the prompt, generate with citations. Use it when the knowledge is private or changes often; fine-tuning is for changing style or behaviour, is costly, and goes stale. Session 4.</details>
+  <details><summary>"Your RAG bot gives wrong answers. How do you debug it?"</summary>Look at the retrieved chunks first: most bugs are retrieval bugs. Check text extraction, chunk size, k, the score threshold; try hybrid search; measure the hit rate on a test set. Session 4.</details>
+  <details><summary>"What is an AI agent? When would you not use one?"</summary>An LLM that works towards a goal by choosing and calling tools in a loop. Don't use one when a single call, RAG or a fixed workflow works: agents cost more, are slower and harder to test. Session 6.</details>
+  <details><summary>"How does function calling work?"</summary>You send tool declarations; the model replies with a function name and arguments; your code runs it and sends the result back; repeat until it answers. Session 7.</details>
+  <details><summary>"What is MCP and why does it matter?"</summary>An open standard for connecting AI apps to tools and data: build a server once, use it from any MCP app (host, client, server; stdio or HTTP). Session 7.</details>
+  <details><summary>"How do you evaluate and monitor an LLM app in production?"</summary>An eval set (correct, grounded, right tool, refusals, safety) run on every change and in CI; traces for every request; dashboards for latency, errors, cost and user feedback; alerts. Session 9.</details>
+  <details><summary>"How would you protect an agent from prompt injection?"</summary>No single fix: separate data from instructions, least-privilege tools, human approval for risky actions, input and output checks, no secrets in prompts, logging. Sessions 5, 9.</details>
+  <details><summary>"Design a chatbot for 10,000 college students." (system design)</summary>RAG over official documents + read-only tools for live data, behind an API with login and rate limits; small model for most questions; caching; evals in CI; tracing and dashboards; pilot first. Sessions 4–9.</details>
+
+  <!-- 8 -->
+  <h2 id="resources">8. Free resources</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Track</th><th>Where to learn (free)</th></tr>
+    <tr><td>LLM apps, RAG, agents</td><td>DeepLearning.AI short courses · Hugging Face LLM Course and Agents Course · Anthropic's courses on GitHub (anthropics/courses) · LangChain Academy</td></tr>
+    <tr><td>ML and deep learning foundations</td><td>fast.ai <i>Practical Deep Learning for Coders</i> · Google <i>Machine Learning Crash Course</i> · NPTEL machine learning courses · Kaggle Learn</td></tr>
+    <tr><td>Practice and community</td><td>Kaggle competitions · Smart India Hackathon · Google Summer of Code · open-source AI projects on GitHub</td></tr>
+    <tr><td>Staying current</td><td>Official blogs and docs of the model providers; pick 2–3 and read them weekly, rather than following hype</td></tr>
+  </table></div>
+  <p style="color:var(--muted);font-size:0.95rem">Certificates (for example, cloud AI certifications from AWS, Microsoft or Google) can help, especially for services companies. But a deployed project you can demo and explain is worth more in almost every interview.</p>
+
+  <!-- Review quiz -->
+  <h2 id="review">9. Two-day review quiz</h2>
+  <details><summary>1. Why does a chatbot "forget" the start of a long conversation? (Session 1)</summary>The conversation exceeded the context window; older messages were dropped or summarised.</details>
+  <details><summary>2. Name the six parts of a good prompt. (Session 2)</summary>Role, Task, Context, Examples, Format, Rules.</details>
+  <details><summary>3. How does a chatbot remember your name if the model has no memory? (Session 3)</summary>The app re-sends the conversation history with every request.</details>
+  <details><summary>4. What do you check first when a RAG answer is wrong? (Session 4)</summary>Which chunks were retrieved.</details>
+  <details><summary>5. What's the difference between direct and indirect prompt injection? (Session 5)</summary>Direct: the user types it. Indirect: hidden in content the bot reads.</details>
+  <details><summary>6. Workflow vs agent: who decides the next step? (Session 6)</summary>Workflow: your code. Agent: the LLM.</details>
+  <details><summary>7. Who runs a tool: the model or your code? (Session 7)</summary>Your code. The model only asks.</details>
+  <details><summary>8. Name two multi-agent patterns. (Session 8)</summary>Any two: pipeline, orchestrator–workers, planner–executor, reviewer loop.</details>
+  <details><summary>9. When do you run your eval set? (Session 9)</summary>After every change, and in CI before deploying.</details>
+  <details><summary>10. In the capstone, why is RAG a tool instead of always running? (Session 10)</summary>So the agent decides: it searches the FAQ for rules, calls the timetable for exam dates, and calls nothing for "hi". Fewer wasted calls and better answers.</details>
+
+  <div class="box key">
+    <span class="label">Thank you!</span>
+    You started with "what is an LLM?" and finished with a working, tested AI agent. Keep building. Ship the capstone this month, share it, and help a friend build theirs. All notes, slides and labs stay here for you: <a href="../">the workshop home page</a>.
+  </div>
+
+  <!-- Instructor -->
+  <h2 id="instructor">Instructor guide</h2>
+  <p>Suggested plan for the 60 minutes. Press <b>S</b> in the slides to open speaker notes.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Time</th><th>Segment</th><th>What to do</th></tr>
+    <tr><td>0–5 min</td><td>Two days in one picture</td><td>Journey diagram. Ask the class to name one thing from each session.</td></tr>
+    <tr><td>5–10 min</td><td>Capstone intro</td><td>Architecture; "RAG as a tool". Show the five-turn conversation.</td></tr>
+    <tr><td>10–35 min</td><td>Capstone lab</td><td>Pairs run the notebook through the Gradio link. Walk around; help with keys and rate limits.</td></tr>
+    <tr><td>35–40 min</td><td>Demos</td><td>2–3 pairs show their agent on the projector (or on a phone via the Gradio link).</td></tr>
+    <tr><td>40–52 min</td><td>Careers</td><td>Roles diagram and table; what companies look for; 90-day roadmap; portfolio tips.</td></tr>
+    <tr><td>52–57 min</td><td>Interview questions</td><td>Ask 3–4 aloud; let students answer from what they learned.</td></tr>
+    <tr><td>57–60 min</td><td>Close</td><td>Thank you; share the repo link; collect feedback; certificates if the college provides them.</td></tr>
+  </table></div>
+  <div class="box try">
+    <span class="label">Before class</span>
+    Run the capstone notebook once on Colab end to end, including the Gradio link. It makes several API calls per question, so make sure backup keys are ready. Prepare the workshop repo link (or a QR code) for the closing slide, and a feedback form if the college uses one.
+  </div>
+
+  <footer>
+    Session 10 of the GenAI &amp; Agentic AI 2-day workshop · <a href="../">All sessions</a> · <a href="slides.html">Slides</a> · <a href="../session-09/notes.html">← Session 9</a>
+  </footer>
+</main>
+</body>
+</html>

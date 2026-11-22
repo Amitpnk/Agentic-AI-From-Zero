@@ -1,0 +1,65 @@
+<mxfile host="drawio">
+  <diagram id="two-day-journey" name="Two days in one picture">
+    <mxGraphModel dx="1100" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1060" pageHeight="440" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Two days in one picture: from &quot;what is an LLM?&quot; to a deployed agent" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="1020" height="36" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d1" value="&lt;b&gt;Day 1: Generative AI&lt;/b&gt;" style="text;html=1;fontSize=15;align=left;verticalAlign=middle;fontColor=#15803d;" vertex="1" parent="1">
+          <mxGeometry x="20" y="60" width="400" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="s1" value="&lt;b&gt;1&lt;/b&gt; How LLMs work&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5b636e&quot;&gt;tokens, embeddings, hallucination&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="20" y="92" width="190" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="&lt;b&gt;2&lt;/b&gt; Prompt engineering&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5b636e&quot;&gt;6 parts, few-shot, JSON&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="230" y="92" width="190" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="&lt;b&gt;3&lt;/b&gt; LLM APIs&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5b636e&quot;&gt;calls, memory, streaming, cost&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="440" y="92" width="190" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="s4" value="&lt;b&gt;4&lt;/b&gt; RAG&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5b636e&quot;&gt;answers from your documents&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="650" y="92" width="190" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="s5" value="&lt;b&gt;5&lt;/b&gt; Responsible AI&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5b636e&quot;&gt;bias, privacy, guardrails&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="860" y="92" width="180" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" style="endArrow=block;endFill=1;html=1;strokeColor=#15803d;strokeWidth=2;" edge="1" parent="1" source="s1" target="s2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a2" style="endArrow=block;endFill=1;html=1;strokeColor=#15803d;strokeWidth=2;" edge="1" parent="1" source="s2" target="s3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a3" style="endArrow=block;endFill=1;html=1;strokeColor=#15803d;strokeWidth=2;" edge="1" parent="1" source="s3" target="s4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a4" style="endArrow=block;endFill=1;html=1;strokeColor=#15803d;strokeWidth=2;" edge="1" parent="1" source="s4" target="s5"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="d2" value="&lt;b&gt;Day 2: Agentic AI&lt;/b&gt;" style="text;html=1;fontSize=15;align=left;verticalAlign=middle;fontColor=#c2410c;" vertex="1" parent="1">
+          <mxGeometry x="20" y="190" width="400" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="s6" value="&lt;b&gt;6&lt;/b&gt; Chatbots to agents&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5b636e&quot;&gt;ReAct loop, when not to&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="20" y="222" width="190" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="s7" value="&lt;b&gt;7&lt;/b&gt; Tool calling + MCP&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5b636e&quot;&gt;real tools, your own server&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="230" y="222" width="190" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="s8" value="&lt;b&gt;8&lt;/b&gt; Frameworks + teams&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5b636e&quot;&gt;LangGraph, human-in-the-loop&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="440" y="222" width="190" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="s9" value="&lt;b&gt;9&lt;/b&gt; Production&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5b636e&quot;&gt;evals, tracing, deploy&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="650" y="222" width="190" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="s10" value="&lt;b&gt;10&lt;/b&gt; Capstone + careers&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;your helpdesk agent 🎓&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c2410c;strokeColor=none;fontColor=#ffffff;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="860" y="222" width="180" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="b1" style="endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=2;" edge="1" parent="1" source="s6" target="s7"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b2" style="endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=2;" edge="1" parent="1" source="s7" target="s8"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b3" style="endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=2;" edge="1" parent="1" source="s8" target="s9"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b4" style="endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=2;" edge="1" parent="1" source="s9" target="s10"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="link" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s5" target="s6"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="950" y="176" /><mxPoint x="115" y="176" /></Array></mxGeometry></mxCell>
+
+        <mxCell id="proj" value="&lt;b&gt;You built:&lt;/b&gt; ① Prompt Lab · ② Chatbot with memory · ③ RAG over college documents · ④ Timetable agent + MCP server · ⑤ Research team of agents · ⑥ Campus helpdesk agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#e3e0d8;dashed=1;fontColor=#1f2328;fontSize=14;align=left;spacingLeft=12;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="20" y="310" width="1020" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
