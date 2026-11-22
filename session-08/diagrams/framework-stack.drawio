@@ -1,0 +1,57 @@
+<mxfile host="drawio">
+  <diagram id="framework-stack" name="What a framework gives you">
+    <mxGraphModel dx="1000" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="960" pageHeight="420" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="What an agent framework gives you" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="36" as="geometry" />
+        </mxCell>
+
+        <mxCell id="you" value="&lt;b&gt;You write:&lt;/b&gt; the agents' roles and prompts, the tools, and how they connect" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=15;arcSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="20" y="60" width="920" height="56" as="geometry" />
+        </mxCell>
+
+        <mxCell id="fw" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf0ff;strokeColor=#1d4ed8;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="20" y="130" width="920" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="fwt" value="&lt;b&gt;The framework handles:&lt;/b&gt; &lt;font color=&quot;#5b636e&quot; style=&quot;font-size:13px&quot;&gt;(the parts you'd otherwise write by hand, like our Session 7 loop)&lt;/font&gt;" style="text;html=1;fontSize=15;align=left;verticalAlign=middle;fontColor=#1d4ed8;" vertex="1" parent="1">
+          <mxGeometry x="36" y="136" width="880" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f1" value="🔁 &lt;b&gt;Tool-calling loop&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="40" y="175" width="210" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="f2" value="🗂️ &lt;b&gt;Shared state&lt;/b&gt; between agents" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="265" y="175" width="210" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="f3" value="💾 &lt;b&gt;Memory&lt;/b&gt; and checkpoints" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="490" y="175" width="210" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="f4" value="🙋 &lt;b&gt;Human-in-the-loop&lt;/b&gt; pauses" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="715" y="175" width="210" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="f5" value="🤝 &lt;b&gt;Multi-agent&lt;/b&gt; handoffs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="40" y="235" width="210" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="f6" value="📡 &lt;b&gt;Streaming&lt;/b&gt; progress" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="265" y="235" width="210" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="f7" value="🔍 &lt;b&gt;Tracing&lt;/b&gt; and debugging" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="490" y="235" width="210" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="f8" value="🔌 &lt;b&gt;Switch models&lt;/b&gt; and MCP tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="715" y="235" width="210" height="44" as="geometry" />
+        </mxCell>
+
+        <mxCell id="llm" value="&lt;b&gt;LLM APIs&lt;/b&gt;: Gemini · GPT · Claude · Llama (via Groq or Ollama) · ..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1f2328;strokeColor=none;fontColor=#ffffff;fontSize=15;arcSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="20" y="314" width="920" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="foot" value="Trade-off: less code to write, but one more library to learn, and it can hide what's happening. Know the loop underneath (Session 7)." style="text;html=1;whiteSpace=wrap;fontSize=13;align=left;verticalAlign=middle;fontColor=#5b636e;" vertex="1" parent="1">
+          <mxGeometry x="20" y="372" width="920" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

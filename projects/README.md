@@ -13,8 +13,8 @@ Six small projects, one per lab. Each adds a piece, and together they become a *
 | 1 | [Prompt Lab](#project-1--prompt-lab) | 2. Prompt engineering | Beginner | **Starter ready** |
 | 2 | [Chatbot with memory](#project-2--chatbot-with-memory) | 3. LLM APIs | Beginner | **Starter ready** |
 | 3 | [Chat with the syllabus (RAG)](#project-3--chat-with-the-syllabus-rag) | 4. RAG | Intermediate | **Starter ready** |
-| 4 | [Timetable agent + MCP server](#project-4--timetable-agent--mcp-server) | 7. Tool calling & MCP | Intermediate | Coming soon |
-| 5 | [Research team (multi-agent)](#project-5--research-team-multi-agent) | 8. Agent frameworks | Intermediate | Coming soon |
+| 4 | [Timetable agent + MCP server](#project-4--timetable-agent--mcp-server) | 7. Tool calling & MCP | Intermediate | **Starter ready** |
+| 5 | [Research team (multi-agent)](#project-5--research-team-multi-agent) | 8. Agent frameworks | Intermediate | **Starter ready** |
 | 6 | [Campus helpdesk agent](#project-6--campus-helpdesk-agent-capstone) | 10. Mini project | Capstone | Coming soon |
 
 **What you need:** a Google account for Google Colab and a free Gemini API key from Google AI Studio (or a Groq key). No installs, no credit card.
@@ -74,27 +74,33 @@ Notebook: [labs/session-04-rag-lab.ipynb](../labs/session-04-rag-lab.ipynb) · N
 
 ### Project 4 · Timetable agent + MCP server
 
-*Session 7 · Intermediate · 45 min · Coming soon*
+*Session 7 · Intermediate · 45 min* · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-07-tools-mcp-lab.ipynb)
 
-Give the LLM a tool. The agent decides when to call `get_exam_date(subject)` or a weather API, reads the result, and answers.
+Give the LLM real tools: exam timetable, library hours, study-room booking and a live weather API. The agent decides which to call, reads the results, and answers.
 
-- Define a tool with a name, description and parameters
-- Run the tool-calling loop: model asks → your code runs the tool → model answers
-- Expose the same tool as an **MCP server** so any MCP client can use it
+- Write tools as Python functions and describe them to Gemini
+- Write the agent loop yourself, with a cap and a human-approval step for bookings
+- Expose the same tools as an **MCP server**, connect to it as a client, and give Gemini its tools through MCP
+- On your laptop: plug the server into Claude Desktop, Claude Code or VS Code
 
-**Stretch:** add a second tool (library hours) and see the agent pick the right one.
+**Stretch:** add `search_faq` from Project 3 as a tool, serve over HTTP, or test a prompt injection against the approval step.
+
+Notebook: [labs/session-07-tools-mcp-lab.ipynb](../labs/session-07-tools-mcp-lab.ipynb) · Notes: [Session 7](../session-07/notes.md#12-lab-timetable-agent--mcp-server-45-min)
 
 ### Project 5 · Research team (multi-agent)
 
-*Session 8 · Intermediate · 45 min · Coming soon*
+*Session 8 · Intermediate · 40 min* · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-08-multi-agent-lab.ipynb)
 
-A **researcher** agent collects facts on a topic and a **writer** agent turns them into a short report.
+A team of agents: a **researcher** searches Wikipedia and writes notes with sources, a **writer** turns them into a short article for first-years, a **reviewer** sends it back if something's wrong, and **you** approve the final version.
 
-- Build it with an agent framework (LangGraph or CrewAI)
-- Pass work from one agent to the next
-- Add a human approval step before the final report
+- Write the three agents as plain Python functions and run them as a pipeline
+- Wire the same functions into a LangGraph graph with a review loop
+- Pause for human approval with `interrupt()`, then resume with your feedback
+- Inspect the saved state and history
 
-**Stretch:** add a "reviewer" agent that checks the report for mistakes.
+**Stretch:** add a fact-checker, run two researchers in parallel (orchestrator–workers), or give the researcher your Project 3 or 4 tools.
+
+Notebook: [labs/session-08-multi-agent-lab.ipynb](../labs/session-08-multi-agent-lab.ipynb) · Notes: [Session 8](../session-08/notes.md#9-lab-a-research-team-of-agents-40-min)
 
 ---
 
@@ -110,7 +116,7 @@ A student asks *"When is my DBMS exam, and is the library open on Sunday?"* and 
 | Conversation memory | Project 2 |
 | Answers from the college FAQ, with sources | Project 3 |
 | Timetable tool over MCP | Project 4 |
-| Guardrails: "I don't know", no personal data | Session 5 |
+| Guardrails: "I don't know", no personal data ([`safe_ask` starter](../session-05/notes.md#6-guardrails)) | Session 5 |
 | Deployed as an API (stretch) | Session 9 |
 
 **Make it portfolio-ready:** push it to GitHub with a README that has a screenshot, a diagram, how to run it, 5 example questions it answers well and 2 it refuses correctly. Deploy it and add the link to your resume.

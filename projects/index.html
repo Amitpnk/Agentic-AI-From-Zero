@@ -35,8 +35,8 @@
     <tr><td>1</td><td><a href="#p1">Prompt Lab</a></td><td>2. Prompt engineering</td><td>Beginner</td><td><b>Starter ready</b></td></tr>
     <tr><td>2</td><td><a href="#p2">Chatbot with memory</a></td><td>3. LLM APIs</td><td>Beginner</td><td><b>Starter ready</b></td></tr>
     <tr><td>3</td><td><a href="#p3">Chat with the syllabus (RAG)</a></td><td>4. RAG</td><td>Intermediate</td><td><b>Starter ready</b></td></tr>
-    <tr><td>4</td><td><a href="#p4">Timetable agent + MCP server</a></td><td>7. Tool calling &amp; MCP</td><td>Intermediate</td><td>Coming soon</td></tr>
-    <tr><td>5</td><td><a href="#p5">Research team (multi-agent)</a></td><td>8. Agent frameworks</td><td>Intermediate</td><td>Coming soon</td></tr>
+    <tr><td>4</td><td><a href="#p4">Timetable agent + MCP server</a></td><td>7. Tool calling &amp; MCP</td><td>Intermediate</td><td><b>Starter ready</b></td></tr>
+    <tr><td>5</td><td><a href="#p5">Research team (multi-agent)</a></td><td>8. Agent frameworks</td><td>Intermediate</td><td><b>Starter ready</b></td></tr>
     <tr><td>6</td><td><a href="#capstone">Campus helpdesk agent</a></td><td>10. Mini project</td><td>Capstone</td><td>Coming soon</td></tr>
   </table></div>
 
@@ -103,26 +103,36 @@
 
   <div class="project" id="p4">
     <h3>Project 4 · Timetable agent + MCP server</h3>
-    <div class="tags"><span class="pill">Session 7</span><span class="pill">Intermediate</span><span class="pill">45 min</span><span class="pill">Coming soon</span></div>
-    <p>Give the LLM a tool. The agent decides when to call <code>get_exam_date(subject)</code> or a weather API, reads the result, and answers.</p>
+    <div class="tags"><span class="pill">Session 7</span><span class="pill">Intermediate</span><span class="pill">45 min</span><span class="pill on">Starter ready</span></div>
+    <p>Give the LLM real tools: exam timetable, library hours, study-room booking and a live weather API. The agent decides which to call, reads the results, and answers.</p>
     <ul>
-      <li>Define a tool with a name, description and parameters</li>
-      <li>Run the tool-calling loop: model asks → your code runs the tool → model answers</li>
-      <li>Expose the same tool as an <b>MCP server</b> so any MCP client can use it</li>
+      <li>Write tools as Python functions and describe them to Gemini</li>
+      <li>Write the agent loop yourself, with a cap and a human-approval step for bookings</li>
+      <li>Expose the same tools as an <b>MCP server</b>, connect to it as a client, and give Gemini its tools through MCP</li>
+      <li>On your laptop: plug the server into Claude Desktop, Claude Code or VS Code</li>
     </ul>
-    <p><b>Stretch:</b> add a second tool (library hours) and see the agent pick the right one.</p>
+    <p><b>Stretch:</b> add <code>search_faq</code> from Project 3 as a tool, serve over HTTP, or test a prompt injection against the approval step.</p>
+    <div class="btn-row">
+      <a class="btn" href="https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-07-tools-mcp-lab.ipynb" target="_blank" rel="noopener">Open in Colab</a>
+      <a class="btn secondary" href="../session-07/notes.html#lab">Session 7 notes</a>
+    </div>
   </div>
 
   <div class="project" id="p5">
     <h3>Project 5 · Research team (multi-agent)</h3>
-    <div class="tags"><span class="pill">Session 8</span><span class="pill">Intermediate</span><span class="pill">45 min</span><span class="pill">Coming soon</span></div>
-    <p>Two agents working together: a <b>researcher</b> collects facts on a topic and a <b>writer</b> turns them into a short report.</p>
+    <div class="tags"><span class="pill">Session 8</span><span class="pill">Intermediate</span><span class="pill">40 min</span><span class="pill on">Starter ready</span></div>
+    <p>A team of agents: a <b>researcher</b> searches Wikipedia and writes notes with sources, a <b>writer</b> turns them into a short article for first-years, a <b>reviewer</b> sends it back if something's wrong, and <b>you</b> approve the final version.</p>
     <ul>
-      <li>Build it with an agent framework (LangGraph or CrewAI)</li>
-      <li>Pass work from one agent to the next</li>
-      <li>Add a human approval step before the final report</li>
+      <li>Write the three agents as plain Python functions and run them as a pipeline</li>
+      <li>Wire the same functions into a LangGraph graph with a review loop</li>
+      <li>Pause for human approval with <code>interrupt()</code>, then resume with your feedback</li>
+      <li>Inspect the saved state and history</li>
     </ul>
-    <p><b>Stretch:</b> add a third "reviewer" agent that checks the report for mistakes.</p>
+    <p><b>Stretch:</b> add a fact-checker, run two researchers in parallel (orchestrator–workers), or give the researcher your Project 3 or 4 tools.</p>
+    <div class="btn-row">
+      <a class="btn" href="https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-08-multi-agent-lab.ipynb" target="_blank" rel="noopener">Open in Colab</a>
+      <a class="btn secondary" href="../session-08/notes.html#lab">Session 8 notes</a>
+    </div>
   </div>
 
   <h2 id="capstone">Capstone</h2>
@@ -137,7 +147,7 @@
       <tr><td>Conversation memory</td><td>Project 2</td></tr>
       <tr><td>Answers from the college FAQ, with sources</td><td>Project 3</td></tr>
       <tr><td>Timetable tool over MCP</td><td>Project 4</td></tr>
-      <tr><td>Guardrails: "I don't know", no personal data</td><td>Session 5</td></tr>
+      <tr><td>Guardrails: "I don't know", no personal data (<a href="../session-05/notes.html#guardrails"><code>safe_ask</code> starter</a>)</td><td>Session 5</td></tr>
       <tr><td>Deployed as an API (stretch)</td><td>Session 9</td></tr>
     </table></div>
     <div class="box try">

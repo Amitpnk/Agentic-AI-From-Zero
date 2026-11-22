@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session 8: Agent Frameworks and Multi-Agent Systems</title>
+<meta name="description" content="Simple notes with examples: why agent frameworks exist, LangGraph vs CrewAI vs agent SDKs, multi-agent patterns (pipeline, orchestrator-worker, planner-executor, reviewer loop), human-in-the-loop, and a researcher + writer team in LangGraph.">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="home" href="../">GenAI &amp; Agentic AI Workshop</a>
+    <nav>
+      <a href="slides.html">Slides</a>
+      <a href="#lab">Lab</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#instructor">Instructor guide</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="eyebrow">Day 2 · Session 8 · 1.5 hours</div>
+  <h1>Agent Frameworks and Multi-Agent Systems</h1>
+  <p class="lead">In Session 7 you wrote the agent loop by hand. Real projects also need shared state, retries, pauses for human approval, and sometimes a <b>team</b> of agents. Frameworks give you those building blocks. Today you'll compare the popular ones and build a researcher + writer team.</p>
+
+  <div class="btn-row">
+    <a class="btn" href="slides.html">Open the slides</a>
+    <a class="btn secondary" href="#lab">Jump to the lab</a>
+  </div>
+
+  <div class="toc">
+    <b>What you will learn</b>
+    <ol>
+      <li><a href="#why">Why use a framework?</a></li>
+      <li><a href="#compare">LangGraph, CrewAI and the agent SDKs compared</a></li>
+      <li><a href="#multi">Why more than one agent?</a></li>
+      <li><a href="#patterns">Four multi-agent patterns</a></li>
+      <li><a href="#hitl">Human-in-the-loop</a></li>
+      <li><a href="#when-not">When not to use multiple agents</a></li>
+      <li><a href="#langgraph">LangGraph in 10 minutes</a></li>
+      <li><a href="#crewai">The same team in CrewAI (for comparison)</a></li>
+      <li><a href="#lab">Lab: a research team of agents</a></li>
+      <li><a href="#recap">Recap, quiz and glossary</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <h2 id="why">1. Why use a framework?</h2>
+  <p>Your Session 7 agent was about 25 lines. A real app quickly needs more: remember state between steps, pause for a human and resume tomorrow, retry when a tool fails, show progress, log everything for debugging, and coordinate several agents. You <i>can</i> write all that yourself. A <b>framework</b> gives you tested building blocks so you focus on the agents themselves.</p>
+
+  <figure class="diagram">
+    <img src="diagrams/framework-stack.svg" alt="You write the agents' roles, prompts, tools and connections. The framework handles the tool-calling loop, shared state, memory and checkpoints, human-in-the-loop pauses, multi-agent handoffs, streaming, tracing, and switching models or MCP tools. Underneath are the LLM APIs.">
+  </figure>
+
+  <div class="box key">
+    <span class="label">Learn the loop first, then the framework</span>
+    Frameworks change fast and can hide what's going on. Because you built the loop by hand in Session 7, you'll understand what any framework is doing underneath, and you can debug it when it misbehaves.
+  </div>
+
+  <!-- 2 -->
+  <h2 id="compare">2. LangGraph, CrewAI and the agent SDKs compared</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Framework</th><th>How you think about it</th><th>Strengths</th><th>Good for</th></tr>
+    <tr><td><b>LangGraph</b><br><small>(from LangChain)</small></td><td>A <b>graph</b>: nodes (agents, tools, humans) connected by edges, with shared state</td><td>Fine control, loops and branches, pause/resume, human-in-the-loop, any model</td><td>Production agents where you need control and reliability</td></tr>
+    <tr><td><b>CrewAI</b></td><td>A <b>crew</b> of role-playing agents (role, goal, backstory) working on tasks</td><td>Very quick to start, easy to read</td><td>Prototypes, content and research teams</td></tr>
+    <tr><td><b>OpenAI Agents SDK</b></td><td>Lightweight <b>agents + handoffs</b> between them, with guardrails</td><td>Small and simple, built-in tracing; best with OpenAI models, others supported</td><td>Simple multi-agent apps, triage and handoffs</td></tr>
+    <tr><td><b>Claude Agent SDK</b></td><td>The <b>agent harness behind Claude Code</b>: tools, files, shell, MCP, subagents</td><td>Strong general-purpose agents out of the box</td><td>Agents that work with files, code and automation</td></tr>
+    <tr><td><b>Google ADK</b><br><small>(Agent Development Kit)</small></td><td>Agents and multi-agent systems, Gemini-first</td><td>Good Gemini integration, evaluation tools, Google Cloud deployment</td><td>Gemini and Google Cloud projects</td></tr>
+    <tr><td><b>Microsoft Agent Framework</b></td><td>Successor to AutoGen and Semantic Kernel</td><td>Multi-agent conversations, Azure integration, .NET and Python</td><td>Teams on Azure and .NET</td></tr>
+  </table></div>
+  <p>They all share the same core ideas you already know: an LLM, tools (often via MCP), a loop, memory and some way to coordinate agents. Pick by your <b>model</b>, your <b>cloud</b>, and how much <b>control</b> you need. Today's lab uses <b>LangGraph</b>, because its graphs make the patterns easy to see.</p>
+  <p style="color:var(--muted);font-size:0.95rem">This space moves very fast: names, features and versions change every few months. Always check the official docs for the version you install.</p>
+
+  <!-- 3 -->
+  <h2 id="multi">3. Why more than one agent?</h2>
+  <p>One agent with 20 tools and a giant prompt tends to get confused. Splitting the job into <b>specialists</b> helps, the same way a college fest has separate teams for sponsorship, design and logistics.</p>
+  <ul>
+    <li><b>Focus:</b> each agent has a short, clear prompt and only the tools it needs.</li>
+    <li><b>Quality checks:</b> one agent can review another's work.</li>
+    <li><b>Parallel work:</b> several agents research different things at the same time.</li>
+    <li><b>Smaller context:</b> each agent sees only what it needs, not the whole history.</li>
+  </ul>
+  <div class="box example">
+    <span class="label">Example: today's research team</span>
+    🔎 <b>Researcher</b> (has a Wikipedia tool) → ✍️ <b>Writer</b> (no tools, writes for first-years) → 🧐 <b>Reviewer</b> (checks facts against the notes) → 🙋 <b>You</b> (final approval). Each prompt is short and focused, and the reviewer catches the writer's mistakes.
+  </div>
+
+  <!-- 4 -->
+  <h2 id="patterns">4. Four multi-agent patterns</h2>
+
+  <figure class="diagram">
+    <img src="diagrams/multi-agent-patterns.svg" alt="Pipeline: researcher, writer, publisher in sequence. Orchestrator-workers: a lead agent sends sub-tasks to parallel workers and combines results. Planner-executor: a planner writes a plan, an executor carries it out, re-planning on failure. Reviewer loop with human-in-the-loop: writer, reviewer sends back fixes, human gives the final OK.">
+  </figure>
+
+  <div class="table-wrap"><table>
+    <tr><th>Pattern</th><th>How it works</th><th>Use it when</th></tr>
+    <tr><td><b>Pipeline</b> (sequential)</td><td>Each agent does one step and passes the result on</td><td>The steps are clear and always in the same order</td></tr>
+    <tr><td><b>Orchestrator–workers</b></td><td>A lead agent splits the task, workers run in parallel, the lead combines the results</td><td>The task splits into independent parts (compare 3 courses, research 5 companies)</td></tr>
+    <tr><td><b>Planner–executor</b></td><td>One agent writes a plan, another carries it out, and it re-plans if a step fails</td><td>Long, multi-step tasks where a reviewable plan helps</td></tr>
+    <tr><td><b>Reviewer loop</b> (evaluator–optimizer)</td><td>A critic checks the work and sends it back with feedback until it's good</td><td>Quality matters and "good" can be checked (facts, length, tests passing)</td></tr>
+  </table></div>
+  <p>Real systems mix these. For example, "deep research" tools use an orchestrator that sends several research workers out in parallel, then a writer, then a citation checker.</p>
+
+  <!-- 5 -->
+  <h2 id="hitl">5. Human-in-the-loop</h2>
+  <p><b>Human-in-the-loop (HITL)</b> means the agent pauses at important moments and waits for a person. Session 5 said humans should approve risky actions; frameworks make that easy.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Kind</th><th>Example</th></tr>
+    <tr><td><b>Approve or reject</b> an action</td><td>"Book room S3 on Sunday 10–12?" → yes / no</td></tr>
+    <tr><td><b>Edit</b> the output</td><td>Fix the article's title before publishing</td></tr>
+    <tr><td><b>Give feedback</b></td><td>"Make it more fun and add one fun fact" → back to the writer</td></tr>
+    <tr><td><b>Review the plan</b> first</td><td>Check the planner's 5 steps before anything runs</td></tr>
+    <tr><td><b>Answer a question</b></td><td>Agent asks: "Do you mean the 3rd- or 5th-semester syllabus?"</td></tr>
+  </table></div>
+  <p>In LangGraph, a node calls <code>interrupt(...)</code> to pause. The graph's state is saved by a <b>checkpointer</b>, so it can wait seconds or days, then continue with <code>Command(resume=...)</code>.</p>
+
+  <!-- 6 -->
+  <h2 id="when-not">6. When not to use multiple agents</h2>
+  <p>Remember Session 6: <b>use the simplest thing that works</b>. That applies even more here.</p>
+  <ul>
+    <li><b>Cost:</b> every agent is more LLM calls. Anthropic reported that its multi-agent research system used about <b>15 times</b> more tokens than a normal chat. Worth it for hard research, wasteful for simple questions.</li>
+    <li><b>Coordination errors:</b> agents can misunderstand each other, repeat work, or pass mistakes along.</li>
+    <li><b>Harder to debug and test:</b> more moving parts, different paths each run.</li>
+    <li><b>Tightly linked steps:</b> if every step needs the full context of every other step, one agent is usually better than several passing notes.</li>
+  </ul>
+  <div class="box key">
+    <span class="label">A good rule</span>
+    Start with <b>one agent</b> with good tools. Split into several agents only when you can name the specialists and explain why each needs its own prompt, tools or context.
+  </div>
+
+  <!-- 7 -->
+  <h2 id="langgraph">7. LangGraph in 10 minutes</h2>
+  <p>LangGraph models your app as a <b>graph</b>. Here is the lab's team:</p>
+
+  <figure class="diagram">
+    <img src="diagrams/research-team-graph.svg" alt="START goes to researcher (Wikipedia tool), then writer, then reviewer. If changes are needed and fewer than 3 drafts, back to writer. If approved, to human_approval, which pauses. Yes goes to END. Feedback goes back to writer.">
+  </figure>
+
+  <div class="table-wrap"><table>
+    <tr><th>Idea</th><th>What it is</th><th>In code</th></tr>
+    <tr><td><b>State</b></td><td>The shared data every node reads and updates</td><td><code>class TeamState(TypedDict): topic, notes, draft, feedback, approved, revisions</code></td></tr>
+    <tr><td><b>Node</b></td><td>A Python function: takes the state, returns updates</td><td><code>graph.add_node("writer", writer)</code></td></tr>
+    <tr><td><b>Edge</b></td><td>Always go from A to B</td><td><code>graph.add_edge("researcher", "writer")</code></td></tr>
+    <tr><td><b>Conditional edge</b></td><td>Your function decides where to go next</td><td><code>graph.add_conditional_edges("reviewer", after_review, [...])</code></td></tr>
+    <tr><td><b>Checkpointer</b></td><td>Saves the state after every step (pause, resume, history)</td><td><code>graph.compile(checkpointer=InMemorySaver())</code></td></tr>
+    <tr><td><b>Interrupt</b></td><td>Pause and wait for a human</td><td><code>answer = interrupt({"draft": ...})</code></td></tr>
+  </table></div>
+
+<pre><code>def after_review(state):
+    if state["approved"] or state["revisions"] &gt;= MAX_REVISIONS:
+        return "human_approval"
+    return "writer"                         # loop back with the reviewer's feedback
+
+def human_approval(state):
+    answer = interrupt({"draft": state["draft"], "question": "Type 'yes' to publish, or what to change:"})
+    if answer.strip().lower() in ("yes", "y"):
+        return {"approved": True, "feedback": ""}
+    return {"approved": False, "feedback": f"Editor-in-chief says: {answer}"}
+
+graph = StateGraph(TeamState)
+graph.add_node("researcher", researcher)
+graph.add_node("writer", writer)
+graph.add_node("reviewer", reviewer)
+graph.add_node("human_approval", human_approval)
+graph.add_edge(START, "researcher")
+graph.add_edge("researcher", "writer")
+graph.add_edge("writer", "reviewer")
+graph.add_conditional_edges("reviewer", after_review, ["writer", "human_approval"])
+graph.add_conditional_edges("human_approval", lambda s: END if s["approved"] else "writer", ["writer", END])
+
+app = graph.compile(checkpointer=InMemorySaver())</code></pre>
+
+  <p>Each agent is a plain function. For example, the reviewer uses <b>structured output</b> (Session 2) so the graph can branch on a real <code>True</code>/<code>False</code>:</p>
+<pre><code>class Review(BaseModel):
+    approved: bool
+    feedback: str
+
+def reviewer(state):
+    review = llm.with_structured_output(Review).invoke([
+        SystemMessage(REVIEWER_PROMPT),
+        HumanMessage(f"Research notes:\n{state['notes']}\n\nDraft:\n{state['draft']}"),
+    ])
+    return {"approved": review.approved, "feedback": review.feedback}</code></pre>
+
+  <!-- 8 -->
+  <h2 id="crewai">8. The same team in CrewAI (for comparison)</h2>
+  <p>CrewAI describes the same idea as a <b>crew</b> of role-playing agents and <b>tasks</b>. A sketch, to compare styles (not part of the lab; check the CrewAI docs for the current API):</p>
+<pre><code>from crewai import Agent, Task, Crew, Process
+
+researcher = Agent(role="Researcher", goal="Find accurate facts about {topic}",
+                   backstory="A careful fact-finder for a college magazine.",
+                   llm="gemini/gemini-2.5-flash")
+writer = Agent(role="Writer", goal="Write a 200-word article for first-year students",
+               backstory="A friendly tech-magazine writer.",
+               llm="gemini/gemini-2.5-flash")
+
+research = Task(description="Research {topic}. List 6-10 key facts with sources.",
+                expected_output="Bullet-point notes with URLs", agent=researcher)
+write = Task(description="Write the article using the research notes.",
+             expected_output="A ~200-word article with a Sources list", agent=writer, context=[research])
+
+crew = Crew(agents=[researcher, writer], tasks=[research, write], process=Process.sequential)
+print(crew.kickoff(inputs={"topic": "Chandrayaan-3"}))</code></pre>
+  <p>Shorter to write, and very readable. LangGraph takes more code but gives you explicit loops, branches, pauses and state, which matter once real users depend on it.</p>
+
+  <!-- Lab -->
+  <h2 id="lab">9. Lab: a research team of agents (40 min)</h2>
+  <div class="btn-row">
+    <a class="btn" href="https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-08-multi-agent-lab.ipynb" target="_blank" rel="noopener">Open the lab in Colab</a>
+    <a class="btn secondary" href="../projects/#p5">Project 5 details</a>
+  </div>
+  <ol>
+    <li>Build a real <code>search_wikipedia</code> tool (free, no key).</li>
+    <li>Write three agents as plain functions: researcher (with the tool), writer, reviewer (structured output).</li>
+    <li>Run them as a simple Python pipeline.</li>
+    <li>Wire the <i>same</i> functions into a LangGraph graph with a review loop and a human-approval pause.</li>
+    <li>Run it as the editor-in-chief: ask for changes, then approve.</li>
+    <li>Look inside the saved state and history.</li>
+  </ol>
+  <div class="box key">
+    <span class="label">If Wikipedia says "busy"</span>
+    Wikipedia limits how many requests one network can make, and a whole class on the same Wi-Fi can hit that limit. The lab's tool waits and retries, and has backup facts for the example topic (Chandrayaan-3), so the lab still works.
+  </div>
+  <div class="box try">
+    <span class="label">Stretch goals</span>
+    Pick your own topic. Add a fact-checker agent. Run two researchers in parallel (orchestrator–workers). Swap Wikipedia for your Session 4 <code>search_faq</code> or Session 7 tools. Count how many LLM calls one article took.
+  </div>
+
+  <!-- Recap -->
+  <h2 id="recap">10. Recap</h2>
+  <ol>
+    <li>Frameworks give you the loop, state, memory, pauses, tracing and multi-agent wiring. You write the agents.</li>
+    <li><b>LangGraph</b> = graphs with control; <b>CrewAI</b> = quick role-based crews; <b>agent SDKs</b> from OpenAI, Anthropic, Google and Microsoft = lighter, model-specific toolkits.</li>
+    <li>Multiple agents help with <b>focus</b>, <b>quality checks</b> and <b>parallel work</b>.</li>
+    <li>Patterns: <b>pipeline</b>, <b>orchestrator–workers</b>, <b>planner–executor</b>, <b>reviewer loop</b>.</li>
+    <li><b>Human-in-the-loop</b>: pause, let a person approve, edit or give feedback, then resume.</li>
+    <li>Multi-agent costs many more tokens and is harder to debug. Start with one agent; split only for a clear reason.</li>
+  </ol>
+
+  <h2 id="quiz">Quick quiz</h2>
+  <details><summary>1. Name three things a framework gives you that you'd otherwise write by hand.</summary>Any three: the tool-calling loop, shared state, memory/checkpoints, human-in-the-loop pauses, multi-agent handoffs, streaming, tracing, model switching.</details>
+  <details><summary>2. LangGraph vs CrewAI in one line each?</summary>LangGraph: a graph of nodes and edges with explicit state and control. CrewAI: a crew of role-playing agents doing tasks, quick to set up.</details>
+  <details><summary>3. Which pattern fits "compare 5 companies for placements"?</summary>Orchestrator–workers: one worker per company in parallel, then the orchestrator combines.</details>
+  <details><summary>4. What does a reviewer (critic) agent add?</summary>A quality check: it compares the work to the rules or sources and sends it back with feedback until it's good.</details>
+  <details><summary>5. In LangGraph, what makes it possible to pause for a human and resume later?</summary><code>interrupt()</code> to pause, plus a checkpointer that saves the state; then <code>Command(resume=...)</code> continues.</details>
+  <details><summary>6. Give two reasons not to use multiple agents.</summary>Any two: many more tokens (cost), coordination errors, harder to debug and test, tightly linked steps work better in one agent.</details>
+  <details><summary>7. Why does the reviewer use structured output?</summary>So the graph gets a real <code>approved: True/False</code> to branch on, instead of trying to read a free-text answer.</details>
+
+  <h2 id="glossary">Glossary</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Term</th><th>Meaning in one line</th></tr>
+    <tr><td>Agent framework</td><td>A library of building blocks for agents: loop, state, tools, memory, coordination.</td></tr>
+    <tr><td>Multi-agent system</td><td>Several agents with different roles working together on one task.</td></tr>
+    <tr><td>Orchestrator</td><td>A lead agent that splits work and combines results.</td></tr>
+    <tr><td>Worker / subagent</td><td>An agent that handles one part of a bigger task.</td></tr>
+    <tr><td>Handoff</td><td>One agent passing the conversation or task to another.</td></tr>
+    <tr><td>Planner–executor</td><td>One agent plans the steps, another carries them out.</td></tr>
+    <tr><td>Evaluator / critic</td><td>An agent that checks another agent's work.</td></tr>
+    <tr><td>Human-in-the-loop (HITL)</td><td>The agent pauses for a person to approve, edit or give feedback.</td></tr>
+    <tr><td>State (LangGraph)</td><td>The shared data passed between nodes.</td></tr>
+    <tr><td>Node / edge</td><td>A step in the graph / a connection deciding what runs next.</td></tr>
+    <tr><td>Checkpointer</td><td>Saves the state after each step so the graph can pause, resume and replay.</td></tr>
+    <tr><td>Interrupt</td><td>LangGraph's way to pause a graph and wait for input.</td></tr>
+  </table></div>
+
+  <h2 id="learn-more">Learn more (free)</h2>
+  <ul>
+    <li>LangChain Academy, <i>Introduction to LangGraph</i> (free course)</li>
+    <li>Anthropic, <i>How we built our multi-agent research system</i> (engineering blog)</li>
+    <li>Anthropic, <i>Building effective agents</i> (patterns: chaining, routing, orchestrator-workers, evaluator-optimizer)</li>
+    <li>Official docs: CrewAI, OpenAI Agents SDK, Claude Agent SDK, Google ADK</li>
+  </ul>
+
+  <!-- Instructor -->
+  <h2 id="instructor">Instructor guide</h2>
+  <p>Suggested plan for the 90 minutes. Press <b>S</b> in the slides to open speaker notes.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Time</th><th>Segment</th><th>What to do</th></tr>
+    <tr><td>0–5 min</td><td>Hook</td><td>Show the Session 7 loop. Ask: what if it must pause for approval until tomorrow? What if we want three agents?</td></tr>
+    <tr><td>5–18 min</td><td>Frameworks</td><td>Framework stack diagram. Comparison table: focus on "how you think about it", not features.</td></tr>
+    <tr><td>18–33 min</td><td>Multi-agent + patterns</td><td>College-fest-teams analogy. Four patterns; ask the class to match each to a campus example.</td></tr>
+    <tr><td>33–40 min</td><td>HITL + when not</td><td>HITL table. The 15× tokens point. "Start with one agent."</td></tr>
+    <tr><td>40–48 min</td><td>LangGraph basics</td><td>Lab graph diagram, then the code: state, nodes, edges, conditional edges, interrupt.</td></tr>
+    <tr><td>48–85 min</td><td>Lab</td><td>Students run Steps 1–6. Ask a few to share the funniest feedback they gave as editor-in-chief.</td></tr>
+    <tr><td>85–90 min</td><td>Recap + quiz</td><td>Quiz 3, 5 and 6. Preview Session 9: taking agents to production.</td></tr>
+  </table></div>
+  <div class="box try">
+    <span class="label">Before class</span>
+    Run the notebook once on Colab and check the <code>MODEL</code> name and package versions (written for LangGraph 1.x). One article takes roughly 6–10 LLM calls, so free-tier limits hit sooner: stagger the class or keep a backup key. If the campus Wi-Fi is rate-limited by Wikipedia, the backup facts keep the default topic working.
+  </div>
+
+  <footer>
+    Session 8 of the GenAI &amp; Agentic AI 2-day workshop · <a href="../">All sessions</a> · <a href="slides.html">Slides</a> · <a href="../session-07/notes.html">← Session 7</a>
+  </footer>
+</main>
+</body>
+</html>
