@@ -1,0 +1,48 @@
+<mxfile host="drawio">
+  <diagram id="trace-timeline" name="One request, traced">
+    <mxGraphModel dx="1100" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1060" pageHeight="470" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="A trace: the full story of one request" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="sub" value="&quot;When is my OS exam? Is the library open the day before?&quot; · trace_id 7f3a9c · total 3.9 s · 2,960 tokens · $0.0012 (illustrative numbers)" style="text;html=1;fontSize=13;align=left;verticalAlign=middle;fontColor=#5b636e;" vertex="1" parent="1">
+          <mxGeometry x="20" y="42" width="1020" height="24" as="geometry" />
+        </mxCell>
+
+        <!-- Row labels -->
+        <mxCell id="r1" value="Input checks" style="text;html=1;fontSize=13;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1"><mxGeometry x="20" y="80" width="180" height="32" as="geometry" /></mxCell>
+        <mxCell id="r2" value="🧠 LLM call 1 · 620 in / 25 out" style="text;html=1;fontSize=13;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1"><mxGeometry x="20" y="124" width="200" height="32" as="geometry" /></mxCell>
+        <mxCell id="r3" value="🛠️ get_exam_date(&quot;OS&quot;)" style="text;html=1;fontSize=13;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1"><mxGeometry x="20" y="168" width="200" height="32" as="geometry" /></mxCell>
+        <mxCell id="r4" value="🧠 LLM call 2 · 760 in / 30 out" style="text;html=1;fontSize=13;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1"><mxGeometry x="20" y="212" width="200" height="32" as="geometry" /></mxCell>
+        <mxCell id="r5" value="🛠️ get_library_hours(...)" style="text;html=1;fontSize=13;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1"><mxGeometry x="20" y="256" width="200" height="32" as="geometry" /></mxCell>
+        <mxCell id="r6" value="🧠 LLM call 3 · 1,415 in / 110 out" style="text;html=1;fontSize=13;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1"><mxGeometry x="20" y="300" width="210" height="32" as="geometry" /></mxCell>
+        <mxCell id="r7" value="Output checks" style="text;html=1;fontSize=13;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1"><mxGeometry x="20" y="344" width="180" height="32" as="geometry" /></mxCell>
+
+        <!-- Grid line -->
+        <mxCell id="axis" value="" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=1.5;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="240" y="390" as="sourcePoint" /><mxPoint x="1040" y="390" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="t0" value="0 s" style="text;html=1;fontSize=11;align=center;fontColor=#5b636e;" vertex="1" parent="1"><mxGeometry x="225" y="392" width="30" height="20" as="geometry" /></mxCell>
+        <mxCell id="t1" value="1 s" style="text;html=1;fontSize=11;align=center;fontColor=#5b636e;" vertex="1" parent="1"><mxGeometry x="425" y="392" width="30" height="20" as="geometry" /></mxCell>
+        <mxCell id="t2" value="2 s" style="text;html=1;fontSize=11;align=center;fontColor=#5b636e;" vertex="1" parent="1"><mxGeometry x="625" y="392" width="30" height="20" as="geometry" /></mxCell>
+        <mxCell id="t3" value="3 s" style="text;html=1;fontSize=11;align=center;fontColor=#5b636e;" vertex="1" parent="1"><mxGeometry x="825" y="392" width="30" height="20" as="geometry" /></mxCell>
+
+        <!-- Bars: 0.2 px per ms, x0 = 240 -->
+        <mxCell id="b1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#5b636e;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="240" y="86" width="6" height="20" as="geometry" /></mxCell>
+        <mxCell id="b2" value="1.2 s" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6d28d9;strokeColor=none;fontColor=#ffffff;fontSize=12;" vertex="1" parent="1"><mxGeometry x="242" y="130" width="240" height="20" as="geometry" /></mxCell>
+        <mxCell id="b3" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c2410c;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="482" y="174" width="24" height="20" as="geometry" /></mxCell>
+        <mxCell id="b3l" value="120 ms" style="text;html=1;fontSize=11;align=left;verticalAlign=middle;fontColor=#c2410c;" vertex="1" parent="1"><mxGeometry x="510" y="174" width="60" height="20" as="geometry" /></mxCell>
+        <mxCell id="b4" value="0.9 s" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6d28d9;strokeColor=none;fontColor=#ffffff;fontSize=12;" vertex="1" parent="1"><mxGeometry x="506" y="218" width="180" height="20" as="geometry" /></mxCell>
+        <mxCell id="b5" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c2410c;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="686" y="262" width="18" height="20" as="geometry" /></mxCell>
+        <mxCell id="b5l" value="90 ms" style="text;html=1;fontSize=11;align=left;verticalAlign=middle;fontColor=#c2410c;" vertex="1" parent="1"><mxGeometry x="708" y="262" width="60" height="20" as="geometry" /></mxCell>
+        <mxCell id="b6" value="1.6 s (writing the answer)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6d28d9;strokeColor=none;fontColor=#ffffff;fontSize=12;" vertex="1" parent="1"><mxGeometry x="704" y="306" width="312" height="20" as="geometry" /></mxCell>
+        <mxCell id="b7" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#5b636e;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="1016" y="350" width="6" height="20" as="geometry" /></mxCell>
+
+        <mxCell id="foot" value="&lt;b&gt;What the trace tells you:&lt;/b&gt; LLM calls take about 94% of the time, tools almost none. Input tokens grow each step (the history is re-sent). To make it faster: fewer steps, a faster model, or call both tools in parallel." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#e3e0d8;dashed=1;fontColor=#1f2328;fontSize=13;align=left;spacingLeft=12;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="20" y="420" width="1020" height="44" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

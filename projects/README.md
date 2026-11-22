@@ -117,7 +117,7 @@ A student asks *"When is my DBMS exam, and is the library open on Sunday?"* and 
 | Answers from the college FAQ, with sources | Project 3 |
 | Timetable tool over MCP | Project 4 |
 | Guardrails: "I don't know", no personal data ([`safe_ask` starter](../session-05/notes.md#6-guardrails)) | Session 5 |
-| Deployed as an API (stretch) | Session 9 |
+| Deployed as an API (stretch: [deploy starter](../labs/session-09-deploy/)) | Session 9 |
 
 **Make it portfolio-ready:** push it to GitHub with a README that has a screenshot, a diagram, how to run it, 5 example questions it answers well and 2 it refuses correctly. Deploy it and add the link to your resume.
 

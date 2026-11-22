@@ -1,0 +1,62 @@
+<mxfile host="drawio">
+  <diagram id="deployment" name="CampusBuddy in production">
+    <mxGraphModel dx="1100" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1000" pageHeight="500" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="CampusBuddy in production" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="36" as="geometry" />
+        </mxCell>
+
+        <!-- Users -->
+        <mxCell id="u1" value="🌐 College website chat" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="20" y="90" width="170" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="u2" value="📱 WhatsApp / Telegram bot" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="20" y="150" width="170" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="u3" value="📲 College mobile app" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="20" y="210" width="170" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Cloud -->
+        <mxCell id="cloud" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f8ff;strokeColor=#1d4ed8;dashed=1;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="250" y="60" width="480" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="cloudt" value="&lt;b&gt;Cloud&lt;/b&gt; (e.g. Google Cloud Run, AWS App Runner, Azure Container Apps)" style="text;html=1;fontSize=13;align=left;verticalAlign=middle;fontColor=#1d4ed8;" vertex="1" parent="1">
+          <mxGeometry x="264" y="66" width="460" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="api" value="&lt;b&gt;CampusBuddy API&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;FastAPI in a container&lt;br&gt;API key · rate limit · input checks&lt;br&gt;agent loop (max 5 steps)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c2410c;strokeColor=none;fontColor=#ffffff;fontSize=15;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="280" y="110" width="210" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="sec" value="🔑 &lt;b&gt;Secret manager&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Gemini API key&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="530" y="110" width="180" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="tools" value="🧰 &lt;b&gt;Tools (read-only)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;timetable DB · vector DB (RAG) · weather API&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="530" y="184" width="180" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="obs" value="🔍 &lt;b&gt;Logs, traces, dashboards, alerts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;latency · errors · tokens · cost · 👍/👎&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf0ff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="280" y="290" width="430" height="56" as="geometry" />
+        </mxCell>
+
+        <mxCell id="llm" value="🧠 &lt;b&gt;LLM API&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Gemini (or GPT, Claude...)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1f2328;strokeColor=none;fontColor=#ffffff;fontSize=14;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="790" y="140" width="190" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ci" value="🧪 &lt;b&gt;GitHub + CI&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;every change: run evals.py → if it passes, build and deploy&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=13;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="250" y="410" width="480" height="56" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="u1" target="api"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" value="HTTPS" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;fontSize=11;fontColor=#5b636e;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="u2" target="api"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="u3" target="api"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" style="endArrow=none;html=1;strokeColor=#5b636e;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="api" target="sec"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" style="endArrow=block;endFill=1;startArrow=block;startFill=1;html=1;strokeColor=#5b636e;strokeWidth=1.5;" edge="1" parent="1" source="api" target="tools"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" style="endArrow=block;endFill=1;html=1;strokeColor=#1d4ed8;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="api" target="obs"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;startArrow=block;startFill=1;html=1;strokeColor=#1f2328;strokeWidth=2;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="api" target="llm"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="385" y="100" /><mxPoint x="760" y="100" /><mxPoint x="760" y="120" /><mxPoint x="885" y="120" /></Array></mxGeometry></mxCell>
+        <mxCell id="e8" value="deploy" style="endArrow=block;endFill=1;html=1;strokeColor=#15803d;strokeWidth=2;dashed=1;fontSize=11;fontColor=#15803d;labelBackgroundColor=#ffffff;exitX=0.07;exitY=0;exitDx=0;exitDy=0;entryX=0.07;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="ci" target="cloud"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

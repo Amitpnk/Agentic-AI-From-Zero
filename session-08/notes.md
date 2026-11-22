@@ -264,4 +264,4 @@ This is **[Project 5](../projects/README.md#project-5--research-team-multi-agent
 
 ---
 
-**Previous:** [Session 7: Tool Calling and MCP](../session-07/notes.md) · **Next:** Session 9: Taking Agents to Production (coming soon)
+**Previous:** [Session 7: Tool Calling and MCP](../session-07/notes.md) · **Next:** [Session 9: Taking Agents to Production](../session-09/notes.md)
