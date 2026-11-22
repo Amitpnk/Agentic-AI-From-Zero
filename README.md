@@ -15,6 +15,7 @@ Notes, slides, diagrams and labs for a 2-day hands-on workshop: **Generative AI*
 | 7. Tool calling and MCP | [notes](session-07/notes.html) | [notes.md](session-07/notes.md) | [slides](session-07/slides.html) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-07-tools-mcp-lab.ipynb) |
 | 8. Agent frameworks and multi-agent | [notes](session-08/notes.html) | [notes.md](session-08/notes.md) | [slides](session-08/slides.html) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-08-multi-agent-lab.ipynb) |
 | 9. Taking agents to production | [notes](session-09/notes.html) | [notes.md](session-09/notes.md) | [slides](session-09/slides.html) | [Deploy starter](labs/session-09-deploy/) (FastAPI + Docker + evals) |
+| 10. Mini project and careers | [notes](session-10/notes.html) | [notes.md](session-10/notes.md) | [slides](session-10/slides.html) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-10-capstone-lab.ipynb) |
 
 **Projects:** six hands-on projects that build up to a campus helpdesk agent. See [projects/README.md](projects/README.md).
 

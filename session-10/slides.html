@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mini Project and Careers: Slides</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+<style>
+  :root {
+    --r-main-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-text-transform: none;
+    --r-heading-font-weight: 750;
+    --r-main-font-size: 32px;
+    --r-link-color: #1d4ed8;
+    --accent: #c2410c;
+    --soft: #fff1e8;
+    --blue-soft: #eaf0ff;
+    --green-soft: #e9f8ee;
+    --muted: #5b636e;
+  }
+  body, .reveal-viewport { background: #fbfaf7; }
+  .reveal h1 { font-size: 2.2em; }
+  .reveal h2 { font-size: 1.5em; color: #1f2328; margin-bottom: 0.5em; }
+  .reveal .slides section { text-align: left; }
+  .reveal .slides section.center { text-align: center; }
+  .reveal .accent { color: var(--accent); }
+  .reveal .muted { color: var(--muted); }
+  .reveal .small { font-size: 0.7em; }
+  .reveal ul, .reveal ol { display: block; margin-left: 1.1em; }
+  .reveal li { margin: 0.25em 0; }
+  .reveal .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.55em; font-weight: 700; }
+  .reveal .card { background: #fff; border: 1px solid #e3e0d8; border-radius: 14px; padding: 0.6em 0.8em; }
+  .reveal .card.hl { background: var(--soft); border-color: transparent; }
+  .reveal .card.ex { background: var(--blue-soft); border-color: transparent; }
+  .reveal .card.ok { background: var(--green-soft); border-color: transparent; }
+  .reveal .card h3 { font-size: 0.8em; margin: 0 0 0.3em; }
+  .reveal .card p, .reveal .card li { font-size: 0.8em; }
+  .reveal .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7em; }
+  .reveal .cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6em; }
+  .reveal .big { font-size: 1.35em; font-weight: 700; line-height: 1.3; }
+  .reveal table { font-size: 0.68em; width: 100%; }
+  .reveal table th, .reveal table td { padding: 0.35em 0.5em; border-bottom: 1px solid #e3e0d8; }
+  .reveal code { background: #f3f1ec; padding: 0 0.2em; border-radius: 4px; }
+  .reveal pre { width: 100%; box-shadow: none; font-size: 0.5em; margin: 0.3em 0; }
+  .reveal pre code { background: #f3f1ec; border-radius: 10px; padding: 0.6em 0.8em; max-height: 460px; line-height: 1.4; }
+  .reveal img.diagram { width: 100%; margin: 0; }
+  .reveal .slide-number { background: transparent; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1. Title -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">GenAI &amp; Agentic AI Workshop · Day 2 · Session 10</p>
+  <h1 style="color:#fff">Mini Project &amp; Careers</h1>
+  <p style="color:#cbd5e1">Build your campus helpdesk agent, then plan what's next</p>
+  <p class="small" style="color:#94a3b8">Press <b>→</b> to move · <b>S</b> for speaker notes · <b>F</b> for full screen</p>
+  <aside class="notes">60 minutes: 5 recap, 30 capstone lab, 5 demos, 17 careers, 3 close.</aside>
+</section>
+
+<!-- 2. Journey -->
+<section>
+  <h2>Two days in one picture</h2>
+  <img class="diagram" src="diagrams/two-day-journey.svg" alt="Sessions 1 to 10 and the six projects">
+  <aside class="notes">Ask the class to name one thing they remember from each session. Celebrate: they built six projects.</aside>
+</section>
+
+<!-- 3. Capstone -->
+<section>
+  <h2>The capstone: campus helpdesk agent 🎓</h2>
+  <img class="diagram" src="../projects/diagrams/helpdesk-architecture.svg" alt="Helpdesk agent with memory, RAG, timetable tool, guardrails and deployment" style="max-height:540px;width:auto;display:block;margin:0 auto;">
+</section>
+
+<!-- 4. Pieces -->
+<section>
+  <h2>Everything, in one notebook</h2>
+  <table>
+    <tr><th>Piece</th><th>From</th></tr>
+    <tr><td>System prompt: role, rules, cite sources</td><td>Session 2</td></tr>
+    <tr><td>Memory: questions + answers only</td><td>Session 3</td></tr>
+    <tr><td><code>search_faq</code>: RAG as a <b>tool</b></td><td>Session 4</td></tr>
+    <tr><td>Guardrails: injection check, PII masking</td><td>Session 5</td></tr>
+    <tr><td>Agent loop + live read-only tools</td><td>Sessions 6–7</td></tr>
+    <tr><td>Evals before sharing</td><td>Session 9</td></tr>
+    <tr><td>Chat web page (Gradio)</td><td>Today</td></tr>
+  </table>
+</section>
+
+<!-- 5. RAG as a tool -->
+<section>
+  <h2>New idea: RAG as a tool</h2>
+  <div class="cols3">
+    <div class="card ex"><h3>"When is my OS exam?"</h3><p>→ <code>get_exam_date</code></p></div>
+    <div class="card ok"><h3>"What's the hostel fee?"</h3><p>→ <code>search_faq</code></p></div>
+    <div class="card"><h3>"Hi!"</h3><p>→ no tool</p></div>
+  </div>
+  <p class="fragment big accent" style="margin-top:0.6em">The agent decides when to search.</p>
+</section>
+
+<!-- 6. Conversation -->
+<section>
+  <h2>A real conversation</h2>
+<pre><code class="plaintext">🧑 Hi, I'm Priya from CSE, 3rd year.
+🧑 When is my OS exam?
+   🛠️  get_exam_date({'subject': 'OS'})          → Mon 14 Dec, 2 PM, Hall A
+🧑 Is the library open the day before?
+   🛠️  get_library_hours({'date': '2026-12-13'}) → Sunday, exam month: 10 AM–4 PM
+🧑 What's the late fee if I pay my second instalment late?
+   🛠️  search_faq({'question': 'late fee ...'})  → ₹100/day, max ₹2,000 [Fees]
+🧑 What's my name and branch?
+🤖 You're Priya, from CSE.</code></pre>
+  <p class="fragment small">"The day before" only works because of <b>memory</b> 🧠</p>
+</section>
+
+<!-- 7. Lab -->
+<section>
+  <h2>Capstone lab (30 min) 🧪</h2>
+  <div class="cols">
+    <ol>
+      <li>Knowledge base (FAQ → Chroma)</li>
+      <li>Four read-only tools</li>
+      <li>System prompt + guardrails</li>
+      <li><code>chat()</code> with memory</li>
+    </ol>
+    <ol start="5">
+      <li>Five-turn conversation</li>
+      <li>Run the evals</li>
+      <li><b>Gradio link → open on your phone 📱</b></li>
+    </ol>
+  </div>
+  <p class="small muted" style="margin-top:0.5em">Make it yours: your college's documents · a new tool · Hindi/Kannada · deploy it</p>
+  <aside class="notes">Pairs. Walk around. After 25 minutes, pick 2-3 pairs to demo on the projector or via the Gradio link on a phone.</aside>
+</section>
+
+<!-- 8. Demos -->
+<section class="center">
+  <p class="eyebrow">Demo time</p>
+  <p class="big">Show us your agent! 🎤</p>
+  <p class="muted">2–3 pairs · 1 minute each · one question that worked, one that didn't</p>
+</section>
+
+<!-- 9. Roles -->
+<section>
+  <h2>AI careers: four roles</h2>
+  <img class="diagram" src="diagrams/ai-roles.svg" alt="GenAI app developer, AI engineer, forward deployed engineer, ML engineer or data scientist">
+  <aside class="notes">Forward deployed engineer: popularised by Palantir, now hired by AI companies to work directly with customers. Prompt engineer is now usually a skill inside these jobs.</aside>
+</section>
+
+<!-- 10. What companies want -->
+<section>
+  <h2>What companies look for</h2>
+  <div class="cols3">
+    <div class="card"><h3>🧱 Fundamentals</h3><p>Python, Git, SQL, APIs, DSA</p></div>
+    <div class="card"><h3>🛠️ Building</h3><p>Prompts, RAG, tools, agents: deployed</p></div>
+    <div class="card"><h3>🧭 Judgement</h3><p>RAG vs agent vs workflow, and when not to use AI</p></div>
+    <div class="card"><h3>📏 Quality</h3><p>Evals, testing, debugging with traces</p></div>
+    <div class="card"><h3>🛡️ Responsibility</h3><p>Safety, privacy, cost</p></div>
+    <div class="card"><h3>🗣️ Communication</h3><p>Explain it to non-experts</p></div>
+  </div>
+</section>
+
+<!-- 11. Roadmap -->
+<section>
+  <h2>Your next 90 days</h2>
+  <img class="diagram" src="diagrams/learning-roadmap.svg" alt="Month 1 ship, month 2 go deeper, month 3 real users">
+</section>
+
+<!-- 12. Portfolio -->
+<section>
+  <h2>A portfolio that gets interviews</h2>
+  <ol>
+    <li><b>3 good projects</b> &gt; 10 tutorials</li>
+    <li>Solve a <b>real problem</b> for a real person</li>
+    <li>README: GIF, diagram, how to run, <b>eval results</b>, limitations</li>
+    <li>A <b>live link</b> anyone can try in 10 seconds</li>
+    <li>Show your <b>thinking</b>: "I chose RAG because..."</li>
+    <li><b>No API keys</b> in the repo!</li>
+  </ol>
+</section>
+
+<!-- 13. Interview -->
+<section>
+  <h2>Interview questions you can now answer 💼</h2>
+  <ul class="small">
+    <li>How does an LLM generate text?</li>
+    <li class="fragment">How would you reduce hallucination?</li>
+    <li class="fragment">RAG or fine-tuning? Why?</li>
+    <li class="fragment">Your RAG bot is wrong. How do you debug it?</li>
+    <li class="fragment">What is an agent, and when would you <i>not</i> use one?</li>
+    <li class="fragment">How does function calling work? What is MCP?</li>
+    <li class="fragment">How do you evaluate and monitor an LLM app?</li>
+    <li class="fragment">Design a chatbot for 10,000 students.</li>
+  </ul>
+  <aside class="notes">Ask 3-4 of these aloud and let students answer. Model answers with session references are in the notes.</aside>
+</section>
+
+<!-- 14. Resources -->
+<section>
+  <h2>Keep learning (free)</h2>
+  <div class="cols">
+    <div class="card ex"><h3>LLM apps &amp; agents</h3><p>DeepLearning.AI short courses · Hugging Face LLM &amp; Agents courses · Anthropic courses · LangChain Academy</p></div>
+    <div class="card ok"><h3>ML foundations</h3><p>fast.ai · Google ML Crash Course · NPTEL · Kaggle Learn</p></div>
+  </div>
+  <p class="small" style="margin-top:0.5em">Practice: Kaggle · Smart India Hackathon · Google Summer of Code · open source</p>
+</section>
+
+<!-- 15. Thank you -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">That's a wrap 🎉</p>
+  <h1 style="color:#fff">You built an AI agent from zero.</h1>
+  <p style="color:#cbd5e1">Ship it this month. Share it. Help a friend build theirs.</p>
+  <p style="color:#fff;margin-top:1em">All notes, slides and labs:<br><b style="color:#fb923c">amitpnk.github.io/Agentic-AI-From-Zero</b></p>
+  <p style="color:#94a3b8" class="small">Thank you! Questions? 🙋</p>
+  <aside class="notes">Share the repo link (or a QR code). Collect feedback. Certificates if the college provides them.</aside>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    width: 1280,
+    height: 720,
+    margin: 0.06,
+    transition: 'slide',
+    plugins: [RevealNotes]
+  });
+</script>
+</body>
+</html>

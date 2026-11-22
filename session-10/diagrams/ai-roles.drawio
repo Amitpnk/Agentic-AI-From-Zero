@@ -1,0 +1,46 @@
+<mxfile host="drawio">
+  <diagram id="ai-roles" name="AI career roles">
+    <mxGraphModel dx="1100" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1000" pageHeight="470" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Four AI roles you can aim for" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="36" as="geometry" />
+        </mxCell>
+
+        <mxCell id="h1" value="GenAI app developer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#15803d;strokeColor=none;fontColor=#ffffff;fontSize=16;fontStyle=1;arcSize=18;" vertex="1" parent="1">
+          <mxGeometry x="20" y="60" width="225" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" value="&lt;b&gt;Does:&lt;/b&gt; adds AI features to apps: chatbots, RAG search, summaries, extraction.&lt;br&gt;&lt;br&gt;&lt;b&gt;Skills:&lt;/b&gt; Python or JS, LLM APIs, prompting, RAG, vector DBs, web basics.&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#15803d&quot;&gt;&lt;b&gt;This workshop:&lt;/b&gt; Sessions 2–4&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=none;fontColor=#1f2328;fontSize=13;align=left;verticalAlign=top;spacing=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="20" y="116" width="225" height="250" as="geometry" />
+        </mxCell>
+
+        <mxCell id="h2" value="AI engineer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c2410c;strokeColor=none;fontColor=#ffffff;fontSize=16;fontStyle=1;arcSize=18;" vertex="1" parent="1">
+          <mxGeometry x="265" y="60" width="225" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="&lt;b&gt;Does:&lt;/b&gt; builds and ships complete AI products: agents, tools, evals, monitoring, cost control.&lt;br&gt;&lt;br&gt;&lt;b&gt;Skills:&lt;/b&gt; strong software engineering + LLMs + evals + cloud and deployment.&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#c2410c&quot;&gt;&lt;b&gt;This workshop:&lt;/b&gt; Sessions 6–9&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=none;fontColor=#1f2328;fontSize=13;align=left;verticalAlign=top;spacing=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="265" y="116" width="225" height="250" as="geometry" />
+        </mxCell>
+
+        <mxCell id="h3" value="Forward deployed engineer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1d4ed8;strokeColor=none;fontColor=#ffffff;fontSize=16;fontStyle=1;arcSize=18;" vertex="1" parent="1">
+          <mxGeometry x="510" y="60" width="225" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="&lt;b&gt;Does:&lt;/b&gt; works directly with a customer, understands their real problem, and builds the AI solution on site. Part engineer, part consultant.&lt;br&gt;&lt;br&gt;&lt;b&gt;Skills:&lt;/b&gt; fast prototyping, communication, domain knowledge, ownership.&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#1d4ed8&quot;&gt;&lt;b&gt;This workshop:&lt;/b&gt; the capstone mindset&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf0ff;strokeColor=none;fontColor=#1f2328;fontSize=13;align=left;verticalAlign=top;spacing=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="510" y="116" width="225" height="250" as="geometry" />
+        </mxCell>
+
+        <mxCell id="h4" value="ML engineer / data scientist" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6d28d9;strokeColor=none;fontColor=#ffffff;fontSize=16;fontStyle=1;arcSize=18;" vertex="1" parent="1">
+          <mxGeometry x="755" y="60" width="225" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" value="&lt;b&gt;Does:&lt;/b&gt; trains and evaluates models on data: predictions, fine-tuning, recommendation, MLOps.&lt;br&gt;&lt;br&gt;&lt;b&gt;Skills:&lt;/b&gt; maths and statistics, data handling, PyTorch / scikit-learn, experiments.&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#6d28d9&quot;&gt;&lt;b&gt;This workshop:&lt;/b&gt; Session 1 basics; next: an ML course&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f1ebff;strokeColor=none;fontColor=#1f2328;fontSize=13;align=left;verticalAlign=top;spacing=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="755" y="116" width="225" height="250" as="geometry" />
+        </mxCell>
+
+        <mxCell id="foot" value="&lt;b&gt;All four need the same foundation:&lt;/b&gt; Python, Git, SQL, APIs, problem solving, and being able to explain your work. Titles vary by company; read the job description, not just the title." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#e3e0d8;dashed=1;fontColor=#1f2328;fontSize=14;align=left;spacingLeft=12;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="20" y="384" width="960" height="56" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

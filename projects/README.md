@@ -15,7 +15,7 @@ Six small projects, one per lab. Each adds a piece, and together they become a *
 | 3 | [Chat with the syllabus (RAG)](#project-3--chat-with-the-syllabus-rag) | 4. RAG | Intermediate | **Starter ready** |
 | 4 | [Timetable agent + MCP server](#project-4--timetable-agent--mcp-server) | 7. Tool calling & MCP | Intermediate | **Starter ready** |
 | 5 | [Research team (multi-agent)](#project-5--research-team-multi-agent) | 8. Agent frameworks | Intermediate | **Starter ready** |
-| 6 | [Campus helpdesk agent](#project-6--campus-helpdesk-agent-capstone) | 10. Mini project | Capstone | Coming soon |
+| 6 | [Campus helpdesk agent](#project-6--campus-helpdesk-agent-capstone) | 10. Mini project | Capstone | **Starter ready** |
 
 **What you need:** a Google account for Google Colab and a free Gemini API key from Google AI Studio (or a Groq key). No installs, no credit card.
 
@@ -106,16 +106,19 @@ Notebook: [labs/session-08-multi-agent-lab.ipynb](../labs/session-08-multi-agent
 
 ## Project 6 · Campus helpdesk agent (capstone)
 
-*Session 10 · Capstone · 60 min · Coming soon*
+*Session 10 · Capstone · 30 min* · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-10-capstone-lab.ipynb)
 
-A student asks *"When is my DBMS exam, and is the library open on Sunday?"* and the agent answers using everything you built.
+A student asks *"When is my OS exam? Is the library open the day before? What's the late fee?"* and the agent answers using everything you built, choosing the right tool each time and remembering the conversation. Ends with a Gradio chat page you can open on your phone.
+
+Notebook: [labs/session-10-capstone-lab.ipynb](../labs/session-10-capstone-lab.ipynb) · Notes: [Session 10](../session-10/notes.md#2-the-capstone-campus-helpdesk-agent)
 
 | Piece | Comes from |
 | --- | --- |
 | System prompt with role and rules | Project 1 |
 | Conversation memory | Project 2 |
 | Answers from the college FAQ, with sources | Project 3 |
-| Timetable tool over MCP | Project 4 |
+| Timetable and library tools (an MCP version is in Project 4) | Project 4 |
+| Evals before sharing | Session 9 |
 | Guardrails: "I don't know", no personal data ([`safe_ask` starter](../session-05/notes.md#6-guardrails)) | Session 5 |
 | Deployed as an API (stretch: [deploy starter](../labs/session-09-deploy/)) | Session 9 |
 
