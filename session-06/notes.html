@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session 6: From Chatbots to Agents</title>
+<meta name="description" content="Simple notes with examples: what makes an agent (reasoning, tools, memory, actions), the ReAct loop with a worked example, workflows vs agents, and when not to use an agent.">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="home" href="../">GenAI &amp; Agentic AI Workshop</a>
+    <nav>
+      <a href="slides.html">Slides</a>
+      <a href="#be-the-agent">Activity</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#instructor">Instructor guide</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="eyebrow">Day 2 · Session 6 · 1 hour</div>
+  <h1>From Chatbots to Agents</h1>
+  <p class="lead">Yesterday's CampusBuddy can <i>talk</i>: it answers from documents. Today we make it <i>do</i> things: check live data, make bookings, finish multi-step tasks. That's an agent. This session explains what agents are, how they work, and when you <b>shouldn't</b> use one.</p>
+
+  <div class="btn-row">
+    <a class="btn" href="slides.html">Open the slides</a>
+    <a class="btn secondary" href="#be-the-agent">Jump to the activity</a>
+  </div>
+
+  <div class="toc">
+    <b>What you will learn</b>
+    <ol>
+      <li><a href="#talk-vs-do">Talking vs doing</a></li>
+      <li><a href="#spectrum">From chatbot to agent: a spectrum</a></li>
+      <li><a href="#parts">What makes an agent: four parts</a></li>
+      <li><a href="#loop">The agent loop (ReAct), step by step</a></li>
+      <li><a href="#tools">Tools</a></li>
+      <li><a href="#memory">Memory and planning</a></li>
+      <li><a href="#workflows">Workflows vs agents, and when not to use an agent</a></li>
+      <li><a href="#real">Agents in the real world</a></li>
+      <li><a href="#be-the-agent">Activity: be the agent</a></li>
+      <li><a href="#recap">Recap, quiz and glossary</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <h2 id="talk-vs-do">1. Talking vs doing</h2>
+  <p>Ask yesterday's CampusBuddy:</p>
+  <div class="box example">
+    <span class="label">A request a chatbot can't finish</span>
+    "When is my OS exam? If the library is open the day before, book me a study room for 2 hours in the morning."
+  </div>
+  <p>A chatbot or RAG bot can't do this. It needs to:</p>
+  <ol>
+    <li>Look up <b>live data</b> (the exam timetable), not a static FAQ.</li>
+    <li><b>Decide</b> what to do next based on what it found (the day before is a Sunday: is the library open?).</li>
+    <li><b>Take an action</b> in another system (book the room).</li>
+  </ol>
+  <p>An <b>AI agent</b> is an LLM that can do all three: it works towards a goal by deciding which tools to use, using them, looking at the results, and repeating until the job is done.</p>
+
+  <!-- 2 -->
+  <h2 id="spectrum">2. From chatbot to agent: a spectrum</h2>
+  <p>"Agent" isn't magic. It's the far end of a spectrum. The key question is: <b>who decides the next step?</b></p>
+
+  <figure class="diagram">
+    <img src="diagrams/autonomy-spectrum.svg" alt="Four levels: chatbot (one LLM call), RAG bot (search then answer, decided by your code), workflow (several steps in an order you wrote), agent (the LLM picks tools in a loop). More freedom means more power but more cost, risk and testing.">
+  </figure>
+
+  <div class="table-wrap"><table>
+    <tr><th></th><th>Who decides the next step?</th><th>Example</th></tr>
+    <tr><td><b>Chatbot</b></td><td>Nobody: question in, answer out</td><td>Session 3 CampusBuddy</td></tr>
+    <tr><td><b>RAG bot</b></td><td>Your code: always search, then answer</td><td>Session 4 CampusBuddy</td></tr>
+    <tr><td><b>Workflow</b></td><td>Your code: a fixed sequence, maybe with if/else</td><td>Classify a complaint → route it → draft a reply</td></tr>
+    <tr><td><b>Agent</b></td><td>The LLM: it picks tools in a loop until done</td><td>"Check my exam and book a library room"</td></tr>
+  </table></div>
+
+  <!-- 3 -->
+  <h2 id="parts">3. What makes an agent: four parts</h2>
+  <div class="flow">
+    <div class="step"><b>🧠 Brain (LLM)</b><small>Understands the goal, reasons about what to do next, and decides when it's finished.</small></div>
+    <div class="step"><b>🧰 Tools</b><small>Functions it can call: search, calculator, APIs, databases. Its "hands".</small></div>
+    <div class="step"><b>📝 Memory</b><small>What happened so far in this task, plus anything worth remembering for next time.</small></div>
+    <div class="step"><b>⚡ Actions</b><small>Tools that change something: book, send, save, pay. This is where the risk is.</small></div>
+  </div>
+  <div class="box example">
+    <span class="label">Analogy: a new teaching assistant</span>
+    You give a TA a goal: "Sort out the lab schedule for next week." They <b>think</b> (brain), check the timetable and email faculty (tools), keep notes of who replied (memory), and finally book the lab (action). You don't tell them every step; you trust them to figure it out. That trust is exactly why you check their work at first.
+  </div>
+
+  <!-- 4 -->
+  <h2 id="loop">4. The agent loop (ReAct), step by step</h2>
+  <p>Almost every agent runs the same simple loop. It's called <b>ReAct</b>, short for <b>Re</b>ason + <b>Act</b> (Yao et al., 2022):</p>
+  <ol>
+    <li><b>Think:</b> the LLM looks at the goal and everything so far, and decides what to do next.</li>
+    <li><b>Act:</b> it picks a tool and the inputs. <i>Your code</i> runs the tool.</li>
+    <li><b>Observe:</b> the result goes back into the agent's memory.</li>
+    <li><b>Repeat</b> until the LLM decides the goal is met, then give the final answer.</li>
+  </ol>
+
+  <figure class="diagram">
+    <img src="diagrams/agent-loop.svg" alt="The goal goes into Think. Think leads to Act, which calls a tool. The result goes to Observe, which goes back to Think. When the goal is met, Think produces the final answer. Always cap the loop.">
+  </figure>
+
+  <h3>A worked example</h3>
+  <p>Goal: <i>"When is my OS exam? If the library is open the day before, book me a study room for 2 hours in the morning."</i></p>
+  <div class="table-wrap"><table>
+    <tr><th>Step</th><th>What happens</th></tr>
+    <tr><td>💭 Think</td><td>I need the OS exam date first.</td></tr>
+    <tr><td>🛠️ Act</td><td><code>get_exam_date(subject="OS")</code></td></tr>
+    <tr><td>👀 Observe</td><td><code>{"date": "2026-12-14", "time": "2 PM", "hall": "Hall A"}</code></td></tr>
+    <tr><td>💭 Think</td><td>14 Dec is a Monday, so the day before is Sunday 13 Dec. Is the library open then?</td></tr>
+    <tr><td>🛠️ Act</td><td><code>get_library_hours(date="2026-12-13")</code></td></tr>
+    <tr><td>👀 Observe</td><td><code>{"open": "10:00", "close": "16:00", "note": "Sunday opening in exam month"}</code></td></tr>
+    <tr><td>💭 Think</td><td>It's open 10 to 4. Two hours in the morning means 10 to 12. Book it.</td></tr>
+    <tr><td>🛠️ Act</td><td><code>book_study_room(date="2026-12-13", start="10:00", hours=2)</code></td></tr>
+    <tr><td>👀 Observe</td><td><code>{"status": "confirmed", "room": "S3"}</code></td></tr>
+    <tr><td>💭 Think</td><td>Goal met. Write the answer.</td></tr>
+    <tr><td>✅ Answer</td><td>"Your OS exam is on Monday 14 Dec at 2 PM in Hall A. The library is open on Sunday 13 Dec (10 AM–4 PM, exam-month timings), so I booked study room S3 from 10 AM to 12 PM."</td></tr>
+  </table></div>
+  <div class="box key">
+    <span class="label">Notice</span>
+    Nobody wrote "call three tools in this order". If the library had been closed, the agent would have stopped after two tools and said so. <b>The number of steps depends on what it finds.</b> That's what makes it an agent, not a workflow.
+  </div>
+
+  <h3>The loop in code (a preview)</h3>
+  <p>The whole idea fits in a few lines. In Session 7 you'll write the real version with function calling.</p>
+<pre><code>def run_agent(goal, tools, max_steps=8):
+    memory = [goal]
+    for step in range(max_steps):              # always cap the loop!
+        decision = llm(memory, tools)           # THINK: answer, or which tool?
+        if decision.is_final_answer:
+            return decision.text
+        result = tools[decision.tool](**decision.args)   # ACT: your code runs the tool
+        memory.append((decision, result))       # OBSERVE: remember the result
+    return "Sorry, I couldn't finish that. Please contact the office."</code></pre>
+
+  <!-- 5 -->
+  <h2 id="tools">5. Tools</h2>
+  <p>A <b>tool</b> is just a function the agent is allowed to call. You describe it to the LLM with a <b>name</b>, a <b>description</b> (when to use it), and its <b>inputs</b>.</p>
+  <div class="box key">
+    <span class="label">The most important fact about tools</span>
+    The LLM <b>never runs the tool itself</b>. It only replies with "please call <code>get_exam_date</code> with <code>subject="OS"</code>". <i>Your code</i> runs it and sends back the result. So your code is always in control, and that's where you add permissions and checks (Session 5).
+  </div>
+  <div class="table-wrap"><table>
+    <tr><th>Tool for CampusBuddy</th><th>What it does</th><th>Risk</th></tr>
+    <tr><td><code>search_faq(question)</code></td><td>The Session 4 RAG search</td><td>Read-only, low</td></tr>
+    <tr><td><code>get_exam_date(subject)</code></td><td>Looks up the live timetable</td><td>Read-only, low</td></tr>
+    <tr><td><code>get_library_hours(date)</code></td><td>Opening hours for a date</td><td>Read-only, low</td></tr>
+    <tr><td><code>calculator(expression)</code></td><td>Exact maths (LLMs can slip on arithmetic)</td><td>Low</td></tr>
+    <tr><td><code>book_study_room(date, start, hours)</code></td><td>Makes a booking</td><td>Changes data: medium</td></tr>
+    <tr><td><code>send_email(to, subject, body)</code></td><td>Emails someone</td><td>High: ask a human first</td></tr>
+  </table></div>
+  <p>Good tool descriptions matter as much as good prompts (Session 2). If the description is vague, the agent picks the wrong tool or the wrong inputs.</p>
+
+  <!-- 6 -->
+  <h2 id="memory">6. Memory and planning</h2>
+  <h3>Memory</h3>
+  <ul>
+    <li><b>Short-term memory:</b> everything in the current task: the goal, each thought, each tool result. It's the same "re-send the history" trick from Session 3, so long tasks get expensive.</li>
+    <li><b>Long-term memory:</b> facts saved for next time ("Priya is in 3rd-year CSE and prefers morning slots"), stored in a database or vector store (Session 4) and retrieved when needed.</li>
+  </ul>
+  <h3>Planning</h3>
+  <ul>
+    <li><b>Step by step (ReAct):</b> decide one step at a time. Simple and flexible.</li>
+    <li><b>Plan first:</b> write a full plan, then execute it. Better for long tasks; the plan can be shown to a human first.</li>
+    <li><b>Reflection:</b> after finishing, check the work ("Did I actually book the room? Is the time right?") and fix mistakes.</li>
+  </ul>
+
+  <!-- 7 -->
+  <h2 id="workflows">7. Workflows vs agents, and when not to use an agent</h2>
+  <p>Agents are exciting, so it's tempting to make everything an agent. Don't. A useful rule from practitioners: <b>use the simplest thing that works</b>, and only add agent-style freedom when you need it.</p>
+
+  <figure class="diagram">
+    <img src="diagrams/agent-or-workflow.svg" alt="Flowchart. Can one LLM call answer it? Yes: chatbot or RAG. No: are the steps the same every time? Yes: workflow. No: agent. Is a mistake costly? Yes: agent with human approval.">
+  </figure>
+
+  <div class="table-wrap"><table>
+    <tr><th></th><th>Workflow</th><th>Agent</th></tr>
+    <tr><td>Steps</td><td>Fixed, written by you</td><td>Chosen by the LLM at run time</td></tr>
+    <tr><td>Good for</td><td>Known, repeatable tasks</td><td>Open-ended tasks with an unknown number of steps</td></tr>
+    <tr><td>Cost and speed</td><td>Predictable, usually cheaper and faster</td><td>More LLM calls: slower and costlier</td></tr>
+    <tr><td>Testing</td><td>Easy: same path every time</td><td>Harder: different path each time</td></tr>
+    <tr><td>Risk</td><td>Low: it can only do what you coded</td><td>Higher: it might choose a wrong or harmful action</td></tr>
+  </table></div>
+
+  <div class="box key">
+    <span class="label">Mistakes multiply</span>
+    If each step is right 95% of the time, a 10-step agent gets <i>every</i> step right only about 0.95<sup>10</sup> ≈ <b>60%</b> of the time. Fewer steps, better tools and checks along the way make a huge difference.
+  </div>
+
+  <p>Common workflow patterns you'll see (no agent needed):</p>
+  <ul>
+    <li><b>Chaining:</b> one LLM call's output feeds the next (summarise → translate → format).</li>
+    <li><b>Routing:</b> classify the input, then send it to the right handler (Session 2's complaint router).</li>
+    <li><b>Parallel:</b> run several LLM calls at once and combine them (summarise 10 feedback forms together).</li>
+  </ul>
+
+  <!-- 8 -->
+  <h2 id="real">8. Agents in the real world</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Type</th><th>What it does</th><th>Examples</th></tr>
+    <tr><td><b>Coding agents</b></td><td>Read a codebase, edit files, run tests, fix bugs</td><td>Claude Code, GitHub Copilot's agent mode, Cursor</td></tr>
+    <tr><td><b>Research agents</b></td><td>Search the web many times, read sources, write a report</td><td>"Deep research" features in ChatGPT, Gemini and Claude</td></tr>
+    <tr><td><b>Customer support agents</b></td><td>Look up orders, issue refunds within limits, escalate to humans</td><td>Airlines, banks, e-commerce helpdesks</td></tr>
+    <tr><td><b>Computer-use agents</b></td><td>Click and type in a browser or app like a person</td><td>Browser agents that fill forms or book tickets</td></tr>
+  </table></div>
+  <p>Notice what they have in common: clear goals, well-defined tools, and limits on risky actions (refunds up to a limit, human escalation). That's the pattern to copy.</p>
+
+  <!-- Activity -->
+  <h2 id="be-the-agent">9. Activity: be the agent (10 min)</h2>
+  <p>Groups of three. No laptops. One person is the <b>User</b>, one is the <b>Agent</b> (the LLM), one is the <b>Tools</b>.</p>
+  <ul>
+    <li>The <b>User</b> reads out one goal card.</li>
+    <li>The <b>Agent</b> can't look anything up. They can only write <b>Think</b> lines on paper and ask the Tools person for an exact call, like <code>get_exam_date(subject="CN")</code>.</li>
+    <li>The <b>Tools</b> person answers <i>only</i> from the tool cards below, exactly as written. Wrong format or unknown tool? Reply <code>ERROR</code>.</li>
+    <li>The Agent writes a final answer. The User checks it.</li>
+  </ul>
+
+  <h3>Tool cards</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Tool</th><th>Data (the only answers allowed)</th></tr>
+    <tr><td><code>get_exam_date(subject)</code></td><td>DBMS → Sat 12 Dec, 10 AM, Hall B · OS → Mon 14 Dec, 2 PM, Hall A · CN → Wed 16 Dec, 10 AM, Hall C · anything else → "not found"</td></tr>
+    <tr><td><code>get_library_hours(date)</code></td><td>Mon–Sat: 8 AM–8 PM · Sunday in December: 10 AM–4 PM · Sunday in other months: closed</td></tr>
+    <tr><td><code>book_study_room(date, start, hours)</code></td><td>Max 3 hours. Fails if the library is closed at that time. Otherwise: "confirmed, room S1" (then S2, S3...)</td></tr>
+    <tr><td><code>calculator(expression)</code></td><td>The Tools person works it out exactly.</td></tr>
+  </table></div>
+
+  <h3>Goal cards</h3>
+  <ol>
+    <li>"Can I study in the library the evening before my CN exam? If yes, book 2 hours from 6 PM."</li>
+    <li>"Book me a 4-hour study room the day before DBMS." <i>(Watch what the agent does when a tool says no.)</i></li>
+    <li>"How many days are there between my first and last exam?"</li>
+    <li>"When is my Maths exam?" <i>(Does the agent admit "not found", or make something up?)</i></li>
+  </ol>
+  <div class="box try">
+    <span class="label">Discuss after</span>
+    How many tool calls did each goal need? Did any Agent guess instead of calling a tool? What would happen if <code>book_study_room</code> were <code>send_email_to_all_students</code> instead? (Session 5!)
+  </div>
+
+  <h3>Quick vote: agent or not?</h3>
+  <details><summary>1. Answer students' questions from the college handbook.</summary><b>RAG bot.</b> One search + one answer. No agent needed.</details>
+  <details><summary>2. Every morning at 8, summarise yesterday's complaints and email the principal.</summary><b>Workflow.</b> Same steps every day, on a schedule.</details>
+  <details><summary>3. Read each complaint, send it to the right department, and draft a reply.</summary><b>Workflow (routing).</b> Classify, then a fixed path per department.</details>
+  <details><summary>4. "Plan my study week around exams, lab slots and club events, and book library rooms."</summary><b>Agent.</b> Open-ended, several tools, the number of steps depends on what it finds.</details>
+  <details><summary>5. Find and fix a failing test in a large codebase.</summary><b>Agent.</b> It has to explore, try, run tests and retry: classic coding agent.</details>
+  <details><summary>6. Decide which students get the merit scholarship.</summary><b>Not an autonomous agent.</b> A decision about people: AI can help prepare the list, a human decides (Session 5).</details>
+
+  <!-- Recap -->
+  <h2 id="recap">10. Recap</h2>
+  <ol>
+    <li>Chatbots <b>talk</b>; agents <b>do</b>: they use tools and take actions towards a goal.</li>
+    <li>The key question: <b>who decides the next step?</b> Your code (workflow) or the LLM (agent).</li>
+    <li>Four parts: <b>brain</b> (LLM), <b>tools</b>, <b>memory</b>, <b>actions</b>.</li>
+    <li>The <b>ReAct loop</b>: think → act → observe → repeat. Always cap the number of steps.</li>
+    <li>The LLM only <i>asks</i> for a tool; <b>your code runs it</b>, so your code stays in control.</li>
+    <li><b>Use the simplest thing that works.</b> Workflows are cheaper, faster and easier to test. Use agents for open-ended tasks, with human approval for risky actions.</li>
+  </ol>
+
+  <h2 id="quiz">Quick quiz</h2>
+  <details><summary>1. What's the main difference between a workflow and an agent?</summary>In a workflow, your code decides the steps. In an agent, the LLM decides the next step at run time, in a loop.</details>
+  <details><summary>2. Name the four parts of an agent.</summary>Brain (LLM), tools, memory, actions.</details>
+  <details><summary>3. What do the three steps of the ReAct loop do?</summary>Think (decide what to do next), Act (call a tool), Observe (add the result to memory). Repeat until done.</details>
+  <details><summary>4. Who actually runs a tool: the LLM or your code?</summary>Your code. The LLM only says which tool and which inputs.</details>
+  <details><summary>5. Why should you always cap the agent loop?</summary>So a confused agent can't loop forever, wasting time and money.</details>
+  <details><summary>6. Each step is 95% reliable. Roughly how reliable is a 10-step agent?</summary>About 60% (0.95<sup>10</sup> ≈ 0.6). That's why fewer steps and checks matter.</details>
+  <details><summary>7. "Send the exam timetable to all students every Monday." Agent or workflow?</summary>Workflow: fixed steps on a schedule. No agent needed.</details>
+
+  <h2 id="glossary">Glossary</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Term</th><th>Meaning in one line</th></tr>
+    <tr><td>Agent</td><td>An LLM that works towards a goal by choosing and using tools in a loop.</td></tr>
+    <tr><td>Workflow</td><td>LLM calls and tools in a fixed order that your code decides.</td></tr>
+    <tr><td>Tool</td><td>A function the agent may ask your code to run.</td></tr>
+    <tr><td>Action</td><td>A tool call that changes something in the world (book, send, pay).</td></tr>
+    <tr><td>ReAct</td><td>Reason + Act: the think → act → observe loop.</td></tr>
+    <tr><td>Observation</td><td>The result of a tool call, fed back to the LLM.</td></tr>
+    <tr><td>Short-term memory</td><td>Everything in the current task: goal, thoughts, tool results.</td></tr>
+    <tr><td>Long-term memory</td><td>Facts saved for future tasks, usually in a database or vector store.</td></tr>
+    <tr><td>Planning</td><td>Working out the steps before (or while) doing them.</td></tr>
+    <tr><td>Reflection</td><td>The agent checking and correcting its own work.</td></tr>
+    <tr><td>Autonomy</td><td>How much the agent decides on its own, without a human.</td></tr>
+  </table></div>
+
+  <h2 id="learn-more">Learn more (free)</h2>
+  <ul>
+    <li>Anthropic, <i>Building effective agents</i> (blog post on workflows vs agents)</li>
+    <li>Yao et al., <i>ReAct: Synergizing Reasoning and Acting in Language Models</i> (2022)</li>
+    <li>Lilian Weng, <i>LLM Powered Autonomous Agents</i> (blog post)</li>
+    <li>Google, <i>Agents</i> whitepaper (Kaggle)</li>
+  </ul>
+
+  <!-- Instructor -->
+  <h2 id="instructor">Instructor guide</h2>
+  <p>Suggested plan for the 60 minutes. Press <b>S</b> in the slides to open speaker notes.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Time</th><th>Segment</th><th>What to do</th></tr>
+    <tr><td>0–5 min</td><td>Hook</td><td>Recap Day 1 in one line: CampusBuddy can talk. Read out the OS exam + library request. Ask: what's missing?</td></tr>
+    <tr><td>5–12 min</td><td>Spectrum</td><td>Chatbot → RAG → workflow → agent. Keep asking "who decides the next step?"</td></tr>
+    <tr><td>12–24 min</td><td>Four parts + ReAct</td><td>TA analogy. Walk through the worked example one row at a time; let the class predict the next Think.</td></tr>
+    <tr><td>24–32 min</td><td>Tools, memory, planning</td><td>Stress: the LLM never runs the tool. Risk column in the tools table links back to Session 5.</td></tr>
+    <tr><td>32–40 min</td><td>Workflows vs agents</td><td>Flowchart + the 0.95<sup>10</sup> maths on the board. "Use the simplest thing that works."</td></tr>
+    <tr><td>40–50 min</td><td>Be the agent</td><td>Groups of three, goal cards 1–4. Share: who guessed instead of calling a tool?</td></tr>
+    <tr><td>50–57 min</td><td>Agent or not?</td><td>Hands-up vote on the six scenarios, then reveal.</td></tr>
+    <tr><td>57–60 min</td><td>Recap</td><td>Preview Session 7: we write the real tool-calling loop in Python, then turn a tool into an MCP server.</td></tr>
+  </table></div>
+  <div class="box try">
+    <span class="label">Before class</span>
+    Print the tool cards and goal cards (one set per group), or show them on a slide. If you can, show a real coding agent or a "deep research" run for two minutes. Seeing the think/act/observe steps live makes the loop click.
+  </div>
+
+  <footer>
+    Session 6 of the GenAI &amp; Agentic AI 2-day workshop · <a href="../">All sessions</a> · <a href="slides.html">Slides</a> · <a href="../session-05/notes.html">← Session 5</a> · <a href="../session-07/notes.html">Session 7 →</a>
+  </footer>
+</main>
+</body>
+</html>

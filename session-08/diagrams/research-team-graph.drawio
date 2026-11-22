@@ -1,0 +1,45 @@
+<mxfile host="drawio">
+  <diagram id="research-team-graph" name="Lab: research team graph">
+    <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="960" pageHeight="500" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Today's lab as a LangGraph graph" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="36" as="geometry" />
+        </mxCell>
+
+        <mxCell id="start" value="START&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;topic&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;strokeWidth=2;fontColor=#1f2328;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="150" width="90" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="res" value="&lt;b&gt;🔎 researcher&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;tool: search_wikipedia&lt;br&gt;→ notes with sources&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=14;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="150" y="140" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="wri" value="&lt;b&gt;✍️ writer&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;notes (+ feedback)&lt;br&gt;→ ~200-word draft&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf0ff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=14;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="360" y="140" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rev" value="&lt;b&gt;🧐 reviewer&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;checks facts, length, sources&lt;br&gt;→ approved? + feedback&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f1ebff;strokeColor=#6d28d9;fontColor=#1f2328;fontSize=14;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="570" y="140" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="hum" value="&lt;b&gt;🙋 human_approval&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;interrupt(): pause and wait for you&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c2410c;strokeColor=none;fontColor=#ffffff;fontSize=14;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="570" y="300" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="end" value="END&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;published&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;strokeWidth=2;fontColor=#1f2328;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="830" y="310" width="100" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="start" target="res"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="res" target="wri"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="wri" target="rev"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" value="changes needed&lt;br&gt;(and fewer than 3 drafts)" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;html=1;strokeColor=#6d28d9;strokeWidth=2;dashed=1;fontSize=12;fontColor=#6d28d9;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rev" target="wri"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="655" y="90" /><mxPoint x="445" y="90" /></Array></mxGeometry></mxCell>
+        <mxCell id="e5" value="approved" style="endArrow=block;endFill=1;html=1;strokeColor=#6d28d9;strokeWidth=2;dashed=1;fontSize=12;fontColor=#6d28d9;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="rev" target="hum"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" value="&quot;yes&quot;" style="endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=2;dashed=1;fontSize=12;fontColor=#c2410c;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="hum" target="end"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" value="&quot;make it more fun&quot;" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=2;dashed=1;fontSize=12;fontColor=#c2410c;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="hum" target="wri"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="445" y="340" /></Array></mxGeometry></mxCell>
+
+        <mxCell id="legend" value="&lt;b&gt;Solid arrows&lt;/b&gt; = normal edges (always). &lt;b&gt;Dashed arrows&lt;/b&gt; = conditional edges (if/else in your code). A shared &lt;b&gt;state&lt;/b&gt; (topic, notes, draft, feedback, approved, revisions) flows through every node, and a &lt;b&gt;checkpointer&lt;/b&gt; saves it so the graph can pause and resume." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#e3e0d8;dashed=1;fontColor=#1f2328;fontSize=13;align=left;spacingLeft=12;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="20" y="400" width="920" height="64" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

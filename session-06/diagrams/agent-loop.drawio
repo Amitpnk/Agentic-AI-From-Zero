@@ -1,0 +1,47 @@
+<mxfile host="drawio">
+  <diagram id="agent-loop" name="The agent loop (ReAct)">
+    <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="960" pageHeight="520" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="The agent loop: think, act, observe, repeat" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="36" as="geometry" />
+        </mxCell>
+
+        <mxCell id="goal" value="&lt;b&gt;Goal&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;&quot;When is my OS exam? If the library is open the day before, book me a study room.&quot;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;fontColor=#1f2328;fontSize=14;arcSize=12;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="20" y="190" width="200" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="think" value="&lt;b&gt;1. Think&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;LLM reasons: what do I know, what do I need next?&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f1ebff;strokeColor=#6d28d9;strokeWidth=2;fontColor=#1f2328;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="330" y="70" width="210" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="act" value="&lt;b&gt;2. Act&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;LLM picks a tool + inputs; your code runs it&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;strokeWidth=2;fontColor=#1f2328;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="500" y="270" width="210" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="obs" value="&lt;b&gt;3. Observe&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Tool result is added to the agent's memory&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;strokeWidth=2;fontColor=#1f2328;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="250" y="300" width="210" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e0" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="goal" target="think"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e1" style="endArrow=block;endFill=1;html=1;strokeColor=#6d28d9;strokeWidth=2.5;curved=1;" edge="1" parent="1" source="think" target="act"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="610" y="190" /></Array></mxGeometry></mxCell>
+        <mxCell id="e2" style="endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=2.5;curved=1;" edge="1" parent="1" source="act" target="obs"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="480" y="400" /></Array></mxGeometry></mxCell>
+        <mxCell id="e3" style="endArrow=block;endFill=1;html=1;strokeColor=#15803d;strokeWidth=2.5;curved=1;" edge="1" parent="1" source="obs" target="think"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="300" y="230" /></Array></mxGeometry></mxCell>
+
+        <mxCell id="done" value="&lt;b&gt;Done?&lt;/b&gt; → Final answer&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;&quot;OS is on Mon 14 Dec, 2 PM. Library is open Sunday 10-4, so I booked room S3, 10 AM-12 PM.&quot;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c2410c;strokeColor=none;fontColor=#ffffff;fontSize=14;arcSize=12;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="700" y="60" width="240" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="goal met" style="endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=2;dashed=1;fontSize=12;fontColor=#c2410c;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="think" target="done"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="tools" value="&lt;b&gt;Tools&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;get_exam_date()&lt;br&gt;get_library_hours()&lt;br&gt;book_study_room()&lt;br&gt;search_faq()&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;dashed=1;fontColor=#1f2328;fontSize=14;arcSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="760" y="280" width="180" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" style="endArrow=block;endFill=1;startArrow=block;startFill=1;html=1;strokeColor=#c2410c;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="act" target="tools"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="foot" value="&lt;b&gt;Always cap the loop&lt;/b&gt; (e.g. max 8 steps), so a confused agent can't run forever and burn tokens. This loop is called &lt;b&gt;ReAct&lt;/b&gt;: Reason + Act." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#e3e0d8;dashed=1;fontColor=#1f2328;fontSize=14;align=left;spacingLeft=12;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="20" y="430" width="920" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

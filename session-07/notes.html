@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session 7: Tool Calling and MCP</title>
+<meta name="description" content="Simple notes with examples: function calling step by step, writing good tools, the agent loop in Python, a real weather API, and the Model Context Protocol (MCP) with your own MCP server.">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="home" href="../">GenAI &amp; Agentic AI Workshop</a>
+    <nav>
+      <a href="slides.html">Slides</a>
+      <a href="#lab">Lab</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#instructor">Instructor guide</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="eyebrow">Day 2 · Session 7 · 1.5 hours</div>
+  <h1>Tool Calling and MCP</h1>
+  <p class="lead">In Session 6 you <i>played</i> the agent on paper. Now we build it for real: give Gemini tools, write the agent loop in Python, call a live weather API, and then package the same tools as an <b>MCP server</b> that any AI app can use.</p>
+
+  <div class="btn-row">
+    <a class="btn" href="slides.html">Open the slides</a>
+    <a class="btn secondary" href="#lab">Jump to the lab</a>
+  </div>
+
+  <div class="toc">
+    <b>What you will learn</b>
+    <ol>
+      <li><a href="#how">Function calling, step by step</a></li>
+      <li><a href="#tools">Writing a tool the model can use</a></li>
+      <li><a href="#round">One round by hand</a></li>
+      <li><a href="#loop">The agent loop in Python</a></li>
+      <li><a href="#shortcut">The shortcut: automatic function calling</a></li>
+      <li><a href="#real-api">Calling a real API</a></li>
+      <li><a href="#why-mcp">Why MCP?</a></li>
+      <li><a href="#mcp">How MCP works</a></li>
+      <li><a href="#server">Build your own MCP server</a></li>
+      <li><a href="#use">Use it from your agent and from real apps</a></li>
+      <li><a href="#safety">Staying safe with tools and MCP</a></li>
+      <li><a href="#lab">Lab: timetable agent + MCP server</a></li>
+      <li><a href="#recap">Recap, quiz and glossary</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <h2 id="how">1. Function calling, step by step</h2>
+  <p><b>Function calling</b> (also called <b>tool calling</b>) is the API feature that makes agents possible. You tell the model which functions exist; when it needs one, it replies with a structured request instead of text.</p>
+
+  <figure class="diagram">
+    <img src="diagrams/function-calling.svg" alt="1: your code sends the question and tool descriptions to the LLM. 2: the LLM replies with a function call, get_exam_date with subject OS. 3: your code runs the real function and gets the result. 4: your code sends the result back. 5: the LLM gives the final answer, or asks for another function.">
+  </figure>
+
+  <ol>
+    <li>You send the question <b>plus descriptions of your tools</b>.</li>
+    <li>The model replies with a <b>function call</b>: a name and arguments, like <code>get_exam_date(subject="OS")</code>.</li>
+    <li><b>Your code</b> runs the real function.</li>
+    <li>You send the <b>result</b> back to the model.</li>
+    <li>The model writes the answer, or asks for another function (back to step 3). That repeat is the agent loop from Session 6.</li>
+  </ol>
+
+  <!-- 2 -->
+  <h2 id="tools">2. Writing a tool the model can use</h2>
+  <p>A tool is a normal Python function. Here are four for CampusBuddy: three use fake college data (the same as the Session 6 tool cards), and one calls a real weather API.</p>
+<pre><code>EXAMS = {
+    "DBMS": {"subject": "DBMS", "date": "2026-12-12", "day": "Saturday", "time": "10 AM", "hall": "Hall B"},
+    "OS":   {"subject": "OS",   "date": "2026-12-14", "day": "Monday",   "time": "2 PM",  "hall": "Hall A"},
+    "CN":   {"subject": "CN",   "date": "2026-12-16", "day": "Wednesday", "time": "10 AM", "hall": "Hall C"},
+}
+
+def get_exam_date(subject: str) -&gt; dict:
+    """Get the date, day, time and hall of a student's semester exam. subject: DBMS, OS or CN."""
+    exam = EXAMS.get(subject.strip().upper())
+    if exam is None:
+        return {"error": f"No exam found for '{subject}'. Known subjects: DBMS, OS, CN."}
+    return exam
+
+# Also: get_library_hours(date), book_study_room(date, start, hours), get_weather(city)
+# Full code in the lab notebook.</code></pre>
+
+  <p>The model never sees your code. It only sees a <b>declaration</b>: name, description and parameters in JSON Schema.</p>
+<pre><code>{
+    "name": "get_exam_date",
+    "description": "Get the date, day, time and hall of a student's semester exam.",
+    "parameters": {
+        "type": "object",
+        "properties": {"subject": {"type": "string", "description": "Subject code: DBMS, OS or CN"}},
+        "required": ["subject"],
+    },
+}</code></pre>
+
+  <div class="box key">
+    <span class="label">Tips for good tools</span>
+    <ul style="margin:0">
+      <li><b>Clear name and description:</b> say what it does <i>and when to use it</i> ("Only call this when the student asks for a booking").</li>
+      <li><b>Describe every parameter</b>, including the format ("YYYY-MM-DD", "1 to 3").</li>
+      <li><b>Return structured data</b> (a dict), not a long sentence.</li>
+      <li><b>Return errors, don't crash.</b> <code>{"error": "No exam found for 'Maths'..."}</code> lets the model explain or fix its mistake.</li>
+      <li><b>Small and focused:</b> one tool, one job. Separate read-only tools from tools that change things.</li>
+      <li><b>Validate inputs</b> in your code. The model may send <code>2.0</code> instead of <code>2</code>, or a badly formatted date.</li>
+    </ul>
+  </div>
+
+  <!-- 3 -->
+  <h2 id="round">3. One round by hand</h2>
+<pre><code>config = types.GenerateContentConfig(
+    system_instruction=SYSTEM,
+    tools=[types.Tool(function_declarations=declarations)],
+    temperature=0,
+)
+
+question = "When is my OS exam?"
+resp = client.models.generate_content(model=MODEL, contents=question, config=config)
+call = resp.function_calls[0]
+print(call.name, dict(call.args))          # get_exam_date {'subject': 'OS'}
+
+result = TOOLS[call.name](**call.args)      # WE run the tool
+
+contents = [
+    types.Content(role="user", parts=[types.Part(text=question)]),
+    resp.candidates[0].content,             # the model's tool request
+    types.Content(role="user", parts=[
+        types.Part.from_function_response(name=call.name, response={"result": result}),
+    ]),
+]
+final = client.models.generate_content(model=MODEL, contents=contents, config=config)
+print(final.text)   # "Your OS exam is on Monday 14 Dec at 2 PM in Hall A."</code></pre>
+  <p>Notice that we keep the whole conversation in <code>contents</code>: the question, the model's tool request, and our tool result. It's the same "re-send the history" idea as Session 3.</p>
+
+  <!-- 4 -->
+  <h2 id="loop">4. The agent loop in Python</h2>
+  <p>Put that in a loop, cap it, and ask a human before risky actions (Session 5). This is the real version of the Session 6 pseudo-code:</p>
+<pre><code>NEEDS_APPROVAL = {"book_study_room"}
+
+def run_agent(goal, max_steps=6, ask_human=True):
+    contents = [types.Content(role="user", parts=[types.Part(text=goal)])]
+    for step in range(1, max_steps + 1):                       # always cap the loop
+        resp = client.models.generate_content(model=MODEL, contents=contents, config=config)
+        if not resp.function_calls:                             # no tool needed: done
+            return resp.text
+        contents.append(resp.candidates[0].content)
+        parts = []
+        for call in resp.function_calls:                        # may be several at once!
+            args = dict(call.args or {})
+            print(f"🛠️  step {step}: {call.name}({args})")
+            if call.name in NEEDS_APPROVAL and ask_human and input("Approve? (y/n) ") != "y":
+                result = {"status": "cancelled", "reason": "The student did not approve this action."}
+            else:
+                result = TOOLS[call.name](**args)
+            print(f"👀 {result}")
+            parts.append(types.Part.from_function_response(name=call.name, response={"result": result}))
+        contents.append(types.Content(role="user", parts=parts))
+    return "Sorry, I couldn't finish that. Please contact the office."</code></pre>
+
+  <div class="box example">
+    <span class="label">What you'll see</span>
+<pre style="margin:0;background:none;padding:0"><code>🛠️  step 1: get_exam_date({'subject': 'OS'})
+👀 {'subject': 'OS', 'date': '2026-12-14', 'day': 'Monday', 'time': '2 PM', 'hall': 'Hall A'}
+🛠️  step 2: get_library_hours({'date': '2026-12-13'})
+👀 {'date': '2026-12-13', 'day': 'Sunday', 'open': '10:00', 'close': '16:00', ...}
+🛠️  step 3: book_study_room({'date': '2026-12-13', 'start': '10:00', 'hours': 2})
+   Approve? (y/n) y
+👀 {'status': 'confirmed', 'room': 'S1', ...}</code></pre>
+  </div>
+  <p><b>Parallel calls:</b> for "How many days between my first and last exam?", the model often asks for <code>get_exam_date("DBMS")</code> and <code>get_exam_date("CN")</code> <i>in the same step</i>. That's why the loop handles a list of calls.</p>
+
+  <!-- 5 -->
+  <h2 id="shortcut">5. The shortcut: automatic function calling</h2>
+  <p>The Gemini SDK can run the whole loop for you. Pass the <b>Python functions</b> themselves; it reads their docstrings and type hints:</p>
+<pre><code>auto_config = types.GenerateContentConfig(
+    system_instruction=SYSTEM,
+    tools=[get_exam_date, get_library_hours, get_weather],   # plain Python functions
+)
+resp = client.models.generate_content(
+    model=MODEL, contents="Is the library open on the day before my CN exam?", config=auto_config)
+print(resp.text)</code></pre>
+  <p>Great for quick scripts. But you lose control: there's no place for an approval step or logging of each call. Frameworks (Session 8) give you this convenience <i>with</i> the control.</p>
+
+  <!-- 6 -->
+  <h2 id="real-api">6. Calling a real API</h2>
+  <p>Tools can call anything: databases, college ERPs, public APIs. <code>get_weather</code> uses <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>, which is free and needs no API key:</p>
+<pre><code>def get_weather(city: str) -&gt; dict:
+    """Get the current temperature and today's and tomorrow's rain chance for a city."""
+    geo = requests.get("https://geocoding-api.open-meteo.com/v1/search",
+                       params={"name": city, "count": 1}, timeout=10).json()
+    if not geo.get("results"):
+        return {"error": f"City '{city}' not found."}
+    place = geo["results"][0]
+    wx = requests.get("https://api.open-meteo.com/v1/forecast", params={
+        "latitude": place["latitude"], "longitude": place["longitude"],
+        "current": "temperature_2m",
+        "daily": "precipitation_probability_max,temperature_2m_max,temperature_2m_min",
+        "timezone": "auto", "forecast_days": 2}, timeout=10).json()
+    ...   # pick out today's and tomorrow's numbers (full code in the lab)</code></pre>
+  <p>Now <i>"Will it rain in Mysuru tomorrow? Should I carry an umbrella?"</i> gets a real answer from live data. The model decides to call the tool, reads the rain chance and gives advice.</p>
+
+  <!-- 7 -->
+  <h2 id="why-mcp">7. Why MCP?</h2>
+  <p>Our tools work in <i>our</i> notebook. But what if you also want them in Claude Desktop, in VS Code, and in your friend's agent? Without a standard, every app needs its own custom integration for every tool.</p>
+
+  <figure class="diagram">
+    <img src="diagrams/why-mcp.svg" alt="Without MCP, 3 apps and 3 tools need 9 custom integrations. With MCP, each app and each tool implements MCP once: 6 in total. Like USB-C.">
+  </figure>
+
+  <p>The <b>Model Context Protocol (MCP)</b> is an open standard for connecting AI apps to tools and data. Anthropic introduced it in late 2024; since then OpenAI, Google, Microsoft and many others have adopted it, and there are thousands of ready-made MCP servers (GitHub, Google Drive, Slack, databases, browsers...).</p>
+  <div class="box example">
+    <span class="label">Analogy: USB-C</span>
+    Before USB-C, every phone had its own charger. Now any USB-C charger works with any USB-C phone. MCP does the same for AI: build your tool as an MCP server once, and every MCP-compatible app can plug it in.
+  </div>
+
+  <!-- 8 -->
+  <h2 id="mcp">8. How MCP works</h2>
+
+  <figure class="diagram">
+    <img src="diagrams/mcp-architecture.svg" alt="A host (the AI app) contains an LLM and one MCP client per server. Clients connect to servers over stdio (local) or HTTP (remote). Servers offer tools, resources and prompts.">
+  </figure>
+
+  <div class="table-wrap"><table>
+    <tr><th>Part</th><th>What it is</th><th>Example</th></tr>
+    <tr><td><b>Host</b></td><td>The AI app the user talks to</td><td>Claude Desktop, VS Code, Cursor, your own agent</td></tr>
+    <tr><td><b>Client</b></td><td>Lives inside the host; one connection per server</td><td>The <code>ClientSession</code> in our lab</td></tr>
+    <tr><td><b>Server</b></td><td>A small program that offers capabilities</td><td>Our <code>campus_server.py</code></td></tr>
+    <tr><td><b>Transport</b></td><td>How they talk</td><td><b>stdio</b> (a local process) or <b>HTTP</b> (a remote server)</td></tr>
+  </table></div>
+  <p>A server can offer three kinds of things:</p>
+  <ul>
+    <li><b>Tools:</b> actions the model can call (<code>get_exam_date</code>, <code>book_study_room</code>). Most servers are mainly this.</li>
+    <li><b>Resources:</b> data the app can read (a file, a syllabus, a database row).</li>
+    <li><b>Prompts:</b> ready-made prompt templates ("Summarise this complaint").</li>
+  </ul>
+
+  <!-- 9 -->
+  <h2 id="server">9. Build your own MCP server</h2>
+  <p>With the official Python SDK (<code>pip install mcp</code>), it's a few lines. We reuse the exact same functions:</p>
+<pre><code># campus_server.py
+from mcp.server.mcpserver import MCPServer
+from campus_tools import get_exam_date, get_library_hours, book_study_room, get_weather
+
+mcp = MCPServer("campus")
+
+for fn in (get_exam_date, get_library_hours, book_study_room, get_weather):
+    mcp.add_tool(fn)     # name, docstring and type hints become the tool's description
+
+if __name__ == "__main__":
+    mcp.run()            # stdio transport</code></pre>
+  <div class="box key">
+    <span class="label">Heads-up: SDK versions</span>
+    This uses version 2 of the MCP Python SDK. Most older tutorials use version 1, where the same thing is written <code>from mcp.server.fastmcp import FastMCP</code> and <code>mcp = FastMCP("campus")</code>. Same idea, new name. If you see <i>"No module named 'mcp.server.fastmcp'"</i>, that's why.
+  </div>
+
+  <!-- 10 -->
+  <h2 id="use">10. Use it from your agent and from real apps</h2>
+  <h3>From Python (an MCP client)</h3>
+<pre><code>from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+
+server = StdioServerParameters(command=sys.executable, args=["campus_server.py"])
+
+async with stdio_client(server) as (read, write):
+    async with ClientSession(read, write) as session:
+        await session.initialize()
+        tools = await session.list_tools()                         # discover tools
+        result = await session.call_tool("get_exam_date", {"subject": "OS"})
+        print(result.content[0].text)</code></pre>
+  <p>In the lab, we feed the discovered tools to Gemini and send every function call through <code>session.call_tool</code>. The agent no longer knows or cares where the tools live.</p>
+
+  <h3>From Claude Desktop, Claude Code, VS Code or Cursor</h3>
+  <p>On your laptop, register the server once and the app can use your tools. For Claude Desktop (Settings → Developer → Edit Config):</p>
+<pre><code>{
+  "mcpServers": {
+    "campus": {
+      "command": "python",
+      "args": ["C:/path/to/campus_server.py"]
+    }
+  }
+}</code></pre>
+  <p>For Claude Code: <code>claude mcp add campus -- python /path/to/campus_server.py</code>. VS Code and Cursor have similar MCP settings. Then ask <i>"When is my OS exam?"</i>; the app asks permission and calls <b>your</b> tool.</p>
+
+  <!-- 11 -->
+  <h2 id="safety">11. Staying safe with tools and MCP</h2>
+  <p>Tools give the AI real power, so Session 5 matters even more here:</p>
+  <ul>
+    <li><b>Least privilege:</b> read-only tools by default. A booking tool, not a "run any SQL" tool.</li>
+    <li><b>Human approval</b> for actions that change things or can't be undone.</li>
+    <li><b>Validate arguments</b> in the tool, not just in the prompt.</li>
+    <li><b>Cap the loop</b> and log every call.</li>
+    <li><b>Only install MCP servers you trust.</b> A local server runs code on your machine, and a malicious server can hide instructions in its tool descriptions (a form of prompt injection).</li>
+    <li><b>Never put secrets in tool results</b> or descriptions; the model (and the user) can see them.</li>
+  </ul>
+
+  <!-- Lab -->
+  <h2 id="lab">12. Lab: timetable agent + MCP server (45 min)</h2>
+  <div class="btn-row">
+    <a class="btn" href="https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-07-tools-mcp-lab.ipynb" target="_blank" rel="noopener">Open the lab in Colab</a>
+    <a class="btn secondary" href="../projects/#p4">Project 4 details</a>
+  </div>
+  <p><b>Part A: function calling</b></p>
+  <ol>
+    <li>Write and test the four tools (timetable, library hours, booking, live weather).</li>
+    <li>Describe them to Gemini.</li>
+    <li>Do one round by hand and see the function call.</li>
+    <li>Write the agent loop with an approval step. Run the Session 6 goal cards for real.</li>
+    <li>Try the automatic shortcut.</li>
+  </ol>
+  <p><b>Part B: MCP</b></p>
+  <ol start="6">
+    <li>Turn the same tools into an MCP server.</li>
+    <li>Connect to it as an MCP client: list and call tools.</li>
+    <li>Give Gemini its tools from the MCP server.</li>
+    <li>On your laptop: plug the server into Claude Desktop, Claude Code or VS Code.</li>
+  </ol>
+  <div class="box try">
+    <span class="label">Stretch goals</span>
+    Add <code>search_faq</code> from Session 4 as a tool. Improve an error message so the model fixes its own mistake. Serve over HTTP. Add a fake <code>send_email_to_all_students</code> tool and try a prompt injection: does the approval step save you?
+  </div>
+
+  <!-- Recap -->
+  <h2 id="recap">13. Recap</h2>
+  <ol>
+    <li><b>Function calling:</b> the model replies with a tool name + arguments; your code runs it and sends the result back.</li>
+    <li>The model only sees the <b>declaration</b>: name, description, parameters. Write them carefully.</li>
+    <li>Tools should return structured data and <b>errors instead of crashing</b>.</li>
+    <li>The <b>agent loop</b> = function calling in a capped loop, with approval for risky actions.</li>
+    <li><b>MCP</b> is the USB-C of AI tools: build a server once, use it from any MCP app.</li>
+    <li>Host → client → server; servers offer tools, resources and prompts over stdio or HTTP.</li>
+    <li>Only connect servers you trust; least privilege and human approval still apply.</li>
+  </ol>
+
+  <h2 id="quiz">Quick quiz</h2>
+  <details><summary>1. When the model wants to use a tool, what does it send back?</summary>A function call: the tool's name and the arguments (for example <code>get_exam_date(subject="OS")</code>), not text and not the result.</details>
+  <details><summary>2. Why should a tool return <code>{"error": ...}</code> instead of raising an exception?</summary>So the model sees what went wrong and can explain it to the user or try again with better arguments, instead of the program crashing.</details>
+  <details><summary>3. What's the downside of automatic function calling?</summary>Less control: no easy place for approval steps, custom logging or extra checks between calls.</details>
+  <details><summary>4. What problem does MCP solve?</summary>Without a standard, every app needs a custom integration for every tool (apps × tools). With MCP, each app and each tool implements the protocol once.</details>
+  <details><summary>5. Name the three MCP roles.</summary>Host (the AI app), client (one connection per server, inside the host), server (offers tools, resources, prompts).</details>
+  <details><summary>6. What's the difference between the stdio and HTTP transports?</summary>stdio runs the server as a local process on your machine; HTTP connects to a server running somewhere else.</details>
+  <details><summary>7. A random MCP server from the internet promises "free unlimited AI tools". Any risk?</summary>Yes. A local server runs code on your machine and its tool descriptions can contain hidden instructions. Only install servers from sources you trust, and review what they can do.</details>
+
+  <h2 id="glossary">Glossary</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Term</th><th>Meaning in one line</th></tr>
+    <tr><td>Function / tool calling</td><td>The model asks your code to run a named function with arguments.</td></tr>
+    <tr><td>Function declaration</td><td>The name, description and parameter schema the model sees for a tool.</td></tr>
+    <tr><td>JSON Schema</td><td>A standard way to describe the shape of JSON data (types, required fields).</td></tr>
+    <tr><td>Function response</td><td>The tool's result, sent back to the model.</td></tr>
+    <tr><td>Parallel function calls</td><td>Several tool calls requested in one step.</td></tr>
+    <tr><td>Automatic function calling</td><td>The SDK runs the tool loop for you.</td></tr>
+    <tr><td>MCP</td><td>Model Context Protocol: an open standard connecting AI apps to tools and data.</td></tr>
+    <tr><td>MCP host / client / server</td><td>The AI app / its connection to a server / the program offering tools.</td></tr>
+    <tr><td>Resource (MCP)</td><td>Data a server exposes for reading.</td></tr>
+    <tr><td>Transport</td><td>How client and server talk: stdio (local) or HTTP (remote).</td></tr>
+  </table></div>
+
+  <h2 id="learn-more">Learn more (free)</h2>
+  <ul>
+    <li>Google, <i>Function calling with the Gemini API</i> (ai.google.dev)</li>
+    <li>Model Context Protocol, official site and docs (modelcontextprotocol.io)</li>
+    <li>MCP Python SDK on GitHub (modelcontextprotocol/python-sdk), including the v1 → v2 migration guide</li>
+    <li>Open-Meteo API docs (open-meteo.com), a good free API to practise with</li>
+  </ul>
+
+  <!-- Instructor -->
+  <h2 id="instructor">Instructor guide</h2>
+  <p>Suggested plan for the 90 minutes. Press <b>S</b> in the slides to open speaker notes.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Time</th><th>Segment</th><th>What to do</th></tr>
+    <tr><td>0–5 min</td><td>Hook</td><td>"Yesterday you were the Tools person. Today Python is." Show the Session 6 pseudo-code.</td></tr>
+    <tr><td>5–15 min</td><td>Function calling</td><td>Sequence diagram. Stress step 2: the model returns a request, not an answer.</td></tr>
+    <tr><td>15–25 min</td><td>Tools + declarations</td><td>Walk through <code>get_exam_date</code> and its declaration. Tips box.</td></tr>
+    <tr><td>25–40 min</td><td>Live: one round + the loop</td><td>Run lab Steps 3–4 on the projector. Read the 🛠️/👀 lines aloud as Think/Act/Observe.</td></tr>
+    <tr><td>40–50 min</td><td>MCP</td><td>Why-MCP diagram, USB-C analogy, host/client/server. Show the 10-line server.</td></tr>
+    <tr><td>50–85 min</td><td>Lab</td><td>Parts A and B. Fast students: plug the server into Claude Desktop or VS Code on their laptop.</td></tr>
+    <tr><td>85–90 min</td><td>Recap + quiz</td><td>Quiz 1, 4 and 7. Preview Session 8: frameworks and teams of agents.</td></tr>
+  </table></div>
+  <div class="box try">
+    <span class="label">Before class</span>
+    Run the whole notebook once on Colab. Check the current <code>MODEL</code> name and the <code>mcp</code> package version (the lab is written for v2). Function calling makes several requests per question, so free-tier rate limits hit sooner: stagger the class or keep a backup key.
+  </div>
+
+  <footer>
+    Session 7 of the GenAI &amp; Agentic AI 2-day workshop · <a href="../">All sessions</a> · <a href="slides.html">Slides</a> · <a href="../session-06/notes.html">← Session 6</a> · <a href="../session-08/notes.html">Session 8 →</a>
+  </footer>
+</main>
+</body>
+</html>

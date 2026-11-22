@@ -10,6 +10,10 @@ Notes, slides, diagrams and labs for a 2-day hands-on workshop: **Generative AI*
 | 2. Prompt engineering | [notes](session-02/notes.html) | [notes.md](session-02/notes.md) | [slides](session-02/slides.html) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-02-prompt-lab.ipynb) |
 | 3. Building with LLM APIs | [notes](session-03/notes.html) | [notes.md](session-03/notes.md) | [slides](session-03/slides.html) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-03-chatbot-lab.ipynb) |
 | 4. RAG | [notes](session-04/notes.html) | [notes.md](session-04/notes.md) | [slides](session-04/slides.html) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-04-rag-lab.ipynb) |
+| 5. Responsible AI | [notes](session-05/notes.html) | [notes.md](session-05/notes.md) | [slides](session-05/slides.html) | Red-team activity (in notes) |
+| 6. From chatbots to agents | [notes](session-06/notes.html) | [notes.md](session-06/notes.md) | [slides](session-06/slides.html) | "Be the agent" activity (in notes) |
+| 7. Tool calling and MCP | [notes](session-07/notes.html) | [notes.md](session-07/notes.md) | [slides](session-07/slides.html) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-07-tools-mcp-lab.ipynb) |
+| 8. Agent frameworks and multi-agent | [notes](session-08/notes.html) | [notes.md](session-08/notes.md) | [slides](session-08/slides.html) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Amitpnk/Agentic-AI-From-Zero/blob/main/labs/session-08-multi-agent-lab.ipynb) |
 
 **Projects:** six hands-on projects that build up to a campus helpdesk agent. See [projects/README.md](projects/README.md).
 

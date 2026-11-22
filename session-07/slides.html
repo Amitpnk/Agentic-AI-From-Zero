@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tool Calling and MCP: Slides</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+<style>
+  :root {
+    --r-main-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-text-transform: none;
+    --r-heading-font-weight: 750;
+    --r-main-font-size: 32px;
+    --r-link-color: #1d4ed8;
+    --accent: #c2410c;
+    --soft: #fff1e8;
+    --blue-soft: #eaf0ff;
+    --green-soft: #e9f8ee;
+    --muted: #5b636e;
+  }
+  body, .reveal-viewport { background: #fbfaf7; }
+  .reveal h1 { font-size: 2.2em; }
+  .reveal h2 { font-size: 1.5em; color: #1f2328; margin-bottom: 0.5em; }
+  .reveal .slides section { text-align: left; }
+  .reveal .slides section.center { text-align: center; }
+  .reveal .accent { color: var(--accent); }
+  .reveal .muted { color: var(--muted); }
+  .reveal .small { font-size: 0.7em; }
+  .reveal ul, .reveal ol { display: block; margin-left: 1.1em; }
+  .reveal li { margin: 0.25em 0; }
+  .reveal .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.55em; font-weight: 700; }
+  .reveal .card { background: #fff; border: 1px solid #e3e0d8; border-radius: 14px; padding: 0.6em 0.8em; }
+  .reveal .card.hl { background: var(--soft); border-color: transparent; }
+  .reveal .card.ex { background: var(--blue-soft); border-color: transparent; }
+  .reveal .card.ok { background: var(--green-soft); border-color: transparent; }
+  .reveal .card h3 { font-size: 0.8em; margin: 0 0 0.3em; }
+  .reveal .card p, .reveal .card li { font-size: 0.8em; }
+  .reveal .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7em; }
+  .reveal .cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6em; }
+  .reveal .big { font-size: 1.35em; font-weight: 700; line-height: 1.3; }
+  .reveal table { font-size: 0.68em; width: 100%; }
+  .reveal table th, .reveal table td { padding: 0.35em 0.5em; border-bottom: 1px solid #e3e0d8; }
+  .reveal code { background: #f3f1ec; padding: 0 0.2em; border-radius: 4px; }
+  .reveal pre { width: 100%; box-shadow: none; font-size: 0.5em; margin: 0.3em 0; }
+  .reveal pre code { background: #f3f1ec; border-radius: 10px; padding: 0.6em 0.8em; max-height: 460px; line-height: 1.4; }
+  .reveal img.diagram { width: 100%; margin: 0; }
+  .reveal .slide-number { background: transparent; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1. Title -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">GenAI &amp; Agentic AI Workshop · Day 2 · Session 7</p>
+  <h1 style="color:#fff">Tool Calling and MCP</h1>
+  <p style="color:#cbd5e1">Build the agent loop for real, then share your tools with any AI app</p>
+  <p class="small" style="color:#94a3b8">Press <b>→</b> to move · <b>S</b> for speaker notes · <b>F</b> for full screen</p>
+  <aside class="notes">90 minutes. Part A: function calling and the real agent loop. Part B: MCP. Lab in the middle-to-end.</aside>
+</section>
+
+<!-- 2. Hook -->
+<section>
+  <h2>Yesterday you were the Tools person 🎭</h2>
+  <p>Today, <b>Python</b> plays that role.</p>
+<pre class="fragment"><code class="python">decision = llm(memory, tools)                    # THINK
+result = tools[decision.tool](**decision.args)   # ACT: your code runs it
+memory.append((decision, result))                # OBSERVE</code></pre>
+  <p class="fragment big accent">The API feature that makes this real: <b>function calling</b>.</p>
+</section>
+
+<!-- 3. Sequence -->
+<section>
+  <h2>Function calling, step by step</h2>
+  <img class="diagram" src="diagrams/function-calling.svg" alt="Question and tool descriptions, function call, your code runs it, result back, final answer" style="max-height:560px;width:auto;display:block;margin:0 auto;">
+  <aside class="notes">Stress step 2: the model returns a REQUEST to call a function, not an answer, and not the result. Step 3 happens entirely in your code.</aside>
+</section>
+
+<!-- 4. Tool -->
+<section>
+  <h2>A tool is just a Python function</h2>
+<pre><code class="python">def get_exam_date(subject: str) -> dict:
+    """Get the date, day, time and hall of a student's semester exam."""
+    exam = EXAMS.get(subject.strip().upper())
+    if exam is None:
+        return {"error": f"No exam found for '{subject}'. Known subjects: DBMS, OS, CN."}
+    return exam</code></pre>
+  <p class="fragment">The model never sees this code. It sees only the <b>declaration</b>:</p>
+<pre class="fragment"><code class="python">{"name": "get_exam_date",
+ "description": "Get the date, day, time and hall of a student's semester exam.",
+ "parameters": {"type": "object",
+                "properties": {"subject": {"type": "string", "description": "DBMS, OS or CN"}},
+                "required": ["subject"]}}</code></pre>
+</section>
+
+<!-- 5. Tips -->
+<section>
+  <h2>Good tools 🧰</h2>
+  <div class="cols">
+    <div class="card ok"><h3>Clear description</h3><p>What it does + <b>when</b> to use it</p></div>
+    <div class="card ok"><h3>Describe every parameter</h3><p>Formats: "YYYY-MM-DD", "1 to 3"</p></div>
+    <div class="card ok"><h3>Return errors, don't crash</h3><p><code>{"error": "No exam for Maths"}</code></p></div>
+    <div class="card ok"><h3>Small and focused</h3><p>Separate read-only from actions</p></div>
+  </div>
+</section>
+
+<!-- 6. One round -->
+<section>
+  <h2>One round by hand</h2>
+<pre><code class="python">resp = client.models.generate_content(model=MODEL, contents=question, config=config)
+call = resp.function_calls[0]          # get_exam_date {'subject': 'OS'}
+result = TOOLS[call.name](**call.args) # WE run it
+
+contents = [question_content,
+            resp.candidates[0].content,                    # model's request
+            types.Content(role="user", parts=[
+                types.Part.from_function_response(name=call.name, response={"result": result})])]
+final = client.models.generate_content(model=MODEL, contents=contents, config=config)</code></pre>
+  <p class="fragment small muted">Same "re-send the history" idea as Session 3.</p>
+  <aside class="notes">Run lab Step 3 live on the projector. Print resp.function_calls so they see it's structured data.</aside>
+</section>
+
+<!-- 7. Loop -->
+<section>
+  <h2>The real agent loop 🔁</h2>
+<pre><code class="python">for step in range(1, max_steps + 1):                  # capped
+    resp = client.models.generate_content(..., contents=contents, config=config)
+    if not resp.function_calls:
+        return resp.text                               # done
+    contents.append(resp.candidates[0].content)
+    for call in resp.function_calls:                   # may be several!
+        if call.name in NEEDS_APPROVAL and input("Approve? ") != "y":
+            result = {"status": "cancelled"}
+        else:
+            result = TOOLS[call.name](**call.args)
+        ...  # send all results back</code></pre>
+  <aside class="notes">Point out: cap, parallel calls, approval for risky actions (Session 5). Full code is in the notes and notebook.</aside>
+</section>
+
+<!-- 8. Trace -->
+<section>
+  <h2>Watch it run 👀</h2>
+<pre><code class="plaintext">🛠️  step 1: get_exam_date({'subject': 'OS'})
+👀 {'date': '2026-12-14', 'day': 'Monday', 'time': '2 PM', 'hall': 'Hall A'}
+🛠️  step 2: get_library_hours({'date': '2026-12-13'})
+👀 {'day': 'Sunday', 'open': '10:00', 'close': '16:00', ...}
+🛠️  step 3: book_study_room({'date': '2026-12-13', 'start': '10:00', 'hours': 2})
+   Approve? (y/n) y
+👀 {'status': 'confirmed', 'room': 'S1', ...}</code></pre>
+  <p class="fragment big accent">Session 6's paper exercise, for real.</p>
+</section>
+
+<!-- 9. Real API + shortcut -->
+<section>
+  <h2>Real APIs and the shortcut</h2>
+  <div class="cols">
+    <div class="card ex"><h3>🌦️ Live weather tool</h3><p>Open-Meteo: free, no key.<br>"Should I carry an umbrella tomorrow?" → real rain chance.</p></div>
+    <div class="card hl"><h3>⚡ Automatic function calling</h3><p><code>tools=[get_exam_date, get_weather]</code><br>SDK runs the loop for you.<br><b>But:</b> no approval step, less control.</p></div>
+  </div>
+</section>
+
+<!-- 10. Why MCP -->
+<section>
+  <h2>Why MCP? 🔌</h2>
+  <img class="diagram" src="diagrams/why-mcp.svg" alt="Without MCP 9 integrations, with MCP 6">
+  <aside class="notes">Model Context Protocol: open standard introduced by Anthropic in late 2024, now adopted by OpenAI, Google, Microsoft and many others. Thousands of ready-made servers.</aside>
+</section>
+
+<!-- 11. Architecture -->
+<section>
+  <h2>Host, client, server</h2>
+  <img class="diagram" src="diagrams/mcp-architecture.svg" alt="Host with LLM and clients, connected to servers over stdio or HTTP">
+  <aside class="notes">Servers offer tools (actions), resources (data) and prompts (templates). Most servers are mainly tools.</aside>
+</section>
+
+<!-- 12. Server code -->
+<section>
+  <h2>Your MCP server: ~10 lines</h2>
+<pre><code class="python">from mcp.server.mcpserver import MCPServer
+from campus_tools import get_exam_date, get_library_hours, book_study_room, get_weather
+
+mcp = MCPServer("campus")
+for fn in (get_exam_date, get_library_hours, book_study_room, get_weather):
+    mcp.add_tool(fn)
+
+if __name__ == "__main__":
+    mcp.run()          # stdio</code></pre>
+  <p class="fragment small card hl">Older tutorials (SDK v1): <code>from mcp.server.fastmcp import FastMCP</code>. Same idea, new name.</p>
+</section>
+
+<!-- 13. Use it -->
+<section>
+  <h2>Plug it in anywhere</h2>
+  <div class="cols">
+    <div class="card"><h3>🐍 Your agent</h3><p><code>session.list_tools()</code><br><code>session.call_tool("get_exam_date", {...})</code></p></div>
+    <div class="card"><h3>💬 Claude Desktop</h3><p><code>"mcpServers": {"campus": {"command": "python", "args": ["campus_server.py"]}}</code></p></div>
+    <div class="card"><h3>⌨️ Claude Code</h3><p><code>claude mcp add campus -- python campus_server.py</code></p></div>
+    <div class="card"><h3>🧑‍💻 VS Code / Cursor</h3><p>Add the same server in MCP settings</p></div>
+  </div>
+</section>
+
+<!-- 14. Safety -->
+<section>
+  <h2>Tools = power. Stay safe ⚠️</h2>
+  <ul>
+    <li><b>Least privilege:</b> a booking tool, not "run any SQL"</li>
+    <li><b>Human approval</b> for actions that change things</li>
+    <li><b>Validate arguments</b> in code · <b>cap the loop</b> · <b>log every call</b></li>
+    <li><b>Only install MCP servers you trust:</b> they run code on your machine and can hide instructions in tool descriptions</li>
+  </ul>
+</section>
+
+<!-- 15. Lab -->
+<section>
+  <h2>Lab: timetable agent + MCP server (35 min) 🧪</h2>
+  <div class="cols">
+    <div class="card ex"><h3>Part A: function calling</h3>
+      <ol><li>Write + test 4 tools</li><li>Declare them</li><li>One round by hand</li><li>Agent loop + approval</li><li>Automatic shortcut</li></ol></div>
+    <div class="card hl"><h3>Part B: MCP</h3>
+      <ol start="6"><li>Tools → MCP server</li><li>MCP client: list + call</li><li>Gemini + MCP</li><li>Laptop: Claude Desktop / VS Code</li></ol></div>
+  </div>
+  <aside class="notes">Function calling makes several requests per question: free-tier rate limits hit sooner. Stagger if needed.</aside>
+</section>
+
+<!-- 16. Recap -->
+<section>
+  <h2>Recap</h2>
+  <ol>
+    <li>Model returns a <b>function call</b>; your code runs it</li>
+    <li>Model sees only the <b>declaration</b>: write it well</li>
+    <li>Return <b>errors</b>, don't crash</li>
+    <li>Agent loop = function calling, capped, with approval</li>
+    <li><b>MCP</b> = USB-C for AI tools: build once, use anywhere</li>
+    <li>Host → client → server · stdio or HTTP</li>
+  </ol>
+</section>
+
+<!-- 17. Quiz -->
+<section>
+  <h2>Quick quiz 🧠</h2>
+  <ol>
+    <li>Model wants a tool. What does it send?<span class="fragment accent"> Name + arguments</span></li>
+    <li>Why return <code>{"error": ...}</code>?<span class="fragment accent"> So the model can explain or retry</span></li>
+    <li>What problem does MCP solve?<span class="fragment accent"> apps × tools custom integrations</span></li>
+    <li>Random "free tools" MCP server: risk?<span class="fragment accent"> It runs code on your machine</span></li>
+  </ol>
+</section>
+
+<!-- 18. Next -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">Up next · Session 8</p>
+  <h1 style="color:#fff">Agent Frameworks &amp; Multi-Agent Systems</h1>
+  <p style="color:#cbd5e1">LangGraph, CrewAI and agent SDKs; build a researcher + writer team</p>
+  <p style="color:#fff;margin-top:1em">Questions? 🙋</p>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    width: 1280,
+    height: 720,
+    margin: 0.06,
+    transition: 'slide',
+    plugins: [RevealNotes]
+  });
+</script>
+</body>
+</html>

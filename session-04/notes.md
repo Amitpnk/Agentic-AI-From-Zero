@@ -307,4 +307,4 @@ This is **[Project 3](../projects/README.md#project-3--chat-with-the-syllabus-ra
 
 ---
 
-**Previous:** [Session 3: Building with LLM APIs](../session-03/notes.md) · **Next:** Session 5: Responsible AI (coming soon)
+**Previous:** [Session 3: Building with LLM APIs](../session-03/notes.md) · **Next:** [Session 5: Responsible AI](../session-05/notes.md)

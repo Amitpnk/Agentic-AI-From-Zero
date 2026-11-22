@@ -1,0 +1,46 @@
+<mxfile host="drawio">
+  <diagram id="function-calling" name="Function calling step by step">
+    <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="960" pageHeight="560" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Function calling: the model asks, your code runs" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="36" as="geometry" />
+        </mxCell>
+
+        <!-- Lifeline heads -->
+        <mxCell id="hc" value="Your Python code" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;fontColor=#1f2328;fontSize=15;fontStyle=1;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="200" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="hm" value="LLM (Gemini)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1f2328;strokeColor=none;fontColor=#ffffff;fontSize=15;fontStyle=1;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="380" y="60" width="200" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="ht" value="Tool: get_exam_date()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=15;fontStyle=1;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="720" y="60" width="200" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Lifelines -->
+        <mxCell id="lc" style="endArrow=none;html=1;strokeColor=#5b636e;dashed=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="140" y="104" as="sourcePoint" /><mxPoint x="140" y="520" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="lm" style="endArrow=none;html=1;strokeColor=#5b636e;dashed=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="480" y="104" as="sourcePoint" /><mxPoint x="480" y="520" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="lt" style="endArrow=none;html=1;strokeColor=#5b636e;dashed=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="820" y="104" as="sourcePoint" /><mxPoint x="820" y="520" as="targetPoint" /></mxGeometry></mxCell>
+
+        <!-- 1 -->
+        <mxCell id="m1" value="&lt;b&gt;1.&lt;/b&gt; Question + tool descriptions&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;&quot;When is my OS exam?&quot; + get_exam_date(subject)&lt;/font&gt;" style="endArrow=block;endFill=1;html=1;strokeColor=#1d4ed8;strokeWidth=2;fontSize=13;fontColor=#1f2328;labelBackgroundColor=#ffffff;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="140" y="150" as="sourcePoint" /><mxPoint x="480" y="150" as="targetPoint" /></mxGeometry></mxCell>
+        <!-- 2 -->
+        <mxCell id="m2" value="&lt;b&gt;2.&lt;/b&gt; Not text, but a &lt;b&gt;function call&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; face=&quot;Consolas&quot;&gt;get_exam_date(subject=&quot;OS&quot;)&lt;/font&gt;" style="endArrow=block;endFill=1;html=1;strokeColor=#6d28d9;strokeWidth=2;fontSize=13;fontColor=#1f2328;labelBackgroundColor=#ffffff;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="480" y="220" as="sourcePoint" /><mxPoint x="140" y="220" as="targetPoint" /></mxGeometry></mxCell>
+        <!-- 3 -->
+        <mxCell id="m3" value="&lt;b&gt;3.&lt;/b&gt; Your code runs the real function" style="endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=2;fontSize=13;fontColor=#1f2328;labelBackgroundColor=#ffffff;" edge="1" parent="1"><mxGeometry x="0.25" relative="1" as="geometry"><mxPoint x="140" y="290" as="sourcePoint" /><mxPoint x="820" y="290" as="targetPoint" /><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="m3r" value="&lt;font face=&quot;Consolas&quot; style=&quot;font-size:11px&quot;&gt;{&quot;date&quot;: &quot;2026-12-14&quot;, &quot;time&quot;: &quot;2 PM&quot;, &quot;hall&quot;: &quot;Hall A&quot;}&lt;/font&gt;" style="endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=2;dashed=1;fontSize=13;fontColor=#1f2328;labelBackgroundColor=#ffffff;" edge="1" parent="1"><mxGeometry x="-0.25" relative="1" as="geometry"><mxPoint x="820" y="330" as="sourcePoint" /><mxPoint x="140" y="330" as="targetPoint" /><mxPoint as="offset" /></mxGeometry></mxCell>
+        <!-- 4 -->
+        <mxCell id="m4" value="&lt;b&gt;4.&lt;/b&gt; Send the result back" style="endArrow=block;endFill=1;html=1;strokeColor=#15803d;strokeWidth=2;fontSize=13;fontColor=#1f2328;labelBackgroundColor=#ffffff;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="140" y="390" as="sourcePoint" /><mxPoint x="480" y="390" as="targetPoint" /></mxGeometry></mxCell>
+        <!-- 5 -->
+        <mxCell id="m5" value="&lt;b&gt;5.&lt;/b&gt; Final answer (or another function call → back to step 3)&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;&quot;Your OS exam is on Mon 14 Dec at 2 PM in Hall A.&quot;&lt;/font&gt;" style="endArrow=block;endFill=1;html=1;strokeColor=#1f2328;strokeWidth=2;fontSize=13;fontColor=#1f2328;labelBackgroundColor=#ffffff;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="480" y="460" as="sourcePoint" /><mxPoint x="140" y="460" as="targetPoint" /></mxGeometry></mxCell>
+
+        <mxCell id="note" value="The LLM &lt;b&gt;never&lt;/b&gt; touches the tool. Your code decides whether to run it, so this is where you add checks and human approval." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=13;arcSize=14;align=left;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="600" y="380" width="320" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

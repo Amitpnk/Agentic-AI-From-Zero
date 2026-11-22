@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From Chatbots to Agents: Slides</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+<style>
+  :root {
+    --r-main-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-text-transform: none;
+    --r-heading-font-weight: 750;
+    --r-main-font-size: 32px;
+    --r-link-color: #1d4ed8;
+    --accent: #c2410c;
+    --soft: #fff1e8;
+    --blue-soft: #eaf0ff;
+    --green-soft: #e9f8ee;
+    --muted: #5b636e;
+  }
+  body, .reveal-viewport { background: #fbfaf7; }
+  .reveal h1 { font-size: 2.2em; }
+  .reveal h2 { font-size: 1.5em; color: #1f2328; margin-bottom: 0.5em; }
+  .reveal .slides section { text-align: left; }
+  .reveal .slides section.center { text-align: center; }
+  .reveal .accent { color: var(--accent); }
+  .reveal .muted { color: var(--muted); }
+  .reveal .small { font-size: 0.7em; }
+  .reveal ul, .reveal ol { display: block; margin-left: 1.1em; }
+  .reveal li { margin: 0.25em 0; }
+  .reveal .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.55em; font-weight: 700; }
+  .reveal .card { background: #fff; border: 1px solid #e3e0d8; border-radius: 14px; padding: 0.6em 0.8em; }
+  .reveal .card.hl { background: var(--soft); border-color: transparent; }
+  .reveal .card.ex { background: var(--blue-soft); border-color: transparent; }
+  .reveal .card.ok { background: var(--green-soft); border-color: transparent; }
+  .reveal .card h3 { font-size: 0.8em; margin: 0 0 0.3em; }
+  .reveal .card p, .reveal .card li { font-size: 0.8em; }
+  .reveal .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7em; }
+  .reveal .cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6em; }
+  .reveal .big { font-size: 1.35em; font-weight: 700; line-height: 1.3; }
+  .reveal table { font-size: 0.68em; width: 100%; }
+  .reveal table th, .reveal table td { padding: 0.35em 0.5em; border-bottom: 1px solid #e3e0d8; }
+  .reveal code { background: #f3f1ec; padding: 0 0.2em; border-radius: 4px; }
+  .reveal pre { width: 100%; box-shadow: none; font-size: 0.5em; margin: 0.3em 0; }
+  .reveal pre code { background: #f3f1ec; border-radius: 10px; padding: 0.6em 0.8em; max-height: 460px; line-height: 1.4; }
+  .reveal img.diagram { width: 100%; margin: 0; }
+  .reveal .slide-number { background: transparent; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1. Title -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">GenAI &amp; Agentic AI Workshop · Day 2 · Session 6</p>
+  <h1 style="color:#fff">From Chatbots to Agents</h1>
+  <p style="color:#cbd5e1">Yesterday it could talk. Today it learns to <b>do</b>.</p>
+  <p class="small" style="color:#94a3b8">Press <b>→</b> to move · <b>S</b> for speaker notes · <b>F</b> for full screen</p>
+  <aside class="notes">Welcome to Day 2. One-line recap of Day 1: we built CampusBuddy that answers from the college FAQ with sources, and learned how to keep it safe.</aside>
+</section>
+
+<!-- 2. Hook -->
+<section>
+  <h2>Can CampusBuddy do this? 🤔</h2>
+  <div class="card ex"><p>"When is my OS exam? If the library is open the day before, book me a study room for 2 hours in the morning."</p></div>
+  <ul class="fragment" style="margin-top:0.5em">
+    <li>Needs <b>live data</b> (timetable), not a static FAQ</li>
+    <li>Must <b>decide</b> based on what it finds (is it open?)</li>
+    <li>Must <b>act</b> in another system (book the room)</li>
+  </ul>
+  <p class="fragment big accent">A chatbot can't. An <b>agent</b> can.</p>
+</section>
+
+<!-- 3. Spectrum -->
+<section>
+  <h2>Who decides the next step?</h2>
+  <img class="diagram" src="diagrams/autonomy-spectrum.svg" alt="Chatbot, RAG bot, workflow, agent">
+  <aside class="notes">Keep asking the question in the title. Chatbot: nobody. RAG: your code. Workflow: your code. Agent: the LLM.</aside>
+</section>
+
+<!-- 4. Four parts -->
+<section>
+  <h2>What makes an agent</h2>
+  <div class="cols">
+    <div class="card hl"><h3>🧠 Brain (LLM)</h3><p>Understands the goal, decides what next, knows when it's done</p></div>
+    <div class="card ex"><h3>🧰 Tools</h3><p>Search, calculator, APIs, databases: its "hands"</p></div>
+    <div class="card ok"><h3>📝 Memory</h3><p>What happened so far, plus facts for next time</p></div>
+    <div class="card"><h3>⚡ Actions</h3><p>Tools that change things: book, send, pay. <b>The risky part.</b></p></div>
+  </div>
+  <aside class="notes">Analogy: a new teaching assistant. You give a goal, not every step. That trust is why you check their work at first.</aside>
+</section>
+
+<!-- 5. Loop -->
+<section>
+  <h2>The agent loop: ReAct</h2>
+  <img class="diagram" src="diagrams/agent-loop.svg" alt="Think, act, observe, repeat; final answer when done" style="max-height:560px;width:auto;display:block;margin:0 auto;">
+  <aside class="notes">ReAct = Reason + Act (Yao et al., 2022). Nearly every agent framework runs this loop underneath.</aside>
+</section>
+
+<!-- 6. Trace -->
+<section>
+  <h2>Watch it think 👀</h2>
+  <table>
+    <tr><td>💭</td><td>I need the OS exam date first.</td></tr>
+    <tr class="fragment"><td>🛠️</td><td><code>get_exam_date(subject="OS")</code> → Mon 14 Dec, 2 PM, Hall A</td></tr>
+    <tr class="fragment"><td>💭</td><td>Day before = Sunday 13 Dec. Is the library open?</td></tr>
+    <tr class="fragment"><td>🛠️</td><td><code>get_library_hours(date="2026-12-13")</code> → 10:00–16:00 (exam month)</td></tr>
+    <tr class="fragment"><td>💭</td><td>Open. Two morning hours = 10 to 12. Book it.</td></tr>
+    <tr class="fragment"><td>🛠️</td><td><code>book_study_room("2026-12-13", "10:00", 2)</code> → confirmed, room S3</td></tr>
+    <tr class="fragment"><td>✅</td><td>"OS is Mon 14 Dec, 2 PM, Hall A. I booked room S3, Sun 10 AM–12 PM."</td></tr>
+  </table>
+  <p class="fragment small accent" style="margin-top:0.4em">If the library were closed, it would stop after 2 tools. <b>Steps depend on what it finds.</b></p>
+  <aside class="notes">Reveal one row at a time. Before each Think, ask the class what the agent should do next.</aside>
+</section>
+
+<!-- 7. Code preview -->
+<section>
+  <h2>The loop in code (preview)</h2>
+<pre><code class="python">def run_agent(goal, tools, max_steps=8):
+    memory = [goal]
+    for step in range(max_steps):              # always cap the loop!
+        decision = llm(memory, tools)           # THINK
+        if decision.is_final_answer:
+            return decision.text
+        result = tools[decision.tool](**decision.args)   # ACT: YOUR code runs it
+        memory.append((decision, result))       # OBSERVE
+    return "Sorry, I couldn't finish that."</code></pre>
+  <p class="fragment small muted">Session 7: we write the real version with function calling.</p>
+</section>
+
+<!-- 8. Tools -->
+<section>
+  <h2>Tools: the LLM asks, <span class="accent">your code runs</span></h2>
+  <table>
+    <tr><th>Tool</th><th>Risk</th></tr>
+    <tr><td><code>search_faq(question)</code> · <code>get_exam_date(subject)</code></td><td>Read-only: low</td></tr>
+    <tr><td><code>calculator(expression)</code></td><td>Low</td></tr>
+    <tr><td><code>book_study_room(date, start, hours)</code></td><td>Changes data: medium</td></tr>
+    <tr><td><code>send_email(to, subject, body)</code></td><td><b>High: ask a human first</b></td></tr>
+  </table>
+  <p class="fragment card hl" style="margin-top:0.5em">Your code stays in control, so that's where permissions and checks go (Session 5).</p>
+</section>
+
+<!-- 9. Memory & planning -->
+<section>
+  <h2>Memory and planning</h2>
+  <div class="cols">
+    <div class="card ok"><h3>📝 Memory</h3>
+      <ul><li><b>Short-term:</b> this task's goal, thoughts, results (re-sent each step)</li><li><b>Long-term:</b> "Priya prefers morning slots", saved in a DB</li></ul></div>
+    <div class="card ex"><h3>🗺️ Planning</h3>
+      <ul><li><b>Step by step</b> (ReAct)</li><li><b>Plan first</b>, then execute</li><li><b>Reflect:</b> check its own work</li></ul></div>
+  </div>
+</section>
+
+<!-- 10. When not -->
+<section>
+  <h2>Do you really need an agent?</h2>
+  <img class="diagram" src="diagrams/agent-or-workflow.svg" alt="Decision flowchart: chatbot, workflow, agent, agent with human approval" style="max-height:540px;width:auto;display:block;margin:0 auto;">
+</section>
+
+<!-- 11. Maths -->
+<section class="center">
+  <p class="eyebrow">Mistakes multiply</p>
+  <p class="big">95% right per step<br>× 10 steps<br>= <span class="accent">~60%</span> right overall</p>
+  <p class="fragment" style="margin-top:0.8em"><b>Use the simplest thing that works.</b><br><span class="muted small">Workflows: cheaper, faster, easier to test. Agents: only for open-ended tasks.</span></p>
+  <aside class="notes">Work out 0.95^10 on the board. Ask: how would you raise the overall success rate? Fewer steps, better tools, checks between steps.</aside>
+</section>
+
+<!-- 12. Real world -->
+<section>
+  <h2>Agents in the real world 🌍</h2>
+  <div class="cols">
+    <div class="card"><h3>💻 Coding agents</h3><p>Claude Code, GitHub Copilot agent mode, Cursor</p></div>
+    <div class="card"><h3>🔬 Research agents</h3><p>"Deep research" in ChatGPT, Gemini, Claude</p></div>
+    <div class="card"><h3>🎧 Support agents</h3><p>Look up orders, refund within limits, escalate</p></div>
+    <div class="card"><h3>🖱️ Computer-use agents</h3><p>Click and type in a browser like a person</p></div>
+  </div>
+  <p class="fragment small" style="margin-top:0.5em">Common pattern: <b>clear goal + good tools + limits on risky actions.</b></p>
+  <aside class="notes">If possible, show a coding agent or deep research run live for 2 minutes so they see think/act/observe in action.</aside>
+</section>
+
+<!-- 13. Activity -->
+<section>
+  <h2>Be the agent 🎭 (10 min)</h2>
+  <div class="cols3">
+    <div class="card"><h3>👤 User</h3><p>Reads out a goal card</p></div>
+    <div class="card hl"><h3>🧠 Agent</h3><p>Writes Think lines. Can only <i>ask</i> for exact tool calls</p></div>
+    <div class="card ex"><h3>🧰 Tools</h3><p>Answers only from the tool cards. Wrong format = <code>ERROR</code></p></div>
+  </div>
+  <ol class="small" style="margin-top:0.5em">
+    <li>Study the evening before CN? If yes, book 2 hours from 6 PM.</li>
+    <li>Book a 4-hour room the day before DBMS.</li>
+    <li>Days between my first and last exam?</li>
+    <li>When is my Maths exam?</li>
+  </ol>
+  <aside class="notes">Tool and goal cards are in the Session 6 notes. Card 2: the tool says max 3 hours, so watch how the agent adapts. Card 4: does it admit "not found"?</aside>
+</section>
+
+<!-- 14. Vote -->
+<section>
+  <h2>Agent or not? 🗳️</h2>
+  <table>
+    <tr><th>Task</th><th>Pick</th></tr>
+    <tr><td>Answer questions from the handbook</td><td class="fragment">RAG bot</td></tr>
+    <tr><td>Daily 8 AM complaint summary to the principal</td><td class="fragment">Workflow</td></tr>
+    <tr><td>Route complaints + draft replies</td><td class="fragment">Workflow (routing)</td></tr>
+    <tr><td>Plan my study week and book rooms</td><td class="fragment">Agent</td></tr>
+    <tr><td>Fix a failing test in a big codebase</td><td class="fragment">Agent</td></tr>
+    <tr><td>Decide who gets the scholarship</td><td class="fragment">Human decides (AI assists)</td></tr>
+  </table>
+</section>
+
+<!-- 15. Recap -->
+<section>
+  <h2>Recap</h2>
+  <ol>
+    <li>Chatbots <b>talk</b>; agents <b>do</b></li>
+    <li>Who decides the next step? Code = workflow, LLM = agent</li>
+    <li>Brain · tools · memory · actions</li>
+    <li><b>ReAct:</b> think → act → observe → repeat (capped!)</li>
+    <li>The LLM asks; <b>your code runs the tool</b></li>
+    <li><b>Simplest thing that works.</b> Humans approve risky actions</li>
+  </ol>
+</section>
+
+<!-- 16. Next -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">Up next · Session 7</p>
+  <h1 style="color:#fff">Tool Calling and MCP</h1>
+  <p style="color:#cbd5e1">Write the real agent loop in Python, then share your tool with any AI app using the Model Context Protocol</p>
+  <p style="color:#fff;margin-top:1em">Questions? 🙋</p>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    width: 1280,
+    height: 720,
+    margin: 0.06,
+    transition: 'slide',
+    plugins: [RevealNotes]
+  });
+</script>
+</body>
+</html>

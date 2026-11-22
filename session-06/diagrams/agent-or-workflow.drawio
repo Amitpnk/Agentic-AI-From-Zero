@@ -1,0 +1,53 @@
+<mxfile host="drawio">
+  <diagram id="agent-or-workflow" name="Do you need an agent?">
+    <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="960" pageHeight="520" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Do you really need an agent? Pick the simplest thing that works." style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="920" height="36" as="geometry" />
+        </mxCell>
+
+        <mxCell id="q1" value="Can one LLM call answer it&lt;br&gt;(maybe with RAG)?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;strokeWidth=2;fontColor=#1f2328;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="70" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" value="&lt;b&gt;Chatbot / RAG bot&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;FAQ answers, summaries, explanations&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f8ee;strokeColor=#15803d;fontColor=#1f2328;fontSize=14;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="230" width="210" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="q2" value="Are the steps the same&lt;br&gt;every time?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;strokeWidth=2;fontColor=#1f2328;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="70" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" value="&lt;b&gt;Workflow&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Daily complaint summary, routing, form processing&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf0ff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=14;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="370" y="230" width="210" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a3" value="&lt;b&gt;Agent&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Open-ended goals, unknown number of steps: planning a study week, fixing a bug, research&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1e8;strokeColor=#c2410c;fontColor=#1f2328;fontSize=14;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="690" y="85" width="250" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="q3" value="Is a mistake costly?&lt;br&gt;(money, marks, emails&lt;br&gt;to everyone)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b636e;strokeWidth=2;fontColor=#1f2328;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="690" y="210" width="250" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" value="&lt;b&gt;Agent + human approval&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Agent proposes, a person confirms risky actions&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe9ee;strokeColor=#be123c;fontColor=#1f2328;fontSize=14;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="710" y="380" width="210" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="y1" value="Yes" style="endArrow=block;endFill=1;html=1;strokeColor=#15803d;strokeWidth=2;fontSize=13;fontStyle=1;fontColor=#15803d;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="q1" target="a1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="n1" value="No" style="endArrow=block;endFill=1;html=1;strokeColor=#be123c;strokeWidth=2;fontSize=13;fontStyle=1;fontColor=#be123c;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="q1" target="q2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="y2" value="Yes" style="endArrow=block;endFill=1;html=1;strokeColor=#15803d;strokeWidth=2;fontSize=13;fontStyle=1;fontColor=#15803d;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="q2" target="a2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="n2" value="No" style="endArrow=block;endFill=1;html=1;strokeColor=#be123c;strokeWidth=2;fontSize=13;fontStyle=1;fontColor=#be123c;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="q2" target="a3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" style="endArrow=block;endFill=1;html=1;strokeColor=#5b636e;strokeWidth=2;" edge="1" parent="1" source="a3" target="q3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="y3" value="Yes" style="endArrow=block;endFill=1;html=1;strokeColor=#be123c;strokeWidth=2;fontSize=13;fontStyle=1;fontColor=#be123c;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="q3" target="a4"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="n3" value="&lt;b&gt;&lt;font color=&quot;#15803d&quot;&gt;No&lt;/font&gt;&lt;/b&gt; → the agent can act on its own (still log and test it)" style="text;html=1;whiteSpace=wrap;fontSize=13;align=right;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="420" y="320" width="260" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="foot" value="&lt;b&gt;Why start simple?&lt;/b&gt; Each extra LLM step adds cost, delay and a chance of error. At 95% accuracy per step, a 10-step agent gets everything right only about 60% of the time." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#e3e0d8;dashed=1;fontColor=#1f2328;fontSize=14;align=left;spacingLeft=12;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="20" y="380" width="660" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

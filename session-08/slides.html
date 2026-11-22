@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Frameworks and Multi-Agent Systems: Slides</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+<style>
+  :root {
+    --r-main-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --r-heading-text-transform: none;
+    --r-heading-font-weight: 750;
+    --r-main-font-size: 32px;
+    --r-link-color: #1d4ed8;
+    --accent: #c2410c;
+    --soft: #fff1e8;
+    --blue-soft: #eaf0ff;
+    --green-soft: #e9f8ee;
+    --muted: #5b636e;
+  }
+  body, .reveal-viewport { background: #fbfaf7; }
+  .reveal h1 { font-size: 2.2em; }
+  .reveal h2 { font-size: 1.5em; color: #1f2328; margin-bottom: 0.5em; }
+  .reveal .slides section { text-align: left; }
+  .reveal .slides section.center { text-align: center; }
+  .reveal .accent { color: var(--accent); }
+  .reveal .muted { color: var(--muted); }
+  .reveal .small { font-size: 0.7em; }
+  .reveal ul, .reveal ol { display: block; margin-left: 1.1em; }
+  .reveal li { margin: 0.25em 0; }
+  .reveal .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.55em; font-weight: 700; }
+  .reveal .card { background: #fff; border: 1px solid #e3e0d8; border-radius: 14px; padding: 0.6em 0.8em; }
+  .reveal .card.hl { background: var(--soft); border-color: transparent; }
+  .reveal .card.ex { background: var(--blue-soft); border-color: transparent; }
+  .reveal .card.ok { background: var(--green-soft); border-color: transparent; }
+  .reveal .card h3 { font-size: 0.8em; margin: 0 0 0.3em; }
+  .reveal .card p, .reveal .card li { font-size: 0.8em; }
+  .reveal .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7em; }
+  .reveal .cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6em; }
+  .reveal .big { font-size: 1.35em; font-weight: 700; line-height: 1.3; }
+  .reveal table { font-size: 0.68em; width: 100%; }
+  .reveal table th, .reveal table td { padding: 0.35em 0.5em; border-bottom: 1px solid #e3e0d8; }
+  .reveal code { background: #f3f1ec; padding: 0 0.2em; border-radius: 4px; }
+  .reveal pre { width: 100%; box-shadow: none; font-size: 0.5em; margin: 0.3em 0; }
+  .reveal pre code { background: #f3f1ec; border-radius: 10px; padding: 0.6em 0.8em; max-height: 460px; line-height: 1.4; }
+  .reveal img.diagram { width: 100%; margin: 0; }
+  .reveal .slide-number { background: transparent; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1. Title -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">GenAI &amp; Agentic AI Workshop · Day 2 · Session 8</p>
+  <h1 style="color:#fff">Agent Frameworks &amp; Multi-Agent Systems</h1>
+  <p style="color:#cbd5e1">From one agent to a team, with you as the editor-in-chief</p>
+  <p class="small" style="color:#94a3b8">Press <b>→</b> to move · <b>S</b> for speaker notes · <b>F</b> for full screen</p>
+  <aside class="notes">90 minutes. Frameworks, multi-agent patterns, human-in-the-loop, then the lab: a researcher + writer + reviewer team in LangGraph.</aside>
+</section>
+
+<!-- 2. Hook -->
+<section>
+  <h2>Our Session 7 agent: ~25 lines 🎉</h2>
+  <p>But what if it must...</p>
+  <ul>
+    <li class="fragment">⏸️ <b>pause</b> for approval, and resume <b>tomorrow</b>?</li>
+    <li class="fragment">🔁 <b>retry</b> when a tool fails?</li>
+    <li class="fragment">🧑‍🤝‍🧑 work as a <b>team</b> of specialist agents?</li>
+    <li class="fragment">🔍 show you <b>what happened</b> when it goes wrong?</li>
+  </ul>
+  <p class="fragment big accent">That's what frameworks are for.</p>
+</section>
+
+<!-- 3. Stack -->
+<section>
+  <h2>What a framework gives you</h2>
+  <img class="diagram" src="diagrams/framework-stack.svg" alt="You write agents and tools; the framework handles loop, state, memory, HITL, handoffs, streaming, tracing">
+  <aside class="notes">Key line: learn the loop first (Session 7), then the framework. Frameworks change fast and can hide what's going on.</aside>
+</section>
+
+<!-- 4. Comparison -->
+<section>
+  <h2>The main options</h2>
+  <table>
+    <tr><th>Framework</th><th>Think of it as...</th><th>Good for</th></tr>
+    <tr><td><b>LangGraph</b></td><td>A graph of nodes + edges with shared state</td><td>Control, loops, pauses, production</td></tr>
+    <tr><td><b>CrewAI</b></td><td>A crew of role-playing agents doing tasks</td><td>Quick prototypes</td></tr>
+    <tr><td><b>OpenAI Agents SDK</b></td><td>Lightweight agents + handoffs</td><td>Simple multi-agent apps</td></tr>
+    <tr><td><b>Claude Agent SDK</b></td><td>The harness behind Claude Code</td><td>Agents working with files and code</td></tr>
+    <tr><td><b>Google ADK</b></td><td>Gemini-first agent kit</td><td>Gemini / Google Cloud</td></tr>
+    <tr><td><b>Microsoft Agent Framework</b></td><td>AutoGen + Semantic Kernel successor</td><td>Azure / .NET</td></tr>
+  </table>
+  <p class="small muted" style="margin-top:0.4em">Same core ideas everywhere: LLM + tools (often MCP) + loop + memory. Pick by model, cloud and control.</p>
+</section>
+
+<!-- 5. Why multi -->
+<section>
+  <h2>Why a team of agents? 🧑‍🤝‍🧑</h2>
+  <p>Like a college fest: sponsorship, design and logistics teams, not one person doing everything.</p>
+  <div class="cols">
+    <div class="card ok"><h3>🎯 Focus</h3><p>Short prompt, only the tools it needs</p></div>
+    <div class="card ok"><h3>🧐 Quality checks</h3><p>One agent reviews another</p></div>
+    <div class="card ok"><h3>⚡ Parallel work</h3><p>Research several things at once</p></div>
+    <div class="card ok"><h3>📦 Smaller context</h3><p>Each sees only what it needs</p></div>
+  </div>
+</section>
+
+<!-- 6. Patterns -->
+<section>
+  <h2>Four patterns</h2>
+  <img class="diagram" src="diagrams/multi-agent-patterns.svg" alt="Pipeline, orchestrator-workers, planner-executor, reviewer loop with human" style="max-height:560px;width:auto;display:block;margin:0 auto;">
+  <aside class="notes">Ask the class to match each pattern to a campus example before revealing: newsletter (pipeline), compare electives (orchestrator), plan study week (planner), today's lab (reviewer loop + human).</aside>
+</section>
+
+<!-- 7. HITL -->
+<section>
+  <h2>🙋 Human-in-the-loop</h2>
+  <table>
+    <tr><th>Kind</th><th>Example</th></tr>
+    <tr><td>Approve / reject</td><td>"Book room S3 on Sunday 10–12?"</td></tr>
+    <tr><td>Edit</td><td>Fix the title before publishing</td></tr>
+    <tr><td>Feedback</td><td>"Make it more fun" → back to the writer</td></tr>
+    <tr><td>Review the plan</td><td>Check 5 steps before anything runs</td></tr>
+    <tr><td>Answer a question</td><td>"3rd- or 5th-semester syllabus?"</td></tr>
+  </table>
+  <p class="fragment small" style="margin-top:0.4em">LangGraph: <code>interrupt()</code> pauses · checkpointer saves state · <code>Command(resume=...)</code> continues</p>
+</section>
+
+<!-- 8. When not -->
+<section>
+  <h2>When <span class="accent">not</span> to use a team</h2>
+  <div class="cols">
+    <div class="card hl"><h3>💸 ~15× the tokens</h3><p>Anthropic's multi-agent research system vs a normal chat</p></div>
+    <div class="card hl"><h3>🤷 Coordination errors</h3><p>Agents misunderstand, repeat, pass mistakes on</p></div>
+    <div class="card hl"><h3>🐞 Harder to debug</h3><p>More parts, different path each run</p></div>
+    <div class="card hl"><h3>🔗 Tightly linked steps</h3><p>One agent beats several passing notes</p></div>
+  </div>
+  <p class="fragment big accent" style="margin-top:0.5em">Start with one agent. Split for a clear reason.</p>
+</section>
+
+<!-- 9. Lab graph -->
+<section>
+  <h2>Today's lab as a graph</h2>
+  <img class="diagram" src="diagrams/research-team-graph.svg" alt="researcher, writer, reviewer loop, human approval, end" style="max-height:540px;width:auto;display:block;margin:0 auto;">
+</section>
+
+<!-- 10. LangGraph code -->
+<section>
+  <h2>LangGraph: state, nodes, edges</h2>
+<pre><code class="python">graph = StateGraph(TeamState)                       # shared state
+graph.add_node("researcher", researcher)            # nodes = plain functions
+graph.add_node("writer", writer)
+graph.add_node("reviewer", reviewer)
+graph.add_node("human_approval", human_approval)
+
+graph.add_edge(START, "researcher")                 # always
+graph.add_edge("researcher", "writer")
+graph.add_edge("writer", "reviewer")
+graph.add_conditional_edges("reviewer", after_review, ["writer", "human_approval"])   # if/else
+graph.add_conditional_edges("human_approval", after_human, ["writer", END])
+
+app = graph.compile(checkpointer=InMemorySaver())  # pause / resume / history</code></pre>
+</section>
+
+<!-- 11. HITL code -->
+<section>
+  <h2>Pausing for a human</h2>
+<pre><code class="python">def human_approval(state):
+    answer = interrupt({"draft": state["draft"]})       # ⏸️ pause here
+    if answer.lower() in ("yes", "y"):
+        return {"approved": True}
+    return {"approved": False, "feedback": answer}      # back to the writer
+
+# later...
+app.invoke(Command(resume="make it more fun"), config)  # ▶️ continue</code></pre>
+  <p class="fragment small muted">The reviewer uses <b>structured output</b> (<code>approved: bool</code>) so the graph can branch on it.</p>
+</section>
+
+<!-- 12. CrewAI -->
+<section>
+  <h2>Same idea in CrewAI (sketch)</h2>
+<pre><code class="python">researcher = Agent(role="Researcher", goal="Find accurate facts about {topic}", backstory="...")
+writer     = Agent(role="Writer", goal="Write a 200-word article for first-years", backstory="...")
+research   = Task(description="Research {topic}...", expected_output="Notes with URLs", agent=researcher)
+write      = Task(description="Write the article...", expected_output="~200 words", agent=writer,
+                  context=[research])
+Crew(agents=[researcher, writer], tasks=[research, write], process=Process.sequential).kickoff(
+    inputs={"topic": "Chandrayaan-3"})</code></pre>
+  <p class="fragment small">Shorter. LangGraph: more code, but explicit loops, branches, pauses and state.</p>
+</section>
+
+<!-- 13. Lab -->
+<section>
+  <h2>Lab: your research team (35 min) 🧪</h2>
+  <ol>
+    <li>Real <code>search_wikipedia</code> tool (free, no key)</li>
+    <li>Three agents as plain functions</li>
+    <li>Run as a simple Python pipeline</li>
+    <li>Same functions → LangGraph with review loop + human pause</li>
+    <li><b>You are the editor-in-chief:</b> ask for changes, then approve</li>
+    <li>Look inside the saved state</li>
+  </ol>
+  <p class="small muted">Wikipedia busy? The tool retries and has backup facts for the example topic.</p>
+  <aside class="notes">One article takes about 6-10 LLM calls: free-tier limits hit sooner. Ask a few students to share the funniest feedback they gave as editor.</aside>
+</section>
+
+<!-- 14. Recap -->
+<section>
+  <h2>Recap</h2>
+  <ol>
+    <li>Frameworks = loop + state + memory + pauses + tracing</li>
+    <li>LangGraph (control) · CrewAI (quick) · SDKs (lighter)</li>
+    <li>Teams: focus, quality checks, parallel work</li>
+    <li>Pipeline · orchestrator–workers · planner–executor · reviewer loop</li>
+    <li><b>Human-in-the-loop</b>: pause, approve, resume</li>
+    <li>~15× tokens: start with one agent</li>
+  </ol>
+</section>
+
+<!-- 15. Quiz -->
+<section>
+  <h2>Quick quiz 🧠</h2>
+  <ol>
+    <li>"Compare 5 companies": which pattern?<span class="fragment accent"> Orchestrator–workers</span></li>
+    <li>What does a reviewer agent add?<span class="fragment accent"> A quality check with feedback</span></li>
+    <li>How does LangGraph pause for a human?<span class="fragment accent"> interrupt() + checkpointer</span></li>
+    <li>One reason <i>not</i> to use a team?<span class="fragment accent"> Cost / errors / debugging</span></li>
+  </ol>
+</section>
+
+<!-- 16. Next -->
+<section class="center" data-background-color="#1f2328">
+  <p class="eyebrow" style="color:#fb923c">Up next · Session 9</p>
+  <h1 style="color:#fff">Taking Agents to Production</h1>
+  <p style="color:#cbd5e1">Evaluation, tracing, cost and latency, safety, and deploying as an API</p>
+  <p style="color:#fff;margin-top:1em">Questions? 🙋</p>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    width: 1280,
+    height: 720,
+    margin: 0.06,
+    transition: 'slide',
+    plugins: [RevealNotes]
+  });
+</script>
+</body>
+</html>

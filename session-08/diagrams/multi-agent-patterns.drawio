@@ -1,0 +1,109 @@
+<mxfile host="drawio">
+  <diagram id="multi-agent-patterns" name="Multi-agent patterns">
+    <mxGraphModel dx="1100" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1000" pageHeight="640" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Four common multi-agent patterns" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1f2328;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="36" as="geometry" />
+        </mxCell>
+
+        <!-- Panel 1: Pipeline -->
+        <mxCell id="p1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f7fbf8;strokeColor=#15803d;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="20" y="60" width="470" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="p1t" value="&lt;b&gt;1. Pipeline&lt;/b&gt; (sequential)&lt;br&gt;&lt;font style=&quot;font-size:12px&quot; color=&quot;#5b636e&quot;&gt;Each agent does one job and passes it on. Simple and predictable.&lt;/font&gt;" style="text;html=1;fontSize=15;align=left;verticalAlign=top;fontColor=#15803d;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="36" y="68" width="440" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p1a" value="🔎 Researcher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#15803d;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="40" y="170" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p1b" value="✍️ Writer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#15803d;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="195" y="170" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p1c" value="📤 Publisher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#15803d;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="350" y="170" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p1e1" style="endArrow=block;endFill=1;html=1;strokeColor=#15803d;strokeWidth=2;" edge="1" parent="1" source="p1a" target="p1b"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p1e2" style="endArrow=block;endFill=1;html=1;strokeColor=#15803d;strokeWidth=2;" edge="1" parent="1" source="p1b" target="p1c"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p1n" value="Example: research → write → publish a club newsletter" style="text;html=1;fontSize=12;align=left;verticalAlign=middle;fontColor=#5b636e;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="260" width="430" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Panel 2: Orchestrator-workers -->
+        <mxCell id="p2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f8ff;strokeColor=#1d4ed8;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="510" y="60" width="470" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="p2t" value="&lt;b&gt;2. Orchestrator–workers&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot; color=&quot;#5b636e&quot;&gt;A lead agent splits the task, workers run in parallel, the lead combines.&lt;/font&gt;" style="text;html=1;fontSize=15;align=left;verticalAlign=top;fontColor=#1d4ed8;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="526" y="68" width="440" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p2o" value="🧭 Orchestrator" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1d4ed8;strokeColor=none;fontColor=#ffffff;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="530" y="170" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p2w1" value="Worker: syllabus" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=12;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="780" y="125" width="180" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p2w2" value="Worker: placement data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=12;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="780" y="177" width="180" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p2w3" value="Worker: alumni reviews" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;fontColor=#1f2328;fontSize=12;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="780" y="229" width="180" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p2e1" style="endArrow=block;endFill=1;startArrow=block;startFill=1;html=1;strokeColor=#1d4ed8;strokeWidth=1.5;" edge="1" parent="1" source="p2o" target="p2w1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p2e2" style="endArrow=block;endFill=1;startArrow=block;startFill=1;html=1;strokeColor=#1d4ed8;strokeWidth=1.5;" edge="1" parent="1" source="p2o" target="p2w2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p2e3" style="endArrow=block;endFill=1;startArrow=block;startFill=1;html=1;strokeColor=#1d4ed8;strokeWidth=1.5;" edge="1" parent="1" source="p2o" target="p2w3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p2n" value="Example: &quot;Compare 3 elective courses&quot;; deep research tools work like this" style="text;html=1;fontSize=12;align=left;verticalAlign=middle;fontColor=#5b636e;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="530" y="275" width="440" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Panel 3: Planner-executor -->
+        <mxCell id="p3" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbf8ff;strokeColor=#6d28d9;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="20" y="340" width="470" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="p3t" value="&lt;b&gt;3. Planner–executor&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot; color=&quot;#5b636e&quot;&gt;One agent writes a step-by-step plan, another carries it out. Re-plan if a step fails.&lt;/font&gt;" style="text;html=1;fontSize=15;align=left;verticalAlign=top;fontColor=#6d28d9;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="36" y="348" width="440" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3a" value="🗺️ Planner" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6d28d9;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="40" y="450" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3plan" value="&lt;font style=&quot;font-size:11px&quot;&gt;1. Check exam dates&lt;br&gt;2. Check lab slots&lt;br&gt;3. Book library rooms&lt;/font&gt;" style="shape=note;whiteSpace=wrap;html=1;size=12;fillColor=#f1ebff;strokeColor=#6d28d9;fontColor=#1f2328;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="190" y="435" width="130" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p3b" value="⚙️ Executor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6d28d9;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="350" y="450" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3e1" style="endArrow=block;endFill=1;html=1;strokeColor=#6d28d9;strokeWidth=2;" edge="1" parent="1" source="p3a" target="p3plan"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p3e2" style="endArrow=block;endFill=1;html=1;strokeColor=#6d28d9;strokeWidth=2;" edge="1" parent="1" source="p3plan" target="p3b"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p3e3" value="step failed: re-plan" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;html=1;strokeColor=#6d28d9;strokeWidth=1.5;dashed=1;fontSize=11;fontColor=#6d28d9;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="p3b" target="p3a"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="410" y="550" /><mxPoint x="100" y="550" /></Array></mxGeometry></mxCell>
+        <mxCell id="p3n" value="Example: plan my study week" style="text;html=1;fontSize=12;align=left;verticalAlign=middle;fontColor=#5b636e;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="560" width="430" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Panel 4: Reviewer loop + human -->
+        <mxCell id="p4" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffaf6;strokeColor=#c2410c;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="510" y="340" width="470" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="p4t" value="&lt;b&gt;4. Reviewer loop + human-in-the-loop&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot; color=&quot;#5b636e&quot;&gt;A critic sends work back until it's good; a person gives the final OK.&lt;/font&gt;" style="text;html=1;fontSize=15;align=left;verticalAlign=top;fontColor=#c2410c;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="526" y="348" width="440" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p4a" value="✍️ Writer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c2410c;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="530" y="450" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p4b" value="🧐 Reviewer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c2410c;fontColor=#1f2328;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="690" y="450" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p4c" value="🙋 Human" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c2410c;strokeColor=none;fontColor=#ffffff;fontSize=13;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="850" y="450" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p4e1" style="endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=2;" edge="1" parent="1" source="p4a" target="p4b"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e2" value="OK" style="endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=2;fontSize=11;fontColor=#c2410c;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p4b" target="p4c"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e3" value="fix this" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=1.5;dashed=1;fontSize=11;fontColor=#c2410c;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="p4b" target="p4a"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="750" y="420" /><mxPoint x="590" y="420" /></Array></mxGeometry></mxCell>
+        <mxCell id="p4e4" value="change it" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;html=1;strokeColor=#c2410c;strokeWidth=1.5;dashed=1;fontSize=11;fontColor=#c2410c;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="p4c" target="p4a"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="905" y="530" /><mxPoint x="590" y="530" /></Array></mxGeometry></mxCell>
+        <mxCell id="p4n" value="Example: today's lab (research team)" style="text;html=1;fontSize=12;align=left;verticalAlign=middle;fontColor=#5b636e;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="530" y="560" width="430" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
